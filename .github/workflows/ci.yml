@@ -69,7 +69,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Prisma Generate
-        run: pnpm exec prisma generate
+        run: npx prisma generate
 
       - name: Run lint
         run: pnpm --dir . run lint
