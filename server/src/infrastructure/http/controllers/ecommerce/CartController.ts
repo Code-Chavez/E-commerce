@@ -5,21 +5,22 @@ import prisma from '@infrastructure/database/prisma';
 // Helper to calculate cart totals and return consistent structure
 async function formatCartResponse(cart: any) {
   if (!cart) return null;
-  
+
   let subtotal = 0;
-  
+
   const formattedItems = cart.items.map((item: any) => {
     const itemPrice = Number(item.variant.price);
     const itemDiscount = item.variant.discountPercent;
-    
+
     // Calcular el precio final considerando el descuento
-    const finalPrice = itemDiscount > 0 
-      ? itemPrice - (itemPrice * itemDiscount) / 100 
-      : itemPrice;
-      
+    const finalPrice =
+      itemDiscount > 0
+        ? itemPrice - (itemPrice * itemDiscount) / 100
+        : itemPrice;
+
     const totalItemPrice = finalPrice * item.quantity;
     subtotal += totalItemPrice;
-    
+
     return {
       id: item.id,
       cartId: item.cartId,
@@ -35,8 +36,12 @@ async function formatCartResponse(cart: any) {
         discountPercent: itemDiscount,
         finalPrice,
         product: item.variant.product,
-        stock: item.variant.branchStock?.reduce((sum: number, bs: any) => sum + bs.quantity, 0) || 0,
-      }
+        stock:
+          item.variant.branchStock?.reduce(
+            (sum: number, bs: any) => sum + bs.quantity,
+            0
+          ) || 0,
+      },
     };
   });
 
@@ -47,12 +52,11 @@ async function formatCartResponse(cart: any) {
     createdAt: cart.createdAt,
     updatedAt: cart.updatedAt,
     items: formattedItems,
-    subtotal
+    subtotal,
   };
 }
 
 export class CartController {
-  
   // GET /api/v1/cart
   async getCart(req: Request, res: Response, next: NextFunction) {
     try {
@@ -72,19 +76,19 @@ export class CartController {
               variant: {
                 include: {
                   product: {
-                    include: { images: true }
+                    include: { images: true },
                   },
-                  branchStock: true
-                }
-              }
-            }
-          }
-        }
+                  branchStock: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({
         success: true,
-        data: await formatCartResponse(cart)
+        data: await formatCartResponse(cart),
       });
     } catch (error) {
       next(error);
@@ -96,12 +100,14 @@ export class CartController {
     try {
       const schema = z.object({
         variantId: z.number().int().positive(),
-        quantity: z.number().int().positive().default(1)
+        quantity: z.number().int().positive().default(1),
       });
 
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: 'Datos inválidos' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Datos inválidos' });
       }
 
       const { variantId, quantity } = parsed.data;
@@ -109,41 +115,47 @@ export class CartController {
       const sessionId = req.headers['x-session-id'] as string;
 
       if (!userId && !sessionId) {
-        return res.status(400).json({ success: false, error: 'Falta sessionId o autenticación' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Falta sessionId o autenticación' });
       }
 
       // Validar que la variante exista
-      const variant = await prisma.productVariant.findUnique({ where: { id: variantId } });
+      const variant = await prisma.productVariant.findUnique({
+        where: { id: variantId },
+      });
       if (!variant) {
-        return res.status(404).json({ success: false, error: 'Variante no encontrada' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Variante no encontrada' });
       }
 
       // 1. Encontrar o crear el carrito
       let cart = await prisma.cart.findFirst({
-        where: userId ? { userId } : { sessionId }
+        where: userId ? { userId } : { sessionId },
       });
 
       if (!cart) {
         cart = await prisma.cart.create({
-          data: userId ? { userId } : { sessionId }
+          data: userId ? { userId } : { sessionId },
         });
       }
 
       // 2. Comprobar si el ítem ya existe en el carrito
       const existingItem = await prisma.cartItem.findUnique({
         where: {
-          cartId_variantId: { cartId: cart.id, variantId }
-        }
+          cartId_variantId: { cartId: cart.id, variantId },
+        },
       });
 
       if (existingItem) {
         await prisma.cartItem.update({
           where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + quantity }
+          data: { quantity: existingItem.quantity + quantity },
         });
       } else {
         await prisma.cartItem.create({
-          data: { cartId: cart.id, variantId, quantity }
+          data: { cartId: cart.id, variantId, quantity },
         });
       }
 
@@ -156,17 +168,17 @@ export class CartController {
               variant: {
                 include: {
                   product: { include: { images: true } },
-                  branchStock: true
-                }
-              }
-            }
-          }
-        }
+                  branchStock: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({
         success: true,
-        data: await formatCartResponse(updatedCart)
+        data: await formatCartResponse(updatedCart),
       });
     } catch (error) {
       next(error);
@@ -178,12 +190,14 @@ export class CartController {
     try {
       const itemId = parseInt(req.params.id as string, 10);
       const schema = z.object({
-        quantity: z.number().int().positive()
+        quantity: z.number().int().positive(),
       });
 
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: 'Cantidad inválida' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Cantidad inválida' });
       }
 
       const { quantity } = parsed.data;
@@ -191,7 +205,7 @@ export class CartController {
       // Actualizar el ítem
       const item = await prisma.cartItem.update({
         where: { id: itemId },
-        data: { quantity }
+        data: { quantity },
       });
 
       // Retornar el carrito actualizado
@@ -203,17 +217,17 @@ export class CartController {
               variant: {
                 include: {
                   product: { include: { images: true } },
-                  branchStock: true
-                }
-              }
-            }
-          }
-        }
+                  branchStock: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({
         success: true,
-        data: await formatCartResponse(cart)
+        data: await formatCartResponse(cart),
       });
     } catch (error) {
       next(error);
@@ -227,7 +241,9 @@ export class CartController {
 
       const item = await prisma.cartItem.findUnique({ where: { id: itemId } });
       if (!item) {
-        return res.status(404).json({ success: false, error: 'Ítem no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Ítem no encontrado' });
       }
 
       await prisma.cartItem.delete({ where: { id: itemId } });
@@ -241,17 +257,17 @@ export class CartController {
               variant: {
                 include: {
                   product: { include: { images: true } },
-                  branchStock: true
-                }
-              }
-            }
-          }
-        }
+                  branchStock: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({
         success: true,
-        data: await formatCartResponse(cart)
+        data: await formatCartResponse(cart),
       });
     } catch (error) {
       next(error);
@@ -265,58 +281,68 @@ export class CartController {
       const sessionId = req.headers['x-session-id'] as string;
 
       if (!userId || !sessionId) {
-        return res.status(400).json({ success: false, error: 'Se requiere userId y sessionId' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Se requiere userId y sessionId' });
       }
 
       const anonymousCart = await prisma.cart.findUnique({
         where: { sessionId },
-        include: { items: true }
+        include: { items: true },
       });
 
       let userCart = await prisma.cart.findFirst({
         where: { userId },
-        include: { items: true }
+        include: { items: true },
       });
 
       // Si no hay carrito anónimo o no tiene ítems, devolver carrito de usuario
       if (!anonymousCart || anonymousCart.items.length === 0) {
-        if (!userCart) return res.status(200).json({ success: true, data: null });
-        
+        if (!userCart)
+          return res.status(200).json({ success: true, data: null });
+
         const cartFull = await prisma.cart.findUnique({
           where: { id: userCart.id },
           include: {
             items: {
               include: {
                 variant: {
-                  include: { product: { include: { images: true } }, branchStock: true }
-                }
-              }
-            }
-          }
+                  include: {
+                    product: { include: { images: true } },
+                    branchStock: true,
+                  },
+                },
+              },
+            },
+          },
         });
-        return res.status(200).json({ success: true, data: await formatCartResponse(cartFull) });
+        return res
+          .status(200)
+          .json({ success: true, data: await formatCartResponse(cartFull) });
       }
 
       // Si no existe carrito de usuario, simplemente asignamos el anónimo al usuario
       if (!userCart) {
         await prisma.cart.update({
           where: { id: anonymousCart.id },
-          data: { userId, sessionId: null } // Le quitamos el sessionId para que ya sea 100% del usuario
+          data: { userId, sessionId: null }, // Le quitamos el sessionId para que ya sea 100% del usuario
         });
         userCart = anonymousCart;
       } else {
         // Fusionar: Mover ítems del anónimo al usuario
         for (const anonItem of anonymousCart.items) {
-          const existingUserItem = userCart.items.find(i => i.variantId === anonItem.variantId);
+          const existingUserItem = userCart.items.find(
+            (i) => i.variantId === anonItem.variantId
+          );
           if (existingUserItem) {
             await prisma.cartItem.update({
               where: { id: existingUserItem.id },
-              data: { quantity: existingUserItem.quantity + anonItem.quantity }
+              data: { quantity: existingUserItem.quantity + anonItem.quantity },
             });
           } else {
             await prisma.cartItem.update({
               where: { id: anonItem.id },
-              data: { cartId: userCart.id }
+              data: { cartId: userCart.id },
             });
           }
         }
@@ -330,16 +356,19 @@ export class CartController {
           items: {
             include: {
               variant: {
-                include: { product: { include: { images: true } }, branchStock: true }
-              }
-            }
-          }
-        }
+                include: {
+                  product: { include: { images: true } },
+                  branchStock: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({
         success: true,
-        data: await formatCartResponse(updatedUserCart)
+        data: await formatCartResponse(updatedUserCart),
       });
     } catch (error) {
       next(error);

@@ -16,7 +16,9 @@ export class PrismaDeliveryRepository implements IDeliveryRepository {
       deliveredAt: record.deliveredAt ?? null,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
-      pickingItems: record.pickingItems?.map((item: any) => this.toPickingItemDomain(item)),
+      pickingItems: record.pickingItems?.map((item: any) =>
+        this.toPickingItemDomain(item)
+      ),
       failedAttempts: record.failedAttempts?.map((a: any) => ({
         id: a.id,
         deliveryId: a.deliveryId,
@@ -133,7 +135,10 @@ export class PrismaDeliveryRepository implements IDeliveryRepository {
     return this.toDomain(record);
   }
 
-  async assignDeliveryMan(id: number, deliveryManId: number): Promise<Delivery> {
+  async assignDeliveryMan(
+    id: number,
+    deliveryManId: number
+  ): Promise<Delivery> {
     const record = await prisma.delivery.update({
       where: { id },
       data: {
@@ -261,7 +266,12 @@ export class PrismaDeliveryRepository implements IDeliveryRepository {
       newOrderStatus = 'RETURNED';
     }
 
-    if (record.type === 'DELIVERY' && newOrderStatus && record.order && record.order.status !== newOrderStatus) {
+    if (
+      record.type === 'DELIVERY' &&
+      newOrderStatus &&
+      record.order &&
+      record.order.status !== newOrderStatus
+    ) {
       await prisma.order.update({
         where: { id: record.orderId },
         data: { status: newOrderStatus as any },

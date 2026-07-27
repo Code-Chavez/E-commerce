@@ -13,7 +13,7 @@ import { JwtService, AuthTokens } from '@infrastructure/services/JwtService';
 export class RefreshTokenUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async execute(refreshToken: string): Promise<AuthTokens> {

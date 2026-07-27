@@ -22,14 +22,15 @@ export class GenerateTransferGuideUseCase {
       throw err;
     }
 
-    // El responsable es opcional en la estructura actual de transferencia, 
+    // El responsable es opcional en la estructura actual de transferencia,
     // pero idealmente se guarda en algún log o contexto.
-    // Como simplificación y según el requerimiento, lo dejaremos en null 
+    // Como simplificación y según el requerimiento, lo dejaremos en null
     // a menos que el modelo luego agregue requestedById.
     let requestedBy = null;
 
     return {
-      guideNumber: transfer.guideNumber || `TR-${String(transfer.id).padStart(6, '0')}`,
+      guideNumber:
+        transfer.guideNumber || `TR-${String(transfer.id).padStart(6, '0')}`,
       createdAt: transfer.createdAt,
       status: transfer.status,
       requestedBy,

@@ -52,7 +52,10 @@ describe('RegisterUserUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    registerUseCase = new RegisterUserUseCase(mockUserRepository, mockEmailService);
+    registerUseCase = new RegisterUserUseCase(
+      mockUserRepository,
+      mockEmailService
+    );
   });
 
   // --- Success path ---
@@ -77,7 +80,7 @@ describe('RegisterUserUseCase', () => {
     expect(mockUserRepository.updateVerificationPin).toHaveBeenCalledWith(
       1,
       expect.stringMatching(/^\d{6}$/),
-      expect.any(Date),
+      expect.any(Date)
     );
 
     // El servicio de email debe haberse invocado una vez
@@ -85,7 +88,7 @@ describe('RegisterUserUseCase', () => {
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       'test@e-commerce.com',
       expect.any(String),
-      expect.stringContaining('24 horas'),
+      expect.stringContaining('24 horas')
     );
   });
 
@@ -95,7 +98,10 @@ describe('RegisterUserUseCase', () => {
     mockUserRepository.updateVerificationPin.mockResolvedValue();
     mockEmailService.sendEmail.mockResolvedValue();
 
-    await registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' });
+    await registerUseCase.execute({
+      email: 'test@e-commerce.com',
+      password: 'Password1!',
+    });
 
     const createdWithData = mockUserRepository.create.mock.calls[0][0];
     // La contraseña persistida NO debe ser texto plano
@@ -110,7 +116,10 @@ describe('RegisterUserUseCase', () => {
     mockUserRepository.updateVerificationPin.mockResolvedValue();
     mockEmailService.sendEmail.mockResolvedValue();
 
-    await registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' });
+    await registerUseCase.execute({
+      email: 'test@e-commerce.com',
+      password: 'Password1!',
+    });
 
     const [, pin] = mockUserRepository.updateVerificationPin.mock.calls[0];
     expect(pin).toHaveLength(6);
@@ -124,24 +133,35 @@ describe('RegisterUserUseCase', () => {
     mockEmailService.sendEmail.mockResolvedValue();
 
     const before = new Date();
-    await registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' });
+    await registerUseCase.execute({
+      email: 'test@e-commerce.com',
+      password: 'Password1!',
+    });
     const after = new Date();
 
-    const [, , expiresAt] = mockUserRepository.updateVerificationPin.mock.calls[0];
+    const [, , expiresAt] =
+      mockUserRepository.updateVerificationPin.mock.calls[0];
     const diffMs = (expiresAt as Date).getTime() - before.getTime();
 
     // Expiración debe estar entre 23.9 y 24.1 horas (margen de ejecución del test)
     expect(diffMs).toBeGreaterThan(23.9 * 60 * 60 * 1000);
-    expect(diffMs).toBeLessThan(24.1 * 60 * 60 * 1000 + (after.getTime() - before.getTime()));
+    expect(diffMs).toBeLessThan(
+      24.1 * 60 * 60 * 1000 + (after.getTime() - before.getTime())
+    );
   });
 
   // --- Duplicate email (T-018 core requirement) ---
 
   it('[T-018] debería lanzar error con código de email duplicado si el correo ya existe', async () => {
-    mockUserRepository.findByEmail.mockResolvedValue(buildUser({ isActive: false }));
+    mockUserRepository.findByEmail.mockResolvedValue(
+      buildUser({ isActive: false })
+    );
 
     await expect(
-      registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' }),
+      registerUseCase.execute({
+        email: 'test@e-commerce.com',
+        password: 'Password1!',
+      })
     ).rejects.toThrow('Correo electrónico ya registrado');
 
     // No debe intentar crear ni enviar email
@@ -153,7 +173,10 @@ describe('RegisterUserUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(buildUser());
 
     await expect(
-      registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' }),
+      registerUseCase.execute({
+        email: 'test@e-commerce.com',
+        password: 'Password1!',
+      })
     ).rejects.toThrow();
 
     expect(mockUserRepository.updateVerificationPin).not.toHaveBeenCalled();
@@ -165,12 +188,19 @@ describe('RegisterUserUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(null);
     mockUserRepository.create.mockResolvedValue(buildUser());
     mockUserRepository.updateVerificationPin.mockResolvedValue();
-    mockEmailService.sendEmail.mockRejectedValue(new Error('SMTP connection refused'));
+    mockEmailService.sendEmail.mockRejectedValue(
+      new Error('SMTP connection refused')
+    );
     mockUserRepository.deleteById.mockResolvedValue();
 
     await expect(
-      registerUseCase.execute({ email: 'test@e-commerce.com', password: 'Password1!' }),
-    ).rejects.toThrow('El registro falló porque no se pudo despachar el código de verificación');
+      registerUseCase.execute({
+        email: 'test@e-commerce.com',
+        password: 'Password1!',
+      })
+    ).rejects.toThrow(
+      'El registro falló porque no se pudo despachar el código de verificación'
+    );
 
     // El usuario creado debe haber sido eliminado para mantener consistencia
     expect(mockUserRepository.deleteById).toHaveBeenCalledWith(1);
@@ -196,7 +226,7 @@ describe('VerifyUserUseCase', () => {
     mockUserRepository.activateUser.mockResolvedValue();
 
     await expect(
-      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' }),
+      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' })
     ).resolves.toBeUndefined();
 
     expect(mockUserRepository.activateUser).toHaveBeenCalledTimes(1);
@@ -209,7 +239,7 @@ describe('VerifyUserUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(buildUser());
 
     await expect(
-      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '000000' }),
+      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '000000' })
     ).rejects.toThrow('PIN inválido o expirado');
 
     expect(mockUserRepository.activateUser).not.toHaveBeenCalled();
@@ -219,7 +249,7 @@ describe('VerifyUserUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
     await expect(
-      verifyUseCase.execute({ email: 'noexiste@e-commerce.com', pin: '123456' }),
+      verifyUseCase.execute({ email: 'noexiste@e-commerce.com', pin: '123456' })
     ).rejects.toThrow('PIN inválido o expirado');
 
     expect(mockUserRepository.activateUser).not.toHaveBeenCalled();
@@ -234,7 +264,7 @@ describe('VerifyUserUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(expiredUser);
 
     await expect(
-      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' }),
+      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' })
     ).rejects.toThrow('El código de verificación ha expirado');
 
     expect(mockUserRepository.activateUser).not.toHaveBeenCalled();
@@ -243,10 +273,12 @@ describe('VerifyUserUseCase', () => {
   // --- Already active ---
 
   it('[T-018] no debería verificar una cuenta que ya está activa', async () => {
-    mockUserRepository.findByEmail.mockResolvedValue(buildUser({ isActive: true }));
+    mockUserRepository.findByEmail.mockResolvedValue(
+      buildUser({ isActive: true })
+    );
 
     await expect(
-      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' }),
+      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' })
     ).rejects.toThrow('La cuenta ya se encuentra verificada');
 
     expect(mockUserRepository.activateUser).not.toHaveBeenCalled();
@@ -255,15 +287,16 @@ describe('VerifyUserUseCase', () => {
   // --- Missing PIN in DB ---
 
   it('debería lanzar error si el usuario no tiene un PIN activo en la base de datos', async () => {
-    const userWithoutPin = buildUser({ verificationPin: null, pinExpiresAt: null });
+    const userWithoutPin = buildUser({
+      verificationPin: null,
+      pinExpiresAt: null,
+    });
     mockUserRepository.findByEmail.mockResolvedValue(userWithoutPin);
 
     await expect(
-      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' }),
+      verifyUseCase.execute({ email: 'test@e-commerce.com', pin: '123456' })
     ).rejects.toThrow('No existe un código de verificación activo');
 
     expect(mockUserRepository.activateUser).not.toHaveBeenCalled();
   });
 });
-
-

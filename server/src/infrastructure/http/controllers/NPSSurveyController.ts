@@ -14,22 +14,27 @@ export class NPSSurveyController {
 
       const survey = await prisma.nPSSurvey.findUnique({
         where: { token },
-        include: { 
-          user: { select: { name: true, email: true } }, 
+        include: {
+          user: { select: { name: true, email: true } },
           order: { select: { id: true, createdAt: true } },
           client: { select: { name: true, email: true } },
-          posOrder: { select: { id: true, createdAt: true } }
+          posOrder: { select: { id: true, createdAt: true } },
         },
       });
 
       if (!survey) {
-        return res.status(404).json({ success: false, error: 'Encuesta no encontrada o token inválido' });
+        return res.status(404).json({
+          success: false,
+          error: 'Encuesta no encontrada o token inválido',
+        });
       }
 
       if (survey.answeredAt) {
-        return res.status(400).json({ success: false, error: 'Esta encuesta ya fue respondida' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Esta encuesta ya fue respondida' });
       }
-      
+
       const isPOS = survey.channel === 'POS';
 
       return res.status(200).json({
@@ -37,7 +42,9 @@ export class NPSSurveyController {
         data: {
           userName: isPOS ? survey.client?.name : survey.user?.name,
           orderId: isPOS ? survey.posOrder?.id : survey.order?.id,
-          orderDate: isPOS ? survey.posOrder?.createdAt : survey.order?.createdAt,
+          orderDate: isPOS
+            ? survey.posOrder?.createdAt
+            : survey.order?.createdAt,
         },
       });
     } catch (error) {
@@ -60,11 +67,16 @@ export class NPSSurveyController {
       const survey = await prisma.nPSSurvey.findUnique({ where: { token } });
 
       if (!survey) {
-        return res.status(404).json({ success: false, error: 'Encuesta no encontrada o token inválido' });
+        return res.status(404).json({
+          success: false,
+          error: 'Encuesta no encontrada o token inválido',
+        });
       }
 
       if (survey.answeredAt) {
-        return res.status(400).json({ success: false, error: 'Esta encuesta ya fue respondida' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Esta encuesta ya fue respondida' });
       }
 
       await prisma.nPSSurvey.update({

@@ -9,7 +9,8 @@ jest.mock('@infrastructure/services/ResendEmailService', () => {
   return {
     ResendEmailService: jest.fn().mockImplementation(() => {
       return {
-        sendEmail: (to: string, subject: string, html: string) => mockSendEmail(to, subject, html),
+        sendEmail: (to: string, subject: string, html: string) =>
+          mockSendEmail(to, subject, html),
       };
     }),
   };
@@ -21,7 +22,11 @@ jest.mock('@infrastructure/services/FactilizaWhatsAppService', () => {
   return {
     FactilizaWhatsAppService: jest.fn().mockImplementation(() => {
       return {
-        sendMessage: (phone: string, template: string, params: Record<string, string>) => mockSendMessage(phone, template, params),
+        sendMessage: (
+          phone: string,
+          template: string,
+          params: Record<string, string>
+        ) => mockSendMessage(phone, template, params),
       };
     }),
   };
@@ -49,15 +54,17 @@ jest.mock('@infrastructure/database/prisma', () => {
     user: mockUser,
     orderStatusLog: mockOrderStatusLog,
     delivery: mockDelivery,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -86,9 +93,7 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
       {
         id: 1,
         name: 'ADMIN',
-        permissions: [
-          { id: 1, name: 'roles:manage' },
-        ],
+        permissions: [{ id: 1, name: 'roles:manage' }],
       },
     ],
   };
@@ -119,9 +124,13 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
     id: 10,
     userId: 2,
     status: 'PAID',
-    total: 115.00,
-    shippingCost: 15.00,
-    addressSnapshot: { alias: 'Casa', fullAddress: 'Av Larco 123', district: 'Miraflores' },
+    total: 115.0,
+    shippingCost: 15.0,
+    addressSnapshot: {
+      alias: 'Casa',
+      fullAddress: 'Av Larco 123',
+      district: 'Miraflores',
+    },
     paymentIntentId: 'pi_test_123',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -204,7 +213,7 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
       // Verification for email
       expect(mockSendEmail).toHaveBeenCalledWith(
         'customer@example.com',
-        "Actualización de tu Pedido #10 — E-Commerce",
+        'Actualización de tu Pedido #10 — E-Commerce',
         expect.stringContaining('Pagado')
       );
       // Verification for WhatsApp
@@ -235,14 +244,19 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
 
     it('debe actualizar el estado a PAID exitosamente y autogenerar picking list', async () => {
       // Mock findMany to return the paid order so picking list is generated
-      (prisma.order.findMany as any).mockResolvedValue([{
-        id: 10,
-        status: 'PAID',
-        items: [{ variantId: 5, qty: 2 }],
-        user: { id: 1, name: 'John', email: 'john@example.com' },
-        addressSnapshot: {}
-      }]);
-      (prisma.delivery.create as any).mockResolvedValue({ id: 100, status: 'PENDING' });
+      (prisma.order.findMany as any).mockResolvedValue([
+        {
+          id: 10,
+          status: 'PAID',
+          items: [{ variantId: 5, qty: 2 }],
+          user: { id: 1, name: 'John', email: 'john@example.com' },
+          addressSnapshot: {},
+        },
+      ]);
+      (prisma.delivery.create as any).mockResolvedValue({
+        id: 100,
+        status: 'PENDING',
+      });
 
       const res = await request(app)
         .patch('/api/v1/admin/orders/10/status')
@@ -251,7 +265,7 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      
+
       // Verify picking list generation was triggered
       expect(prisma.order.findMany).toHaveBeenCalled();
       expect(prisma.delivery.create).toHaveBeenCalled();
@@ -295,5 +309,3 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
     });
   });
 });
-
-

@@ -21,7 +21,9 @@ const checkAdmin = (req: any, res: any, next: any) => {
   if (roleName === 'ADMIN' || roleName === 'Admin') {
     return next();
   }
-  return res.status(403).json({ success: false, message: 'No autorizado. Solo ADMIN.' });
+  return res
+    .status(403)
+    .json({ success: false, message: 'No autorizado. Solo ADMIN.' });
 };
 
 router.use(requireAuth);

@@ -33,15 +33,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     order: mockOrder,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -66,9 +68,13 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
     id: 10,
     userId: 1,
     status: 'PAID',
-    total: 115.00,
-    shippingCost: 15.00,
-    addressSnapshot: { alias: 'Casa', fullAddress: 'Av Larco 123', district: 'Miraflores' },
+    total: 115.0,
+    shippingCost: 15.0,
+    addressSnapshot: {
+      alias: 'Casa',
+      fullAddress: 'Av Larco 123',
+      district: 'Miraflores',
+    },
     paymentIntentId: 'pi_test_123',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -78,7 +84,7 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
         orderId: 10,
         variantId: 20,
         qty: 2,
-        unitPrice: 50.00,
+        unitPrice: 50.0,
         variant: {
           sku: 'SKU-JEAN-M-BLUE',
           product: {
@@ -110,11 +116,13 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
       expect(res.body.data.orders[0].id).toBe(10);
       expect(res.body.data.total).toBe(1);
       expect(res.body.data.totalPages).toBe(1);
-      expect(prisma.order.findMany).toHaveBeenCalledWith(expect.objectContaining({
-        where: { userId: 1 },
-        skip: 0,
-        take: 5,
-      }));
+      expect(prisma.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: 1 },
+          skip: 0,
+          take: 5,
+        })
+      );
     });
 
     it('debe filtrar por estado del pedido si se proporciona', async () => {
@@ -127,9 +135,11 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
         .query({ status: 'DELIVERED' })
         .expect(200);
 
-      expect(prisma.order.findMany).toHaveBeenCalledWith(expect.objectContaining({
-        where: { userId: 1, status: 'DELIVERED' },
-      }));
+      expect(prisma.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: 1, status: 'DELIVERED' },
+        })
+      );
     });
 
     it('debe retornar 400 si el parámetro status es inválido', async () => {
@@ -151,7 +161,9 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
         .expect(400);
 
       expect(res.body.success).toBe(false);
-      expect(res.body.error).toContain('El parámetro page debe ser un número entero positivo');
+      expect(res.body.error).toContain(
+        'El parámetro page debe ser un número entero positivo'
+      );
     });
   });
 
@@ -176,12 +188,17 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
         .expect(200);
 
       expect(res.headers['content-type']).toBe('application/pdf');
-      expect(res.headers['content-disposition']).toContain('attachment; filename=comprobante-pedido-10.pdf');
+      expect(res.headers['content-disposition']).toContain(
+        'attachment; filename=comprobante-pedido-10.pdf'
+      );
       expect(res.body).toBe('mock pdf receipt stream content');
     });
 
     it('debe retornar 403 si el pedido pertenece a otro usuario', async () => {
-      (prisma.order.findUnique as any).mockResolvedValue({ ...dummyOrder, userId: 99 });
+      (prisma.order.findUnique as any).mockResolvedValue({
+        ...dummyOrder,
+        userId: 99,
+      });
 
       const res = await request(app)
         .get('/api/v1/orders/10/receipt/pdf')
@@ -189,7 +206,9 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
         .expect(403);
 
       expect(res.body.success).toBe(false);
-      expect(res.body.error).toContain('No autorizado para ver este comprobante');
+      expect(res.body.error).toContain(
+        'No autorizado para ver este comprobante'
+      );
     });
 
     it('debe retornar 404 si el pedido no existe', async () => {
@@ -205,5 +224,3 @@ describe('Tests de Integración — HU-044: Historial de Pedidos y Descarga de C
     });
   });
 });
-
-

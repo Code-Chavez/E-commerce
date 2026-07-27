@@ -16,7 +16,11 @@ export const setContextUser = (userId: number, email: string): void => {
   }
 };
 
-export const requestContextMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const requestContextMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   const store: RequestStore = {
     userId: req.auth?.userId,
     email: req.auth?.email,

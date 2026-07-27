@@ -16,7 +16,9 @@ export class CheckoutController {
   constructor() {
     this.stripePaymentService = new StripePaymentService();
     this.calculateCheckoutUseCase = new CalculateCheckoutUseCase();
-    this.createPaymentIntentUseCase = new CreatePaymentIntentUseCase(this.stripePaymentService);
+    this.createPaymentIntentUseCase = new CreatePaymentIntentUseCase(
+      this.stripePaymentService
+    );
     this.processStripeWebhookUseCase = new ProcessStripeWebhookUseCase(
       this.stripePaymentService,
       new ResendEmailService(),
@@ -29,19 +31,31 @@ export class CheckoutController {
       const { cartId, addressId } = req.body;
 
       if (!cartId || !addressId) {
-        res.status(400).json({ success: false, error: 'cartId y addressId son requeridos' });
+        res
+          .status(400)
+          .json({ success: false, error: 'cartId y addressId son requeridos' });
         return;
       }
 
-      const result = await this.calculateCheckoutUseCase.execute({ cartId, addressId });
+      const result = await this.calculateCheckoutUseCase.execute({
+        cartId,
+        addressId,
+      });
 
       res.status(200).json({ success: true, data: result });
     } catch (error: any) {
-      if (error.message.includes('cobertura') || error.message.includes('encontrado') || error.message.includes('encontrada')) {
+      if (
+        error.message.includes('cobertura') ||
+        error.message.includes('encontrado') ||
+        error.message.includes('encontrada')
+      ) {
         res.status(400).json({ success: false, error: error.message });
         return;
       }
-      res.status(500).json({ success: false, error: 'Error interno del servidor al calcular checkout' });
+      res.status(500).json({
+        success: false,
+        error: 'Error interno del servidor al calcular checkout',
+      });
     }
   }
 
@@ -51,12 +65,17 @@ export class CheckoutController {
       const userId = req.auth?.userId;
 
       if (!userId) {
-        res.status(401).json({ success: false, error: 'No autorizado: Usuario no autenticado' });
+        res.status(401).json({
+          success: false,
+          error: 'No autorizado: Usuario no autenticado',
+        });
         return;
       }
 
       if (!cartId || !addressId) {
-        res.status(400).json({ success: false, error: 'cartId y addressId son requeridos' });
+        res
+          .status(400)
+          .json({ success: false, error: 'cartId y addressId son requeridos' });
         return;
       }
 
@@ -78,7 +97,10 @@ export class CheckoutController {
         res.status(400).json({ success: false, error: error.message });
         return;
       }
-      res.status(500).json({ success: false, error: error.message || 'Error al crear el PaymentIntent de Stripe' });
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error al crear el PaymentIntent de Stripe',
+      });
     }
   }
 
@@ -87,7 +109,10 @@ export class CheckoutController {
     const payload = req.rawBody;
 
     if (!signature || !payload) {
-      res.status(400).json({ success: false, error: 'Firma o payload del webhook faltante' });
+      res.status(400).json({
+        success: false,
+        error: 'Firma o payload del webhook faltante',
+      });
       return;
     }
 
@@ -97,7 +122,11 @@ export class CheckoutController {
         signature,
       });
 
-      res.status(200).json({ received: true, processed: result.processed, orderId: result.orderId });
+      res.status(200).json({
+        received: true,
+        processed: result.processed,
+        orderId: result.orderId,
+      });
     } catch (error: any) {
       if (process.env.NODE_ENV !== 'test') {
         console.error('Error en Stripe webhook handler:', error.message);

@@ -1,6 +1,11 @@
 import prisma from '@infrastructure/database/prisma';
 
-export type RFMSegment = 'Champions' | 'Loyal' | 'At Risk' | 'Lost' | 'Promising';
+export type RFMSegment =
+  | 'Champions'
+  | 'Loyal'
+  | 'At Risk'
+  | 'Lost'
+  | 'Promising';
 
 export interface RFMClient {
   userId: number;
@@ -41,7 +46,13 @@ const SEGMENT_COLORS: Record<RFMSegment, string> = {
   Promising: '#8b5cf6',
 };
 
-const ALL_SEGMENTS: RFMSegment[] = ['Champions', 'Loyal', 'At Risk', 'Lost', 'Promising'];
+const ALL_SEGMENTS: RFMSegment[] = [
+  'Champions',
+  'Loyal',
+  'At Risk',
+  'Lost',
+  'Promising',
+];
 
 function scoreRecency(days: number): number {
   if (days <= 30) return 5;
@@ -59,7 +70,13 @@ function scoreFrequency(count: number): number {
   return 1;
 }
 
-function scoreMonetary(amount: number, p20: number, p40: number, p60: number, p80: number): number {
+function scoreMonetary(
+  amount: number,
+  p20: number,
+  p40: number,
+  p60: number,
+  p80: number
+): number {
   if (amount >= p80) return 5;
   if (amount >= p60) return 4;
   if (amount >= p40) return 3;
@@ -96,16 +113,21 @@ export class GetRFMSegmentsUseCase {
     if (orderData.length === 0) {
       return {
         clients: [],
-        segments: ALL_SEGMENTS.map(seg => ({
-          segment: seg, count: 0, avgRFM: 0, totalSpent: 0,
-          avgRecencyDays: 0, avgFrequency: 0, color: SEGMENT_COLORS[seg],
+        segments: ALL_SEGMENTS.map((seg) => ({
+          segment: seg,
+          count: 0,
+          avgRFM: 0,
+          totalSpent: 0,
+          avgRecencyDays: 0,
+          avgFrequency: 0,
+          color: SEGMENT_COLORS[seg],
         })),
         totalClients: 0,
       };
     }
 
     const amounts = orderData
-      .map(o => Number(o._sum.total ?? 0))
+      .map((o) => Number(o._sum.total ?? 0))
       .sort((a, b) => a - b);
 
     const p20 = percentile(amounts, 0.2);
@@ -113,17 +135,19 @@ export class GetRFMSegmentsUseCase {
     const p60 = percentile(amounts, 0.6);
     const p80 = percentile(amounts, 0.8);
 
-    const userIds = orderData.map(o => o.userId);
+    const userIds = orderData.map((o) => o.userId);
     const users = await prisma.user.findMany({
       where: { id: { in: userIds } },
       select: { id: true, name: true, lastName: true, email: true },
     });
-    const userMap = new Map(users.map(u => [u.id, u]));
+    const userMap = new Map(users.map((u) => [u.id, u]));
 
-    const allClients: RFMClient[] = orderData.map(o => {
+    const allClients: RFMClient[] = orderData.map((o) => {
       const user = userMap.get(o.userId);
       const lastOrder = o._max.createdAt!;
-      const recencyDays = Math.floor((now.getTime() - lastOrder.getTime()) / (1000 * 60 * 60 * 24));
+      const recencyDays = Math.floor(
+        (now.getTime() - lastOrder.getTime()) / (1000 * 60 * 60 * 24)
+      );
       const orderCount = o._count.id;
       const totalSpent = Number(o._sum.total ?? 0);
 
@@ -133,7 +157,10 @@ export class GetRFMSegmentsUseCase {
 
       return {
         userId: o.userId,
-        name: user ? `${user.name ?? ''} ${user.lastName ?? ''}`.trim() || `Usuario #${o.userId}` : `Usuario #${o.userId}`,
+        name: user
+          ? `${user.name ?? ''} ${user.lastName ?? ''}`.trim() ||
+            `Usuario #${o.userId}`
+          : `Usuario #${o.userId}`,
         email: user?.email ?? '',
         lastOrderDate: lastOrder,
         orderCount,
@@ -147,20 +174,28 @@ export class GetRFMSegmentsUseCase {
       };
     });
 
-    const segments: RFMSegmentSummary[] = ALL_SEGMENTS.map(seg => {
-      const sc = allClients.filter(c => c.segment === seg);
+    const segments: RFMSegmentSummary[] = ALL_SEGMENTS.map((seg) => {
+      const sc = allClients.filter((c) => c.segment === seg);
       return {
         segment: seg,
         count: sc.length,
-        avgRFM: sc.length ? sc.reduce((s, c) => s + c.rfmScore, 0) / sc.length : 0,
+        avgRFM: sc.length
+          ? sc.reduce((s, c) => s + c.rfmScore, 0) / sc.length
+          : 0,
         totalSpent: sc.reduce((s, c) => s + c.totalSpent, 0),
-        avgRecencyDays: sc.length ? sc.reduce((s, c) => s + c.recencyDays, 0) / sc.length : 0,
-        avgFrequency: sc.length ? sc.reduce((s, c) => s + c.orderCount, 0) / sc.length : 0,
+        avgRecencyDays: sc.length
+          ? sc.reduce((s, c) => s + c.recencyDays, 0) / sc.length
+          : 0,
+        avgFrequency: sc.length
+          ? sc.reduce((s, c) => s + c.orderCount, 0) / sc.length
+          : 0,
         color: SEGMENT_COLORS[seg],
       };
     });
 
-    const clients = segment ? allClients.filter(c => c.segment === segment) : allClients;
+    const clients = segment
+      ? allClients.filter((c) => c.segment === segment)
+      : allClients;
 
     return { clients, segments, totalClients: allClients.length };
   }

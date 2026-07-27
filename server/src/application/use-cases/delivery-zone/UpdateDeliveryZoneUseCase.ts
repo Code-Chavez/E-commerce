@@ -8,7 +8,9 @@ export interface UpdateDeliveryZoneDTO {
 }
 
 export class UpdateDeliveryZoneUseCase {
-  constructor(private readonly deliveryZoneRepository: IDeliveryZoneRepository) {}
+  constructor(
+    private readonly deliveryZoneRepository: IDeliveryZoneRepository
+  ) {}
 
   async execute(id: number, dto: UpdateDeliveryZoneDTO): Promise<DeliveryZone> {
     const existing = await this.deliveryZoneRepository.findById(id);
@@ -18,9 +20,12 @@ export class UpdateDeliveryZoneUseCase {
 
     if (dto.districts) {
       for (const district of dto.districts) {
-        const distExisting = await this.deliveryZoneRepository.findByDistrict(district);
+        const distExisting =
+          await this.deliveryZoneRepository.findByDistrict(district);
         if (distExisting && distExisting.id !== id) {
-          throw new Error(`El distrito ${district} ya pertenece a otra zona de envío (ID: ${distExisting.id})`);
+          throw new Error(
+            `El distrito ${district} ya pertenece a otra zona de envío (ID: ${distExisting.id})`
+          );
         }
       }
     }

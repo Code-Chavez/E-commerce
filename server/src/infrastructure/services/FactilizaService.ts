@@ -14,24 +14,30 @@ export class FactilizaService {
   private get token(): string {
     const envToken = process.env.FACTILIZA_TOKEN;
     if (!envToken) {
-      console.error('[FactilizaService] ERROR CRITICO: FACTILIZA_TOKEN no está definido en el archivo .env');
+      console.error(
+        '[FactilizaService] ERROR CRITICO: FACTILIZA_TOKEN no está definido en el archivo .env'
+      );
       return '';
     }
     return `Bearer ${envToken}`;
   }
 
-  async lookupDocument(type: 'DNI' | 'RUC', number: string): Promise<FactilizaLookupResult> {
-    const url = type === 'DNI'
-      ? `https://api.factiliza.com/v1/dni/info/${number}`
-      : `https://api.factiliza.com/v1/ruc/info/${number}`;
+  async lookupDocument(
+    type: 'DNI' | 'RUC',
+    number: string
+  ): Promise<FactilizaLookupResult> {
+    const url =
+      type === 'DNI'
+        ? `https://api.factiliza.com/v1/dni/info/${number}`
+        : `https://api.factiliza.com/v1/ruc/info/${number}`;
 
     try {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': this.token,
-          'Content-Type': 'application/json'
-        }
+          Authorization: this.token,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {

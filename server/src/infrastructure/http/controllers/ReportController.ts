@@ -31,11 +31,17 @@ const exportReportUseCase = new ExportReportUseCase(
   pdfReportService
 );
 
-const getLowRotationProductsUseCase = new GetLowRotationProductsUseCase(reportRepository);
+const getLowRotationProductsUseCase = new GetLowRotationProductsUseCase(
+  reportRepository
+);
 
 const demandForecastRepository = new PrismaDemandForecastRepository();
-const calculateDemandForecastUseCase = new CalculateDemandForecastUseCase(demandForecastRepository);
-const generateRestockSuggestionsUseCase = new GenerateRestockSuggestionsUseCase(demandForecastRepository);
+const calculateDemandForecastUseCase = new CalculateDemandForecastUseCase(
+  demandForecastRepository
+);
+const generateRestockSuggestionsUseCase = new GenerateRestockSuggestionsUseCase(
+  demandForecastRepository
+);
 
 const DemandForecastQuerySchema = z.object({
   months: z.preprocess(
@@ -51,19 +57,36 @@ const ExportReportQuerySchema = z.object({
   format: z.enum(['pdf', 'excel', 'csv'], {
     message: "El formato debe ser 'pdf', 'excel' o 'csv'",
   }),
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "from" debe tener formato YYYY-MM-DD').optional(),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "to" debe tener formato YYYY-MM-DD').optional(),
+  from: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'La fecha "from" debe tener formato YYYY-MM-DD'
+    )
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "to" debe tener formato YYYY-MM-DD')
+    .optional(),
 });
 
 export class ReportController {
-  async getLowRotationProducts(req: Request, res: Response, next: NextFunction) {
+  async getLowRotationProducts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const validation = LowRotationQuerySchema.safeParse(req.query);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
-      
-      const products = await getLowRotationProductsUseCase.execute(validation.data.days);
+
+      const products = await getLowRotationProductsUseCase.execute(
+        validation.data.days
+      );
       return res.status(200).json({ success: true, data: products });
     } catch (error) {
       next(error);
@@ -93,21 +116,32 @@ export class ReportController {
 
       if (format === 'pdf') {
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="reporte-${type}-${dateStr}.pdf"`);
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="reporte-${type}-${dateStr}.pdf"`
+        );
       } else if (format === 'excel') {
         res.setHeader(
           'Content-Type',
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         );
-        res.setHeader('Content-Disposition', `attachment; filename="reporte-${type}-${dateStr}.xlsx"`);
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="reporte-${type}-${dateStr}.xlsx"`
+        );
       } else {
         res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', `attachment; filename="reporte-${type}-${dateStr}.csv"`);
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="reporte-${type}-${dateStr}.csv"`
+        );
       }
 
       stream.on('error', (err) => {
         if (!res.headersSent) {
-          res.status(500).json({ success: false, error: 'Error generating report stream' });
+          res
+            .status(500)
+            .json({ success: false, error: 'Error generating report stream' });
         }
       });
 
@@ -121,10 +155,14 @@ export class ReportController {
     try {
       const validation = DemandForecastQuerySchema.safeParse(req.query);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
-      const forecasts = await calculateDemandForecastUseCase.execute(validation.data.months);
+      const forecasts = await calculateDemandForecastUseCase.execute(
+        validation.data.months
+      );
       return res.status(200).json({ success: true, data: forecasts });
     } catch (error) {
       next(error);
@@ -135,14 +173,17 @@ export class ReportController {
     try {
       const validation = DemandForecastQuerySchema.safeParse(req.query);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
-      const suggestions = await generateRestockSuggestionsUseCase.execute(validation.data.months);
+      const suggestions = await generateRestockSuggestionsUseCase.execute(
+        validation.data.months
+      );
       return res.status(200).json({ success: true, data: suggestions });
     } catch (error) {
       next(error);
     }
   }
 }
-

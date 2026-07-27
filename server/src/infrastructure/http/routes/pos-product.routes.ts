@@ -6,10 +6,6 @@ const router = Router();
 const controller = new PosProductController();
 
 // GET /api/v1/pos/products?sku=... — Buscar variante por SKU o nombre de producto en el POS (HU-031)
-router.get(
-  '/pos/products',
-  requireAuth,
-  controller.search.bind(controller)
-);
+router.get('/pos/products', requireAuth, controller.search.bind(controller));
 
 export default router;

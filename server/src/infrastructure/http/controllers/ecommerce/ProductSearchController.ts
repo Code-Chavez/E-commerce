@@ -9,15 +9,41 @@ const getProductDetailUseCase = new GetProductDetailUseCase();
 
 const SearchQuerySchema = z.object({
   q: z.string().optional(),
-  categoryId: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().optional()),
-  brandId: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().optional()),
-  genderId: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().optional()),
-  minPrice: z.preprocess((val) => { const n = val ? Number(val) : undefined; return (n !== undefined && n < 0) ? 0 : n; }, z.number().nonnegative().optional()),
-  maxPrice: z.preprocess((val) => { const n = val ? Number(val) : undefined; return (n !== undefined && n < 0) ? 0 : n; }, z.number().nonnegative().optional()),
-  branchId: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().optional()),
-  cursor: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().nonnegative().optional()),
-  limit: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().default(10)),
-  orderBy: z.enum(['price_asc', 'price_desc', 'newest', 'relevance']).default('relevance'),
+  categoryId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().optional()
+  ),
+  brandId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().optional()
+  ),
+  genderId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().optional()
+  ),
+  minPrice: z.preprocess((val) => {
+    const n = val ? Number(val) : undefined;
+    return n !== undefined && n < 0 ? 0 : n;
+  }, z.number().nonnegative().optional()),
+  maxPrice: z.preprocess((val) => {
+    const n = val ? Number(val) : undefined;
+    return n !== undefined && n < 0 ? 0 : n;
+  }, z.number().nonnegative().optional()),
+  branchId: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().optional()
+  ),
+  cursor: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().nonnegative().optional()
+  ),
+  limit: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().default(10)
+  ),
+  orderBy: z
+    .enum(['price_asc', 'price_desc', 'newest', 'relevance'])
+    .default('relevance'),
 });
 
 export class ProductSearchController {
@@ -34,7 +60,18 @@ export class ProductSearchController {
         });
       }
 
-      const { q, categoryId, brandId, genderId, minPrice, maxPrice, branchId, cursor, limit, orderBy } = parsed.data;
+      const {
+        q,
+        categoryId,
+        brandId,
+        genderId,
+        minPrice,
+        maxPrice,
+        branchId,
+        cursor,
+        limit,
+        orderBy,
+      } = parsed.data;
 
       // Extract dynamic attribute filters (e.g. attr_1=5)
       const attributes: Record<string, string> = {};
@@ -80,13 +117,17 @@ export class ProductSearchController {
     try {
       const slug = req.params.slug as string;
       if (!slug) {
-        return res.status(400).json({ success: false, error: 'Slug de producto inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Slug de producto inválido' });
       }
 
       const product = await getProductDetailUseCase.execute(slug);
 
       if (!product) {
-        return res.status(404).json({ success: false, error: 'Producto no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Producto no encontrado' });
       }
 
       return res.status(200).json({

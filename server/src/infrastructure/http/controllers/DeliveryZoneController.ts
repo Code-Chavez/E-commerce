@@ -15,8 +15,12 @@ const createDeliveryZoneUseCase = new CreateDeliveryZoneUseCase(repository);
 const updateDeliveryZoneUseCase = new UpdateDeliveryZoneUseCase(repository);
 const deleteDeliveryZoneUseCase = new DeleteDeliveryZoneUseCase(repository);
 const getDeliveryZonesUseCase = new GetDeliveryZonesUseCase(repository);
-const getDeliveryZoneByDistrictUseCase = new GetDeliveryZoneByDistrictUseCase(repository);
-const getSupportedLocationsUseCase = new GetSupportedLocationsUseCase(repository);
+const getDeliveryZoneByDistrictUseCase = new GetDeliveryZoneByDistrictUseCase(
+  repository
+);
+const getSupportedLocationsUseCase = new GetSupportedLocationsUseCase(
+  repository
+);
 
 export class DeliveryZoneController {
   static async getSupportedLocations(req: Request, res: Response) {
@@ -41,7 +45,9 @@ export class DeliveryZoneController {
       const district = req.params.district as string;
       const zone = await getDeliveryZoneByDistrictUseCase.execute(district);
       if (!zone) {
-        return res.status(404).json({ error: 'Zona no encontrada para este distrito' });
+        return res
+          .status(404)
+          .json({ error: 'Zona no encontrada para este distrito' });
       }
       res.json(zone);
     } catch (error: any) {

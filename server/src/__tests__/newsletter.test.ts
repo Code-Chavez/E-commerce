@@ -34,7 +34,9 @@ jest.mock('@infrastructure/http/middlewares/auth.middleware', () => {
       }
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     },
-    requirePermission: (permission: string) => (req: any, res: any, next: any) => next(),
+    requirePermission:
+      (permission: string) => (req: any, res: any, next: any) =>
+        next(),
     requireRole: (role: string) => (req: any, res: any, next: any) => next(),
     optionalAuth: (req: any, res: any, next: any) => next(),
   };
@@ -59,7 +61,9 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
   describe('POST /api/v1/newsletter/subscribe', () => {
     it('debe suscribir un nuevo correo exitosamente', async () => {
       (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(null);
-      (prisma.newsletterSubscriber.create as any).mockResolvedValue(dummySubscriber);
+      (prisma.newsletterSubscriber.create as any).mockResolvedValue(
+        dummySubscriber
+      );
 
       const res = await request(app)
         .post('/api/v1/newsletter/subscribe')
@@ -73,8 +77,13 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
 
     it('debe reactivar una suscripción inactiva', async () => {
       const inactiveSub = { ...dummySubscriber, isActive: false };
-      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(inactiveSub);
-      (prisma.newsletterSubscriber.update as any).mockResolvedValue({ ...dummySubscriber, isActive: true });
+      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(
+        inactiveSub
+      );
+      (prisma.newsletterSubscriber.update as any).mockResolvedValue({
+        ...dummySubscriber,
+        isActive: true,
+      });
 
       const res = await request(app)
         .post('/api/v1/newsletter/subscribe')
@@ -90,7 +99,9 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
     });
 
     it('debe ser idempotente si ya está activo', async () => {
-      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(dummySubscriber);
+      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(
+        dummySubscriber
+      );
 
       const res = await request(app)
         .post('/api/v1/newsletter/subscribe')
@@ -115,8 +126,13 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
 
   describe('DELETE /api/v1/newsletter/unsubscribe', () => {
     it('debe desuscribir un correo activo desde el cuerpo (body)', async () => {
-      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(dummySubscriber);
-      (prisma.newsletterSubscriber.update as any).mockResolvedValue({ ...dummySubscriber, isActive: false });
+      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(
+        dummySubscriber
+      );
+      (prisma.newsletterSubscriber.update as any).mockResolvedValue({
+        ...dummySubscriber,
+        isActive: false,
+      });
 
       const res = await request(app)
         .delete('/api/v1/newsletter/unsubscribe')
@@ -132,8 +148,13 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
     });
 
     it('debe desuscribir un correo activo desde query params', async () => {
-      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(dummySubscriber);
-      (prisma.newsletterSubscriber.update as any).mockResolvedValue({ ...dummySubscriber, isActive: false });
+      (prisma.newsletterSubscriber.findUnique as any).mockResolvedValue(
+        dummySubscriber
+      );
+      (prisma.newsletterSubscriber.update as any).mockResolvedValue({
+        ...dummySubscriber,
+        isActive: false,
+      });
 
       const res = await request(app)
         .delete('/api/v1/newsletter/unsubscribe')
@@ -180,7 +201,9 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
     });
 
     it('debe retornar 200 con lista de suscriptores activos para ADMIN', async () => {
-      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([dummySubscriber]);
+      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([
+        dummySubscriber,
+      ]);
 
       const res = await request(app)
         .get('/api/v1/admin/newsletter/subscribers')
@@ -195,7 +218,9 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
 
   describe('GET /api/v1/admin/newsletter/subscribers/export', () => {
     it('debe retornar Content-Type text/csv para format=csv', async () => {
-      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([dummySubscriber]);
+      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([
+        dummySubscriber,
+      ]);
 
       const res = await request(app)
         .get('/api/v1/admin/newsletter/subscribers/export?format=csv')
@@ -203,18 +228,24 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
         .expect(200);
 
       expect(res.headers['content-type']).toMatch(/text\/csv/);
-      expect(res.headers['content-disposition']).toMatch(/attachment; filename="newsletter_subscribers_/);
+      expect(res.headers['content-disposition']).toMatch(
+        /attachment; filename="newsletter_subscribers_/
+      );
     });
 
     it('debe retornar Content-Type application/vnd.openxmlformats para format=excel', async () => {
-      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([dummySubscriber]);
+      (prisma.newsletterSubscriber.findMany as any).mockResolvedValue([
+        dummySubscriber,
+      ]);
 
       const res = await request(app)
         .get('/api/v1/admin/newsletter/subscribers/export?format=excel')
         .set('Authorization', 'Bearer admin-token')
         .expect(200);
 
-      expect(res.headers['content-type']).toMatch(/application\/vnd\.openxmlformats/);
+      expect(res.headers['content-type']).toMatch(
+        /application\/vnd\.openxmlformats/
+      );
     });
 
     it('debe retornar 401 sin autenticación', async () => {
@@ -226,19 +257,33 @@ describe('Tests de Integración — HU-088: Gestión de Suscriptores al Newslett
 
   describe('Newsletter unsubscribe link en templates', () => {
     it('AbandonedCartTemplate debe contener la ruta /newsletter/unsubscribe', () => {
-      const template = getAbandonedCartEmailTemplate('Test User', [], 'http://store', 'test@example.com');
+      const template = getAbandonedCartEmailTemplate(
+        'Test User',
+        [],
+        'http://store',
+        'test@example.com'
+      );
       expect(template).toContain('newsletter/unsubscribe');
       expect(template).toContain('test%40example.com');
     });
 
     it('BirthdayCouponTemplate debe contener la ruta /newsletter/unsubscribe', () => {
-      const template = getBirthdayCouponTemplate('Test User', 'BDAY-123', 'http://store', 'test@example.com');
+      const template = getBirthdayCouponTemplate(
+        'Test User',
+        'BDAY-123',
+        'http://store',
+        'test@example.com'
+      );
       expect(template).toContain('newsletter/unsubscribe');
       expect(template).toContain('test%40example.com');
     });
 
     it('NPSSurveyTemplate debe contener la ruta /newsletter/unsubscribe', () => {
-      const template = getNPSSurveyTemplate('Test User', 'http://survey', 'test@example.com');
+      const template = getNPSSurveyTemplate(
+        'Test User',
+        'http://survey',
+        'test@example.com'
+      );
       expect(template).toContain('newsletter/unsubscribe');
       expect(template).toContain('test%40example.com');
     });

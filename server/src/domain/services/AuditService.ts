@@ -1,4 +1,8 @@
-import { CreateAuditLogDTO, AuditLog, AuditLogFilters } from '@domain/entities/AuditLog';
+import {
+  CreateAuditLogDTO,
+  AuditLog,
+  AuditLogFilters,
+} from '@domain/entities/AuditLog';
 import { IAuditLogRepository } from '@domain/repositories/IAuditLogRepository';
 
 /**

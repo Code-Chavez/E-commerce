@@ -35,7 +35,7 @@ const dummyOnSaleProducts = [
     createdAt: new Date(),
     updatedAt: new Date(),
     category: { id: 2, name: 'Camisas' },
-    brand: { id: 3, name: "E-Commerce" },
+    brand: { id: 3, name: 'E-Commerce' },
     images: [{ id: 1, productId: 1, url: '/img.png', isMain: true }],
     variants: [
       {
@@ -55,8 +55,8 @@ const dummyOnSaleProducts = [
             branchId: 1,
             quantity: 5,
             status: 'AVAILABLE',
-          }
-        ]
+          },
+        ],
       },
       {
         id: 11,
@@ -75,11 +75,11 @@ const dummyOnSaleProducts = [
             branchId: 1,
             quantity: 10,
             status: 'AVAILABLE',
-          }
-        ]
-      }
-    ]
-  }
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 describe('E-commerce On-Sale Products Endpoint', () => {
@@ -92,8 +92,7 @@ describe('E-commerce On-Sale Products Endpoint', () => {
     it('should return 200 and grouped product data on success with calculated min/max price/discount', async () => {
       (prisma.product.findMany as any).mockResolvedValue(dummyOnSaleProducts);
 
-      const res = await request(app)
-        .get('/api/v1/ecommerce/products/on-sale');
+      const res = await request(app).get('/api/v1/ecommerce/products/on-sale');
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -101,12 +100,12 @@ describe('E-commerce On-Sale Products Endpoint', () => {
 
       const product = res.body.data[0];
       expect(product.slug).toBe('camisa-elegante-tshirt');
-      
+
       // minDiscount = min(10, 20) = 10
       expect(product.minDiscount).toBe(10);
       // maxDiscount = max(10, 20) = 20
       expect(product.maxDiscount).toBe(20);
-      
+
       // prices after discount:
       // variant 1: 100 - (100 * 10 / 100) = 90
       // variant 2: 150 - (150 * 20 / 100) = 120
@@ -116,5 +115,3 @@ describe('E-commerce On-Sale Products Endpoint', () => {
     });
   });
 });
-
-

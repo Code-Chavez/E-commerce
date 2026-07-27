@@ -1,10 +1,19 @@
 import { IOperatingExpenseRepository } from '@domain/repositories/IOperatingExpenseRepository';
-import { UpdateOperatingExpenseDTO, OperatingExpense, validateOperatingExpense } from '@domain/entities/OperatingExpense';
+import {
+  UpdateOperatingExpenseDTO,
+  OperatingExpense,
+  validateOperatingExpense,
+} from '@domain/entities/OperatingExpense';
 
 export class UpdateOperatingExpenseUseCase {
-  constructor(private readonly expenseRepository: IOperatingExpenseRepository) {}
+  constructor(
+    private readonly expenseRepository: IOperatingExpenseRepository
+  ) {}
 
-  async execute(id: number, dto: UpdateOperatingExpenseDTO): Promise<OperatingExpense> {
+  async execute(
+    id: number,
+    dto: UpdateOperatingExpenseDTO
+  ): Promise<OperatingExpense> {
     const existing = await this.expenseRepository.findById(id);
     if (!existing) {
       throw new Error(`Gasto operativo con ID ${id} no encontrado`);
@@ -14,7 +23,8 @@ export class UpdateOperatingExpenseUseCase {
     const merged = {
       branchId: dto.branchId !== undefined ? dto.branchId : existing.branchId,
       type: dto.type !== undefined ? dto.type : existing.type,
-      description: dto.description !== undefined ? dto.description : existing.description,
+      description:
+        dto.description !== undefined ? dto.description : existing.description,
       amount: dto.amount !== undefined ? dto.amount : existing.amount,
       userId: existing.userId, // User ID cannot be modified after registration
     };

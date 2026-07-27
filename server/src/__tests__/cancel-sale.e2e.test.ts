@@ -28,7 +28,9 @@ jest.mock('@infrastructure/database/prisma', () => ({
       findFirst: jest.fn(),
       create: jest.fn(),
     },
-    $transaction: jest.fn((callback: any) => callback(require('@infrastructure/database/prisma').default)),
+    $transaction: jest.fn((callback: any) =>
+      callback(require('@infrastructure/database/prisma').default)
+    ),
   },
 }));
 
@@ -69,8 +71,8 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
         branchId: 1,
         items: [
           { variantId: 1, quantity: 2 },
-          { variantId: 2, quantity: 1 }
-        ]
+          { variantId: 2, quantity: 1 },
+        ],
       });
 
       (prisma.kardexEntry.findFirst as any).mockResolvedValue(null);
@@ -104,7 +106,7 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
         id: 1,
         status: 'COMPLETED',
         branchId: 1,
-        items: []
+        items: [],
       });
 
       const res = await request(app)
@@ -122,7 +124,7 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
         userId: 2,
         role: 'SELLER',
       });
-      
+
       const hashedPass = await bcrypt.hash('adminpass', 10);
       (prisma.user.findUnique as any).mockImplementation((args: any) => {
         if (args.where.email === 'admin@test.com') {
@@ -131,19 +133,21 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
             email: 'admin@test.com',
             isActive: true,
             password: hashedPass,
-            roles: [{ name: 'ADMIN' }]
+            roles: [{ name: 'ADMIN' }],
           });
         }
-        return Promise.resolve({ id: 2, isActive: true, roles: [{ name: 'SELLER' }] });
+        return Promise.resolve({
+          id: 2,
+          isActive: true,
+          roles: [{ name: 'SELLER' }],
+        });
       });
 
       (prisma.posOrder.findUnique as any).mockResolvedValue({
         id: 1,
         status: 'COMPLETED',
         branchId: 1,
-        items: [
-          { variantId: 1, quantity: 1 }
-        ]
+        items: [{ variantId: 1, quantity: 1 }],
       });
 
       (prisma.kardexEntry.findFirst as any).mockResolvedValue(null);
@@ -153,7 +157,7 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
         .set('Authorization', 'Bearer seller_token')
         .send({
           adminEmail: 'admin@test.com',
-          adminPassword: 'adminpass'
+          adminPassword: 'adminpass',
         });
 
       expect(res.status).toBe(200);
@@ -162,5 +166,3 @@ describe('Anulación de Venta (E2E) - HU-038', () => {
     });
   });
 });
-
-

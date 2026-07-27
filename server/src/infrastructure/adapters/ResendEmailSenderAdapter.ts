@@ -3,7 +3,8 @@ import { Resend } from 'resend';
 
 export class ResendEmailSenderAdapter implements IEmailSender {
   private resend: Resend | null;
-  private readonly defaultFrom = process.env.RESEND_FROM_EMAIL || 'E-Commerce <noreply@e-commerce.shop>';
+  private readonly defaultFrom =
+    process.env.RESEND_FROM_EMAIL || 'E-Commerce <noreply@e-commerce.shop>';
 
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
@@ -25,7 +26,9 @@ export class ResendEmailSenderAdapter implements IEmailSender {
       console.log('--- SIMULACIÓN DE ENVÍO DE EMAIL CON ADJUNTO ---');
       console.log(`To: ${options.to}`);
       console.log(`Subject: ${options.subject}`);
-      console.log(`Attachment: ${options.attachmentName} (${options.attachmentBuffer.length} bytes)`);
+      console.log(
+        `Attachment: ${options.attachmentName} (${options.attachmentBuffer.length} bytes)`
+      );
       console.log('------------------------------------');
       return;
     }

@@ -173,5 +173,3 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
     });
   });
 });
-
-

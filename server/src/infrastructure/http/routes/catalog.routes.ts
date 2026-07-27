@@ -25,17 +25,53 @@ const upload = multer({
 // ─── Categories ───────────────────────────────────────────────────────────────
 router.get('/categories', categories.getAll.bind(categories));
 router.get('/categories/:id', categories.getOne.bind(categories));
-router.post('/categories', requirePermission('products:write'), upload.single('image'), categories.create.bind(categories));
-router.post('/categories/upload', requirePermission('products:write'), upload.single('image'), categories.uploadSizeGuide.bind(categories));
-router.patch('/categories/:id', requirePermission('products:write'), upload.single('image'), categories.update.bind(categories));
-router.delete('/categories/:id', requirePermission('products:write'), categories.deactivate.bind(categories));
+router.post(
+  '/categories',
+  requirePermission('products:write'),
+  upload.single('image'),
+  categories.create.bind(categories)
+);
+router.post(
+  '/categories/upload',
+  requirePermission('products:write'),
+  upload.single('image'),
+  categories.uploadSizeGuide.bind(categories)
+);
+router.patch(
+  '/categories/:id',
+  requirePermission('products:write'),
+  upload.single('image'),
+  categories.update.bind(categories)
+);
+router.delete(
+  '/categories/:id',
+  requirePermission('products:write'),
+  categories.deactivate.bind(categories)
+);
 
 // ─── Brands ───────────────────────────────────────────────────────────────────
 router.get('/brands', brands.getAll.bind(brands));
 router.get('/brands/:id', brands.getOne.bind(brands));
-router.post('/brands', requirePermission('products:write'), brands.create.bind(brands));
-router.post('/brands/upload', requirePermission('products:write'), upload.single('image'), brands.uploadLogo.bind(brands));
-router.patch('/brands/:id', requirePermission('products:write'), brands.update.bind(brands));
-router.delete('/brands/:id', requirePermission('products:write'), brands.deactivate.bind(brands));
+router.post(
+  '/brands',
+  requirePermission('products:write'),
+  brands.create.bind(brands)
+);
+router.post(
+  '/brands/upload',
+  requirePermission('products:write'),
+  upload.single('image'),
+  brands.uploadLogo.bind(brands)
+);
+router.patch(
+  '/brands/:id',
+  requirePermission('products:write'),
+  brands.update.bind(brands)
+);
+router.delete(
+  '/brands/:id',
+  requirePermission('products:write'),
+  brands.deactivate.bind(brands)
+);
 
 export default router;

@@ -24,10 +24,12 @@ export class ToggleBranchStatusUseCase {
       isActive: branch.isActive,
       isMain: branch.isMain,
       igvExempt: branch.igvExempt,
-      warehouse: branch.warehouse ? {
-        id: branch.warehouse.id,
-        createdAt: branch.warehouse.createdAt,
-      } : null,
+      warehouse: branch.warehouse
+        ? {
+            id: branch.warehouse.id,
+            createdAt: branch.warehouse.createdAt,
+          }
+        : null,
       createdAt: branch.createdAt,
       updatedAt: branch.updatedAt,
     };

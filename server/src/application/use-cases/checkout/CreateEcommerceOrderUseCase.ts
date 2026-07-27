@@ -12,8 +12,11 @@ interface CreateEcommerceOrderInput {
 export class CreateEcommerceOrderUseCase {
   constructor(private readonly emailService?: IEmailService) {}
 
-  async execute(input: CreateEcommerceOrderInput): Promise<{ orderId: number; deliveryPin: string }> {
-    const { userId, cartId, addressId, paymentIntentId, creditNoteCode } = input;
+  async execute(
+    input: CreateEcommerceOrderInput
+  ): Promise<{ orderId: number; deliveryPin: string }> {
+    const { userId, cartId, addressId, paymentIntentId, creditNoteCode } =
+      input;
 
     const orderId = await prisma.$transaction(async (tx) => {
       // A) Obtener el carrito y sus ítems
@@ -48,7 +51,10 @@ export class CreateEcommerceOrderUseCase {
 
       for (const zone of deliveryZones) {
         const districtsArray = zone.districts as string[];
-        if (Array.isArray(districtsArray) && districtsArray.includes(address.district)) {
+        if (
+          Array.isArray(districtsArray) &&
+          districtsArray.includes(address.district)
+        ) {
           shippingCost = Number(zone.deliveryCost);
           hasCoverage = true;
           break;
@@ -56,7 +62,9 @@ export class CreateEcommerceOrderUseCase {
       }
 
       if (!hasCoverage) {
-        throw new Error(`Sin cobertura de envío para el distrito: ${address.district}`);
+        throw new Error(
+          `Sin cobertura de envío para el distrito: ${address.district}`
+        );
       }
 
       // C) Calcular subtotal de los ítems
@@ -64,11 +72,12 @@ export class CreateEcommerceOrderUseCase {
       for (const item of cart.items) {
         const itemPrice = Number(item.variant.price);
         const itemDiscount = item.variant.discountPercent || 0;
-        
-        const finalPrice = itemDiscount > 0 
-          ? itemPrice - (itemPrice * itemDiscount) / 100 
-          : itemPrice;
-          
+
+        const finalPrice =
+          itemDiscount > 0
+            ? itemPrice - (itemPrice * itemDiscount) / 100
+            : itemPrice;
+
         subtotal += finalPrice * item.quantity;
       }
       let total = subtotal + shippingCost;
@@ -76,29 +85,37 @@ export class CreateEcommerceOrderUseCase {
       // C.2) Validar y aplicar Vale de Crédito
       if (creditNoteCode) {
         const creditNote = await tx.creditNote.findUnique({
-          where: { code: creditNoteCode }
+          where: { code: creditNoteCode },
         });
 
         if (!creditNote) {
-          throw new Error(`El vale de crédito con código ${creditNoteCode} no existe.`);
+          throw new Error(
+            `El vale de crédito con código ${creditNoteCode} no existe.`
+          );
         }
 
         if (creditNote.type !== 'STORE_CREDIT') {
-          throw new Error(`El código proporcionado no es un saldo a favor válido para canjear en tienda.`);
+          throw new Error(
+            `El código proporcionado no es un saldo a favor válido para canjear en tienda.`
+          );
         }
 
         if (creditNote.usedAt !== null) {
-          throw new Error(`El vale de crédito ${creditNoteCode} ya fue utilizado.`);
+          throw new Error(
+            `El vale de crédito ${creditNoteCode} ya fue utilizado.`
+          );
         }
 
         // Marcar el vale como usado
         const updated = await tx.creditNote.updateMany({
           where: { code: creditNoteCode, usedAt: null },
-          data: { usedAt: new Date() }
+          data: { usedAt: new Date() },
         });
 
         if (updated.count !== 1) {
-          throw new Error(`El vale de crédito ${creditNoteCode} ya fue utilizado concurrentemente.`);
+          throw new Error(
+            `El vale de crédito ${creditNoteCode} ya fue utilizado concurrentemente.`
+          );
         }
 
         total = Math.max(0, total - Number(creditNote.amount));
@@ -125,7 +142,9 @@ export class CreateEcommerceOrderUseCase {
       }
 
       if (!mainBranch) {
-        throw new Error('No se encontró ninguna sucursal activa para despachar el stock');
+        throw new Error(
+          'No se encontró ninguna sucursal activa para despachar el stock'
+        );
       }
 
       // E) Crear la Orden con PIN de seguridad de 6 dígitos
@@ -138,7 +157,9 @@ export class CreateEcommerceOrderUseCase {
           total,
           shippingCost,
           addressSnapshot,
-          paymentIntentId: paymentIntentId || `FREE_ORDER_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+          paymentIntentId:
+            paymentIntentId ||
+            `FREE_ORDER_${Date.now()}_${Math.random().toString(36).substring(7)}`,
           deliveryPin,
         },
       });
@@ -148,10 +169,11 @@ export class CreateEcommerceOrderUseCase {
         // Calcular precio final con descuento
         const itemPrice = Number(item.variant.price);
         const itemDiscount = item.variant.discountPercent || 0;
-        
-        const finalPrice = itemDiscount > 0 
-          ? itemPrice - (itemPrice * itemDiscount) / 100 
-          : itemPrice;
+
+        const finalPrice =
+          itemDiscount > 0
+            ? itemPrice - (itemPrice * itemDiscount) / 100
+            : itemPrice;
 
         // Crear OrderItem
         await tx.orderItem.create({
@@ -175,7 +197,9 @@ export class CreateEcommerceOrderUseCase {
         });
 
         if (!stock || stock.quantity < item.quantity) {
-          throw new Error(`Stock insuficiente en sucursal principal para el SKU: ${item.variant.sku}`);
+          throw new Error(
+            `Stock insuficiente en sucursal principal para el SKU: ${item.variant.sku}`
+          );
         }
 
         const newQty = stock.quantity - item.quantity;
@@ -293,11 +317,14 @@ export class CreateEcommerceOrderUseCase {
           await this.emailService.sendEmail(
             user.email,
             `Confirmación de pago — Pedido #${orderId.orderId} | PIN de entrega`,
-            html.trim(),
+            html.trim()
           );
         }
       } catch (emailErr) {
-        console.error(`Error enviando email de confirmación con PIN para orden #${orderId.orderId}:`, emailErr);
+        console.error(
+          `Error enviando email de confirmación con PIN para orden #${orderId.orderId}:`,
+          emailErr
+        );
       }
     }
 

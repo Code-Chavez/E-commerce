@@ -25,7 +25,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     product: mockProduct,
     productVariant: mockProductVariant,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -158,5 +160,3 @@ describe('Tests de Integración — HU-015: Inactivación Lógica de Productos',
     });
   });
 });
-
-

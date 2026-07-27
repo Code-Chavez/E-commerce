@@ -1,5 +1,9 @@
 import prisma from '@infrastructure/database/prisma';
-import { IBranchRepository, CreateBranchDTO, UpdateBranchDTO } from '@domain/repositories/IBranchRepository';
+import {
+  IBranchRepository,
+  CreateBranchDTO,
+  UpdateBranchDTO,
+} from '@domain/repositories/IBranchRepository';
 import { Branch } from '@domain/entities/Branch';
 
 export class PrismaBranchRepository implements IBranchRepository {

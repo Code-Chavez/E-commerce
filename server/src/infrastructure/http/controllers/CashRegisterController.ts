@@ -15,13 +15,27 @@ const updateUseCase = new UpdateCashRegisterUseCase(cashRegisterRepository);
 const deleteUseCase = new DeleteCashRegisterUseCase(cashRegisterRepository);
 
 const CreateCashRegisterSchema = z.object({
-  branchId: z.number().int().positive('El ID de la sucursal debe ser un entero positivo'),
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres').max(100, 'El nombre debe tener un máximo de 100 caracteres'),
+  branchId: z
+    .number()
+    .int()
+    .positive('El ID de la sucursal debe ser un entero positivo'),
+  name: z
+    .string()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(100, 'El nombre debe tener un máximo de 100 caracteres'),
 });
 
 const UpdateCashRegisterSchema = z.object({
-  branchId: z.number().int().positive('El ID de la sucursal debe ser un entero positivo').optional(),
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres').max(100, 'El nombre debe tener un máximo de 100 caracteres').optional(),
+  branchId: z
+    .number()
+    .int()
+    .positive('El ID de la sucursal debe ser un entero positivo')
+    .optional(),
+  name: z
+    .string()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(100, 'El nombre debe tener un máximo de 100 caracteres')
+    .optional(),
 });
 
 const mapZodErrors = (issues: z.ZodIssue[]) =>
@@ -38,13 +52,17 @@ export class CashRegisterController {
       if (role !== 'ADMIN') {
         return res.status(403).json({
           success: false,
-          error: 'Acceso denegado: Solo el Administrador está autorizado para crear cajas registradoras',
+          error:
+            'Acceso denegado: Solo el Administrador está autorizado para crear cajas registradoras',
         });
       }
 
       const validation = CreateCashRegisterSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const result = await createUseCase.execute(validation.data);
@@ -71,7 +89,8 @@ export class CashRegisterController {
       if (role !== 'ADMIN' && role !== 'SELLER') {
         return res.status(403).json({
           success: false,
-          error: 'Acceso denegado: Permisos insuficientes para listar cajas registradoras',
+          error:
+            'Acceso denegado: Permisos insuficientes para listar cajas registradoras',
         });
       }
 
@@ -79,7 +98,10 @@ export class CashRegisterController {
       if (branchIdStr !== undefined) {
         const branchId = parseInt(String(branchIdStr), 10);
         if (isNaN(branchId)) {
-          return res.status(400).json({ success: false, error: 'El parámetro branchId debe ser un número entero' });
+          return res.status(400).json({
+            success: false,
+            error: 'El parámetro branchId debe ser un número entero',
+          });
         }
         const records = await prisma.cashRegister.findMany({
           where: { branchId, isActive: true },
@@ -105,24 +127,34 @@ export class CashRegisterController {
       if (role !== 'ADMIN') {
         return res.status(403).json({
           success: false,
-          error: 'Acceso denegado: Solo el Administrador está autorizado para actualizar cajas registradoras',
+          error:
+            'Acceso denegado: Solo el Administrador está autorizado para actualizar cajas registradoras',
         });
       }
 
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'El ID de la caja registradora debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID de la caja registradora debe ser un número entero',
+        });
       }
 
       const validation = UpdateCashRegisterSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const result = await updateUseCase.execute(id, validation.data);
       return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
-      if (error.message?.includes('no existe') || error.message?.includes('eliminada')) {
+      if (
+        error.message?.includes('no existe') ||
+        error.message?.includes('eliminada')
+      ) {
         return res.status(404).json({ success: false, error: error.message });
       }
       if (error.message?.includes('inactiva')) {
@@ -142,13 +174,17 @@ export class CashRegisterController {
       if (role !== 'ADMIN') {
         return res.status(403).json({
           success: false,
-          error: 'Acceso denegado: Solo el Administrador está autorizado para eliminar cajas registradoras',
+          error:
+            'Acceso denegado: Solo el Administrador está autorizado para eliminar cajas registradoras',
         });
       }
 
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'El ID de la caja registradora debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID de la caja registradora debe ser un número entero',
+        });
       }
 
       await deleteUseCase.execute(id);
@@ -160,7 +196,10 @@ export class CashRegisterController {
       if (error.statusCode === 409) {
         return res.status(409).json({ success: false, error: error.message });
       }
-      if (error.message?.includes('no existe') || error.message?.includes('eliminada')) {
+      if (
+        error.message?.includes('no existe') ||
+        error.message?.includes('eliminada')
+      ) {
         return res.status(404).json({ success: false, error: error.message });
       }
       next(error);

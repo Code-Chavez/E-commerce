@@ -9,7 +9,11 @@ export class AdminAlertsController {
     this.getPendingOrderAlertsUseCase = new GetPendingOrderAlertsUseCase();
   }
 
-  getPendingOrders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getPendingOrders = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const result = await this.getPendingOrderAlertsUseCase.execute();
       res.status(200).json({ success: true, ...result });
@@ -18,7 +22,11 @@ export class AdminAlertsController {
     }
   };
 
-  getAutoReturnAlerts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAutoReturnAlerts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const alerts = await prisma.failedDeliveryReturnAlert.findMany({
         where: { isActive: true },
@@ -39,7 +47,11 @@ export class AdminAlertsController {
     }
   };
 
-  dismissAutoReturnAlert = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  dismissAutoReturnAlert = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       if (isNaN(id)) {

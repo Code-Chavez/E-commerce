@@ -11,10 +11,10 @@ export class ReturnDeliveryUseCase {
       include: {
         order: {
           include: {
-            items: true
-          }
-        }
-      }
+            items: true,
+          },
+        },
+      },
     });
 
     if (!delivery) {
@@ -29,13 +29,13 @@ export class ReturnDeliveryUseCase {
       // 1. Actualizar estado del Delivery
       const updatedDelivery = await tx.delivery.update({
         where: { id: deliveryId },
-        data: { status: 'RETURNED' }
+        data: { status: 'RETURNED' },
       });
 
       // 2. Actualizar estado de la Orden y marcar reembolso pendiente
       await tx.order.update({
         where: { id: delivery.orderId },
-        data: { status: 'RETURNED', refundStatus: 'PENDING' }
+        data: { status: 'RETURNED', refundStatus: 'PENDING' },
       });
 
       // Registrar OrderStatusLog
@@ -43,15 +43,18 @@ export class ReturnDeliveryUseCase {
         data: {
           orderId: delivery.orderId,
           status: 'RETURNED',
-          changedBy: 'SYSTEM (Delivery Returned)'
-        }
+          changedBy: 'SYSTEM (Delivery Returned)',
+        },
       });
 
       // 3. Reincorporar stock e insertar Kardex (DEVOLUCION)
       await restoreOrderStock(
         tx,
-        delivery.order.items.map(i => ({ variantId: i.variantId, qty: i.qty })),
-        requestContext.getStore()?.userId ?? null,
+        delivery.order.items.map((i) => ({
+          variantId: i.variantId,
+          qty: i.qty,
+        })),
+        requestContext.getStore()?.userId ?? null
       );
 
       return updatedDelivery;

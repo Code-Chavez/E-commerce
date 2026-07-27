@@ -14,7 +14,11 @@ const VALID_CATEGORIES = Object.values(ComplaintCategory);
 const VALID_STATUSES = Object.values(ComplaintStatus);
 
 export class ComplaintController {
-  createComplaint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  createComplaint = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const userId = (req as any).user?.id;
       if (!userId) {
@@ -25,17 +29,26 @@ export class ComplaintController {
       const { orderId, category, description } = req.body;
 
       if (!category || !description) {
-        res.status(400).json({ success: false, error: 'category y description son requeridos' });
+        res.status(400).json({
+          success: false,
+          error: 'category y description son requeridos',
+        });
         return;
       }
 
       if (!VALID_CATEGORIES.includes(category)) {
-        res.status(400).json({ success: false, error: `Categoría inválida. Valores: ${VALID_CATEGORIES.join(', ')}` });
+        res.status(400).json({
+          success: false,
+          error: `Categoría inválida. Valores: ${VALID_CATEGORIES.join(', ')}`,
+        });
         return;
       }
 
       if (typeof description !== 'string' || description.trim().length < 10) {
-        res.status(400).json({ success: false, error: 'La descripción debe tener al menos 10 caracteres' });
+        res.status(400).json({
+          success: false,
+          error: 'La descripción debe tener al menos 10 caracteres',
+        });
         return;
       }
 
@@ -52,7 +65,11 @@ export class ComplaintController {
     }
   };
 
-  getUserComplaints = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getUserComplaints = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const userId = (req as any).user?.id;
       if (!userId) {
@@ -67,12 +84,18 @@ export class ComplaintController {
     }
   };
 
-  getAdminComplaints = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAdminComplaints = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      const rawStatus = typeof req.query.status === 'string' ? req.query.status : undefined;
-      const statusFilter = rawStatus && VALID_STATUSES.includes(rawStatus as ComplaintStatus)
-        ? (rawStatus as ComplaintStatus)
-        : undefined;
+      const rawStatus =
+        typeof req.query.status === 'string' ? req.query.status : undefined;
+      const statusFilter =
+        rawStatus && VALID_STATUSES.includes(rawStatus as ComplaintStatus)
+          ? (rawStatus as ComplaintStatus)
+          : undefined;
 
       const complaints = await getComplaintsAdminUseCase.execute(statusFilter);
       res.status(200).json({ success: true, data: complaints });
@@ -81,13 +104,20 @@ export class ComplaintController {
     }
   };
 
-  updateStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  updateStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       const { status } = req.body;
 
       if (!status || !VALID_STATUSES.includes(status)) {
-        res.status(400).json({ success: false, error: `status inválido. Valores: ${VALID_STATUSES.join(', ')}` });
+        res.status(400).json({
+          success: false,
+          error: `status inválido. Valores: ${VALID_STATUSES.join(', ')}`,
+        });
         return;
       }
 

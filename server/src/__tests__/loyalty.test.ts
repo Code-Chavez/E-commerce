@@ -15,7 +15,9 @@ describe('LoyaltyConfig & RedeemLoyaltyPoints (Audit Fix)', () => {
     await prisma.loyaltyAccount.deleteMany();
     await prisma.loyaltyConfig.deleteMany();
     await prisma.user.deleteMany({
-      where: { email: { in: ['admin.loyalty@test.com', 'client.loyalty@test.com'] } }
+      where: {
+        email: { in: ['admin.loyalty@test.com', 'client.loyalty@test.com'] },
+      },
     });
 
     // 2. Crear admin user
@@ -25,13 +27,13 @@ describe('LoyaltyConfig & RedeemLoyaltyPoints (Audit Fix)', () => {
         password: 'hash',
         name: 'Admin Loyalty',
         isActive: true,
-      }
+      },
     });
 
     adminToken = jwtService.generateTokens({
       userId: admin.id,
       email: admin.email,
-      role: 'ADMIN'
+      role: 'ADMIN',
     }).accessToken;
 
     // 3. Crear client user
@@ -41,14 +43,14 @@ describe('LoyaltyConfig & RedeemLoyaltyPoints (Audit Fix)', () => {
         password: 'hash',
         name: 'Client Loyalty',
         isActive: true,
-      }
+      },
     });
     clientId = client.id;
 
     clientToken = jwtService.generateTokens({
       userId: client.id,
       email: client.email,
-      role: 'CLIENT'
+      role: 'CLIENT',
     }).accessToken;
   });
 
@@ -56,7 +58,9 @@ describe('LoyaltyConfig & RedeemLoyaltyPoints (Audit Fix)', () => {
     await prisma.loyaltyAccount.deleteMany();
     await prisma.loyaltyConfig.deleteMany();
     await prisma.user.deleteMany({
-      where: { email: { in: ['admin.loyalty@test.com', 'client.loyalty@test.com'] } }
+      where: {
+        email: { in: ['admin.loyalty@test.com', 'client.loyalty@test.com'] },
+      },
     });
   });
 
@@ -101,7 +105,7 @@ describe('LoyaltyConfig & RedeemLoyaltyPoints (Audit Fix)', () => {
         data: {
           userId: clientId,
           balance: 100,
-        }
+        },
       });
     });
 

@@ -1,5 +1,8 @@
 import { IProductVariantRepository } from '@domain/repositories/IProductVariantRepository';
-import { UpdateVariantRequestDTO, VariantResponseDTO } from '../../dtos/ProductVariantDTOs';
+import {
+  UpdateVariantRequestDTO,
+  VariantResponseDTO,
+} from '../../dtos/ProductVariantDTOs';
 import { ProductVariant } from '@domain/entities/ProductVariant';
 
 import { IAuditService, AuditAction } from '@domain/services/AuditService';
@@ -19,7 +22,11 @@ export class UpdateVariantUseCase {
     private readonly priceHistoryRepository?: IPriceHistoryRepository
   ) {}
 
-  async execute(id: number, dto: UpdateVariantRequestDTO, userId?: number): Promise<VariantResponseDTO> {
+  async execute(
+    id: number,
+    dto: UpdateVariantRequestDTO,
+    userId?: number
+  ): Promise<VariantResponseDTO> {
     // 1. Verificar que la variante existe
     const variant = await this.variantRepository.findById(id);
     if (!variant) {
@@ -55,10 +62,14 @@ export class UpdateVariantUseCase {
 
     const updated = await this.variantRepository.update(id, dto);
 
-    const priceHistoryRepo = this.priceHistoryRepository || new PrismaPriceHistoryRepository();
+    const priceHistoryRepo =
+      this.priceHistoryRepository || new PrismaPriceHistoryRepository();
 
     // 4. Registrar auditoría e historial si el precio de venta cambió
-    if (dto.price !== undefined && Number(variant.price) !== Number(dto.price)) {
+    if (
+      dto.price !== undefined &&
+      Number(variant.price) !== Number(dto.price)
+    ) {
       if (this.auditService) {
         await this.auditService.record({
           action: AuditAction.UPDATE_PRICE,
@@ -84,7 +95,10 @@ export class UpdateVariantUseCase {
     }
 
     // 5. Registrar auditoría e historial si el precio de costo cambió
-    if (dto.costPrice !== undefined && Number(variant.costPrice ?? 0) !== Number(dto.costPrice)) {
+    if (
+      dto.costPrice !== undefined &&
+      Number(variant.costPrice ?? 0) !== Number(dto.costPrice)
+    ) {
       if (this.auditService) {
         await this.auditService.record({
           action: AuditAction.UPDATE_PRICE,

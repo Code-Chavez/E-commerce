@@ -14,7 +14,10 @@ export interface SearchPosClientsResponseDTO {
 export class SearchPosClientsUseCase {
   constructor(private readonly clientRepository: IClientRepository) {}
 
-  async execute(query: string, page: number = 1): Promise<SearchPosClientsResponseDTO> {
+  async execute(
+    query: string,
+    page: number = 1
+  ): Promise<SearchPosClientsResponseDTO> {
     const limit = 10;
     const skip = (page - 1) * limit;
 

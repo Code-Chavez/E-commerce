@@ -1,4 +1,7 @@
-import { IPosProductRepository, PosProductResult } from '@domain/repositories/IPosProductRepository';
+import {
+  IPosProductRepository,
+  PosProductResult,
+} from '@domain/repositories/IPosProductRepository';
 import prisma from '@infrastructure/database/prisma';
 
 export class SearchPosProductUseCase {
@@ -17,7 +20,9 @@ export class SearchPosProductUseCase {
     });
 
     if (!activeTurn) {
-      throw new Error('No tienes un turno de caja abierto. Por favor, abre caja antes de realizar búsquedas o ventas en el POS.');
+      throw new Error(
+        'No tienes un turno de caja abierto. Por favor, abre caja antes de realizar búsquedas o ventas en el POS.'
+      );
     }
 
     const branchId = activeTurn.register.branchId;

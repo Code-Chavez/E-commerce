@@ -7,15 +7,21 @@ import { ResendEmailService } from '../../src/infrastructure/services/ResendEmai
 jest.mock('../../src/infrastructure/database/prisma', () => ({
   prisma: {
     user: {
-      create: jest.fn().mockResolvedValue({ id: 1, email: 'test_comms_log@test.com', name: 'Test Comms' } as never),
+      create: jest.fn().mockResolvedValue({
+        id: 1,
+        email: 'test_comms_log@test.com',
+        name: 'Test Comms',
+      } as never),
       delete: jest.fn(),
     },
     communicationLog: {
       create: jest.fn().mockResolvedValue({ id: 1 } as never),
-      findMany: jest.fn().mockResolvedValue([{ id: 1, subject: 'Test Subject' }] as never),
+      findMany: jest
+        .fn()
+        .mockResolvedValue([{ id: 1, subject: 'Test Subject' }] as never),
       deleteMany: jest.fn(),
-    }
-  }
+    },
+  },
 }));
 describe('Communication Log feature', () => {
   let logRepo: PrismaCommunicationLogRepository;
@@ -30,15 +36,15 @@ describe('Communication Log feature', () => {
         email: 'test_comms_log@test.com',
         name: 'Test Comms',
         password: 'hash',
-        authProvider: 'local'
-      }
+        authProvider: 'local',
+      },
     });
 
     const saved = await logRepo.save({
       userId: user.id,
       channel: CommunicationChannel.EMAIL,
       subject: 'Test Subject',
-      type: 'SYSTEM'
+      type: 'SYSTEM',
     });
 
     expect(saved.id).toBeDefined();
@@ -47,11 +53,9 @@ describe('Communication Log feature', () => {
     expect(logs).toHaveLength(1);
     expect(logs[0].subject).toBe('Test Subject');
 
-    await prisma.communicationLog.deleteMany({ where: { userId: user.id }});
-    await prisma.user.delete({ where: { id: user.id }});
+    await prisma.communicationLog.deleteMany({ where: { userId: user.id } });
+    await prisma.user.delete({ where: { id: user.id } });
   });
 
   // Decorator pattern testing is mostly mocked in integration, but we verify the repo port works perfectly.
 });
-
-

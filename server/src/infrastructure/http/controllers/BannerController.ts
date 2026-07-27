@@ -23,12 +23,18 @@ const reorderBannersUseCase = new ReorderBannersUseCase(bannerRepository);
 
 const CreateBannerSchema = z.object({
   linkUrl: z.string().url('Formato de URL inválido').optional().nullable(),
-  order: z.preprocess((val) => val === undefined || val === '' ? undefined : Number(val), z.number().int().nonnegative().optional()),
+  order: z.preprocess(
+    (val) => (val === undefined || val === '' ? undefined : Number(val)),
+    z.number().int().nonnegative().optional()
+  ),
 });
 
 const UpdateBannerSchema = z.object({
   linkUrl: z.string().url('Formato de URL inválido').optional().nullable(),
-  order: z.preprocess((val) => val === undefined || val === '' ? undefined : Number(val), z.number().int().nonnegative().optional()),
+  order: z.preprocess(
+    (val) => (val === undefined || val === '' ? undefined : Number(val)),
+    z.number().int().nonnegative().optional()
+  ),
   isActive: z.preprocess((val) => {
     if (val === 'true') return true;
     if (val === 'false') return false;
@@ -37,12 +43,14 @@ const UpdateBannerSchema = z.object({
 });
 
 const ReorderSchema = z.object({
-  orders: z.array(
-    z.object({
-      id: z.number().int().positive(),
-      order: z.number().int().nonnegative(),
-    })
-  ).min(1, 'Debes proporcionar al menos un orden a actualizar'),
+  orders: z
+    .array(
+      z.object({
+        id: z.number().int().positive(),
+        order: z.number().int().nonnegative(),
+      })
+    )
+    .min(1, 'Debes proporcionar al menos un orden a actualizar'),
 });
 
 export class BannerController {
@@ -79,7 +87,9 @@ export class BannerController {
   async createBanner(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.file) {
-        return res.status(400).json({ success: false, error: 'La imagen del banner es requerida' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'La imagen del banner es requerida' });
       }
 
       const validation = CreateBannerSchema.safeParse(req.body);
@@ -94,7 +104,10 @@ export class BannerController {
       }
 
       // Subir imagen a Cloudinary usando el storage de perfiles adaptado
-      const imageUrl = await storageService.uploadImage(req.file.buffer, req.file.originalname);
+      const imageUrl = await storageService.uploadImage(
+        req.file.buffer,
+        req.file.originalname
+      );
 
       const banner = await createBannerUseCase.execute({
         imageUrl,
@@ -116,7 +129,9 @@ export class BannerController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de banner inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de banner inválido' });
       }
 
       const validation = UpdateBannerSchema.safeParse(req.body);
@@ -132,7 +147,10 @@ export class BannerController {
 
       let imageUrl = undefined;
       if (req.file) {
-        imageUrl = await storageService.uploadImage(req.file.buffer, req.file.originalname);
+        imageUrl = await storageService.uploadImage(
+          req.file.buffer,
+          req.file.originalname
+        );
       }
 
       const updated = await updateBannerUseCase.execute(id, {
@@ -159,11 +177,15 @@ export class BannerController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de banner inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de banner inválido' });
       }
 
       await deleteBannerUseCase.execute(id);
-      return res.status(200).json({ success: true, message: 'Banner eliminado exitosamente' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Banner eliminado exitosamente' });
     } catch (error: any) {
       if (error.message.includes('no existe')) {
         return res.status(404).json({ success: false, error: error.message });
@@ -190,7 +212,9 @@ export class BannerController {
       }
 
       await reorderBannersUseCase.execute(validation.data.orders);
-      return res.status(200).json({ success: true, message: 'Banners reordenados exitosamente' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Banners reordenados exitosamente' });
     } catch (error) {
       next(error);
     }

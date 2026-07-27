@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
-import { PackageCheck, Search, HelpCircle, Loader2, RefreshCw, Sparkles, Building2, Archive } from 'lucide-react';
+import { PackageCheck, Search, HelpCircle, Loader2, Sparkles, Building2, Archive } from 'lucide-react';
 import { handleNumericKeyDown } from '@/shared/validation/documentValidators';
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
 

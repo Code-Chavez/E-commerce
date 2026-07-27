@@ -18,15 +18,17 @@ jest.mock('@infrastructure/database/prisma', () => {
     order: mockOrder,
     posOrder: mockPosOrder,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -69,15 +71,45 @@ describe('Tests de Dashboard Financiero Consolidado Multi-canal (HU-070)', () =>
 
     it('debe consolidar correctamente las ventas y calcular diferencias y porcentajes', () => {
       const currentSales = [
-        { amount: 100, channel: 'ECOMMERCE' as const, branchId: null, branchName: 'Venta Online' },
-        { amount: 200, channel: 'POS' as const, branchId: 1, branchName: 'Sede Miraflores' },
-        { amount: 150, channel: 'POS' as const, branchId: 2, branchName: 'Sede San Isidro' },
+        {
+          amount: 100,
+          channel: 'ECOMMERCE' as const,
+          branchId: null,
+          branchName: 'Venta Online',
+        },
+        {
+          amount: 200,
+          channel: 'POS' as const,
+          branchId: 1,
+          branchName: 'Sede Miraflores',
+        },
+        {
+          amount: 150,
+          channel: 'POS' as const,
+          branchId: 2,
+          branchName: 'Sede San Isidro',
+        },
       ];
 
       const previousSales = [
-        { amount: 80, channel: 'ECOMMERCE' as const, branchId: null, branchName: 'Venta Online' },
-        { amount: 180, channel: 'POS' as const, branchId: 1, branchName: 'Sede Miraflores' },
-        { amount: 100, channel: 'POS' as const, branchId: 2, branchName: 'Sede San Isidro' },
+        {
+          amount: 80,
+          channel: 'ECOMMERCE' as const,
+          branchId: null,
+          branchName: 'Venta Online',
+        },
+        {
+          amount: 180,
+          channel: 'POS' as const,
+          branchId: 1,
+          branchName: 'Sede Miraflores',
+        },
+        {
+          amount: 100,
+          channel: 'POS' as const,
+          branchId: 2,
+          branchName: 'Sede San Isidro',
+        },
       ];
 
       const result = service.consolidate(currentSales, previousSales);
@@ -104,7 +136,12 @@ describe('Tests de Dashboard Financiero Consolidado Multi-canal (HU-070)', () =>
         { total: 500, createdAt: new Date() },
       ]);
       (prisma.posOrder.findMany as any).mockResolvedValueOnce([
-        { total: 1500, createdAt: new Date(), branchId: 1, branch: { name: 'Sede Principal' } },
+        {
+          total: 1500,
+          createdAt: new Date(),
+          branchId: 1,
+          branch: { name: 'Sede Principal' },
+        },
       ]);
 
       // Mock previous period
@@ -112,11 +149,18 @@ describe('Tests de Dashboard Financiero Consolidado Multi-canal (HU-070)', () =>
         { total: 400, createdAt: new Date() },
       ]);
       (prisma.posOrder.findMany as any).mockResolvedValueOnce([
-        { total: 1200, createdAt: new Date(), branchId: 1, branch: { name: 'Sede Principal' } },
+        {
+          total: 1200,
+          createdAt: new Date(),
+          branchId: 1,
+          branch: { name: 'Sede Principal' },
+        },
       ]);
 
       const response = await request(app)
-        .get('/api/v1/admin/reports/financial-dashboard?from=2026-06-01&to=2026-06-30')
+        .get(
+          '/api/v1/admin/reports/financial-dashboard?from=2026-06-01&to=2026-06-30'
+        )
         .set('Authorization', 'Bearer dummy-token');
 
       expect(response.status).toBe(200);
@@ -162,5 +206,3 @@ describe('Tests de Dashboard Financiero Consolidado Multi-canal (HU-070)', () =>
     });
   });
 });
-
-

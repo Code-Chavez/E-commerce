@@ -23,8 +23,23 @@ const checkSupplyOrAdmin = (req: any, res: any, next: any) => {
   next();
 };
 
-router.get('/admin/alerts/pending-orders', requireAuth, checkSupplyOrAdmin, controller.getPendingOrders);
-router.get('/admin/alerts/auto-returns', requireAuth, checkSupplyOrAdmin, controller.getAutoReturnAlerts);
-router.patch('/admin/alerts/auto-returns/:id/dismiss', requireAuth, checkSupplyOrAdmin, controller.dismissAutoReturnAlert);
+router.get(
+  '/admin/alerts/pending-orders',
+  requireAuth,
+  checkSupplyOrAdmin,
+  controller.getPendingOrders
+);
+router.get(
+  '/admin/alerts/auto-returns',
+  requireAuth,
+  checkSupplyOrAdmin,
+  controller.getAutoReturnAlerts
+);
+router.patch(
+  '/admin/alerts/auto-returns/:id/dismiss',
+  requireAuth,
+  checkSupplyOrAdmin,
+  controller.dismissAutoReturnAlert
+);
 
 export default router;

@@ -4,7 +4,15 @@ import { Delivery } from '@domain/entities/Delivery';
 import { DeliveryZone } from '@domain/entities/DeliveryZone';
 
 export interface DeliveriesByZoneGroup {
-  zone: DeliveryZone | { id: 0; districts: string[]; deliveryCost: number; estimatedDays: number; name?: string };
+  zone:
+    | DeliveryZone
+    | {
+        id: 0;
+        districts: string[];
+        deliveryCost: number;
+        estimatedDays: number;
+        name?: string;
+      };
   count: number;
   deliveries: Delivery[];
 }
@@ -17,14 +25,15 @@ export class GetPendingDeliveriesByZoneUseCase {
 
   async execute(): Promise<DeliveriesByZoneGroup[]> {
     // 1. Fetch pending deliveries
-    const pendingDeliveries = await this.deliveryRepository.findDeliveries('PENDING');
+    const pendingDeliveries =
+      await this.deliveryRepository.findDeliveries('PENDING');
 
     // 2. Fetch all zones
     const zones = await this.deliveryZoneRepository.findAll();
 
     // 3. Initialize groups map
     const groups = new Map<number, DeliveriesByZoneGroup>();
-    
+
     // Create unassigned group
     const unassignedGroup: DeliveriesByZoneGroup = {
       zone: {
@@ -56,7 +65,9 @@ export class GetPendingDeliveriesByZoneUseCase {
       if (district) {
         // Find which zone contains this district
         for (const zone of zones) {
-          const zoneDistricts = (zone.districts as string[] || []).map(d => d.trim().toLowerCase());
+          const zoneDistricts = ((zone.districts as string[]) || []).map((d) =>
+            d.trim().toLowerCase()
+          );
           if (zoneDistricts.includes(district)) {
             assignedZoneId = zone.id;
             break;
@@ -75,8 +86,8 @@ export class GetPendingDeliveriesByZoneUseCase {
     }
 
     // 5. Convert to array and filter out empty groups
-    const result = Array.from(groups.values()).filter(g => g.count > 0);
-    
+    const result = Array.from(groups.values()).filter((g) => g.count > 0);
+
     if (unassignedGroup.count > 0) {
       result.push(unassignedGroup);
     }

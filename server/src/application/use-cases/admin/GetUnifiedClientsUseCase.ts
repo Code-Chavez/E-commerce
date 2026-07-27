@@ -1,5 +1,8 @@
 import { IClientRepository } from '@domain/repositories/IClientRepository';
-import { UnifiedClientsPagedResponse, ClientAdminResponseDto } from '@application/dtos/ClientAdminResponseDto';
+import {
+  UnifiedClientsPagedResponse,
+  ClientAdminResponseDto,
+} from '@application/dtos/ClientAdminResponseDto';
 
 export class GetUnifiedClientsUseCase {
   constructor(private readonly clientRepository: IClientRepository) {}
@@ -14,12 +17,13 @@ export class GetUnifiedClientsUseCase {
     const limit = params.limit && params.limit > 0 ? params.limit : 10;
     const skip = (page - 1) * limit;
 
-    const { clients: rawClients, totalCount } = await this.clientRepository.findPaged({
-      type: params.type,
-      search: params.search,
-      skip,
-      take: limit,
-    });
+    const { clients: rawClients, totalCount } =
+      await this.clientRepository.findPaged({
+        type: params.type,
+        search: params.search,
+        skip,
+        take: limit,
+      });
 
     const clients = rawClients.map((client): ClientAdminResponseDto => {
       let clientType: 'POS' | 'ECOMMERCE' | 'AMBOS' = 'POS';

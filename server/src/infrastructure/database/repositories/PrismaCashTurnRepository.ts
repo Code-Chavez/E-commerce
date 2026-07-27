@@ -1,5 +1,8 @@
 import prisma from '@infrastructure/database/prisma';
-import { ICashTurnRepository, CreateCashTurnDTO } from '@domain/repositories/ICashTurnRepository';
+import {
+  ICashTurnRepository,
+  CreateCashTurnDTO,
+} from '@domain/repositories/ICashTurnRepository';
 import { CashTurn, CashRegister } from '@domain/entities/CashTurn';
 
 export class PrismaCashTurnRepository implements ICashTurnRepository {
@@ -39,13 +42,15 @@ export class PrismaCashTurnRepository implements ICashTurnRepository {
     const record = await prisma.cashRegister.findUnique({
       where: { id: registerId },
     });
-    return record ? {
-      id: record.id,
-      branchId: record.branchId,
-      name: record.name,
-      createdAt: record.createdAt,
-      updatedAt: record.updatedAt,
-    } : null;
+    return record
+      ? {
+          id: record.id,
+          branchId: record.branchId,
+          name: record.name,
+          createdAt: record.createdAt,
+          updatedAt: record.updatedAt,
+        }
+      : null;
   }
 
   async findRegistersByBranch(branchId: number): Promise<CashRegister[]> {
@@ -97,4 +102,3 @@ export class PrismaCashTurnRepository implements ICashTurnRepository {
     };
   }
 }
-

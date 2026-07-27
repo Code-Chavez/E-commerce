@@ -33,4 +33,3 @@ router.get(
   requireAuth,
   controller.getLoyaltyBalance.bind(controller)
 );
-

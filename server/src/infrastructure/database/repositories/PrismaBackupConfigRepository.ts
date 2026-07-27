@@ -22,7 +22,11 @@ export class PrismaBackupConfigRepository implements IBackupConfigRepository {
     return this.toDomain(config);
   }
 
-  async update(data: { retentionDays?: number; adminEmail?: string; cronExpression?: string }): Promise<BackupConfig> {
+  async update(data: {
+    retentionDays?: number;
+    adminEmail?: string;
+    cronExpression?: string;
+  }): Promise<BackupConfig> {
     let config = await prisma.backupConfig.findFirst();
     if (!config) {
       config = await prisma.backupConfig.create({ data: {} });

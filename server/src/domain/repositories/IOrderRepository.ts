@@ -38,19 +38,27 @@ export interface IOrderRepository {
   getSalesTotalInRange(start: Date, end: Date): Promise<number>;
   countPending(): Promise<number>;
   findOrdersForExport(params: { from?: Date; to?: Date }): Promise<Order[]>;
-  getProfitabilityData(from?: Date, to?: Date): Promise<Array<{
-    qty: number;
-    unitPrice: number;
-    variantId: number;
-    brandName: string;
-    categoryName: string;
-    orderCreatedAt: Date;
-    unitCost: number;
-  }>>;
-  getFinancialSales(from?: Date, to?: Date): Promise<Array<{
-    amount: number;
-    createdAt: Date;
-  }>>;
+  getProfitabilityData(
+    from?: Date,
+    to?: Date
+  ): Promise<
+    Array<{
+      qty: number;
+      unitPrice: number;
+      variantId: number;
+      brandName: string;
+      categoryName: string;
+      orderCreatedAt: Date;
+      unitCost: number;
+    }>
+  >;
+  getFinancialSales(
+    from?: Date,
+    to?: Date
+  ): Promise<
+    Array<{
+      amount: number;
+      createdAt: Date;
+    }>
+  >;
 }
-
-

@@ -1,6 +1,10 @@
 import prisma from '@infrastructure/database/prisma';
 import { IAddressRepository } from '@domain/repositories/IAddressRepository';
-import { Address, CreateAddressDTO, UpdateAddressDTO } from '@domain/entities/Address';
+import {
+  Address,
+  CreateAddressDTO,
+  UpdateAddressDTO,
+} from '@domain/entities/Address';
 
 export class PrismaAddressRepository implements IAddressRepository {
   private toDomain(record: any): Address {
@@ -27,12 +31,9 @@ export class PrismaAddressRepository implements IAddressRepository {
   async findByUserId(userId: number): Promise<Address[]> {
     const records = await prisma.address.findMany({
       where: { userId },
-      orderBy: [
-        { isDefault: 'desc' },
-        { createdAt: 'asc' },
-      ],
+      orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
     });
-    return records.map(r => this.toDomain(r));
+    return records.map((r) => this.toDomain(r));
   }
 
   async create(userId: number, data: CreateAddressDTO): Promise<Address> {

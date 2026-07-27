@@ -85,7 +85,8 @@ export class GetPendingCrossBranchSalesUseCase {
 
     for (const order of pendingOrders) {
       const sourceBranchId = order.sourceBranchId!;
-      const sourceBranchName = order.sourceBranch?.name || `Sucursal ${sourceBranchId}`;
+      const sourceBranchName =
+        order.sourceBranch?.name || `Sucursal ${sourceBranchId}`;
 
       let group = groupsMap.get(sourceBranchId);
       if (!group) {

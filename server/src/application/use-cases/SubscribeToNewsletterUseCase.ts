@@ -1,5 +1,5 @@
-import { INewsletterRepository } from "../../domain/repositories/INewsletterRepository";
-import { NewsletterSubscriber } from "../../domain/entities/NewsletterSubscriber";
+import { INewsletterRepository } from '../../domain/repositories/INewsletterRepository';
+import { NewsletterSubscriber } from '../../domain/entities/NewsletterSubscriber';
 
 export class SubscribeToNewsletterUseCase {
   constructor(private newsletterRepository: INewsletterRepository) {}

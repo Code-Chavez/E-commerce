@@ -16,7 +16,10 @@ export class StripePaymentAdapter implements IStripePaymentPort {
     });
   }
 
-  async getPaymentIntents(from: Date, to: Date): Promise<StripePaymentIntentInfo[]> {
+  async getPaymentIntents(
+    from: Date,
+    to: Date
+  ): Promise<StripePaymentIntentInfo[]> {
     const paymentIntents: StripePaymentIntentInfo[] = [];
     const gte = Math.floor(from.getTime() / 1000);
     const lte = Math.floor(to.getTime() / 1000);

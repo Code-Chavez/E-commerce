@@ -96,10 +96,17 @@ describe('E-Commerce Cart API (HU-041)', () => {
 
   describe('POST /api/v1/cart/items', () => {
     it('should add item to existing cart (Happy Path)', async () => {
-      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({ id: 1 });
+      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+      });
       (prisma.cart.findFirst as jest.Mock).mockResolvedValue(mockCartResponse);
       (prisma.cartItem.findFirst as jest.Mock).mockResolvedValue(null);
-      (prisma.cartItem.create as jest.Mock).mockResolvedValue({ id: 2, cartId: 1, variantId: 1, quantity: 1 });
+      (prisma.cartItem.create as jest.Mock).mockResolvedValue({
+        id: 2,
+        cartId: 1,
+        variantId: 1,
+        quantity: 1,
+      });
       (prisma.cart.findUnique as jest.Mock).mockResolvedValue(mockCartResponse);
 
       const response = await request(app)
@@ -111,11 +118,21 @@ describe('E-Commerce Cart API (HU-041)', () => {
     });
 
     it('should create new cart if not exists (Happy Path)', async () => {
-      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({ id: 1 });
+      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+      });
       (prisma.cart.findFirst as jest.Mock).mockResolvedValue(null);
       (prisma.cart.create as jest.Mock).mockResolvedValue({ id: 2, userId: 1 });
-      (prisma.cartItem.create as jest.Mock).mockResolvedValue({ id: 2, cartId: 2, variantId: 1, quantity: 1 });
-      (prisma.cart.findUnique as jest.Mock).mockResolvedValue({ ...mockCartResponse, id: 2 });
+      (prisma.cartItem.create as jest.Mock).mockResolvedValue({
+        id: 2,
+        cartId: 2,
+        variantId: 1,
+        quantity: 1,
+      });
+      (prisma.cart.findUnique as jest.Mock).mockResolvedValue({
+        ...mockCartResponse,
+        id: 2,
+      });
 
       const response = await request(app)
         .post('/api/v1/cart/items')
@@ -128,9 +145,15 @@ describe('E-Commerce Cart API (HU-041)', () => {
 
   describe('PATCH /api/v1/cart/items/:id', () => {
     it('should update item quantity (Happy Path)', async () => {
-      (prisma.cartItem.findUnique as jest.Mock).mockResolvedValue({ id: 1, cartId: 1 });
+      (prisma.cartItem.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        cartId: 1,
+      });
       (prisma.cart.findFirst as jest.Mock).mockResolvedValue(mockCartResponse);
-      (prisma.cartItem.update as jest.Mock).mockResolvedValue({ id: 1, quantity: 5 });
+      (prisma.cartItem.update as jest.Mock).mockResolvedValue({
+        id: 1,
+        quantity: 5,
+      });
       (prisma.cart.findUnique as jest.Mock).mockResolvedValue(mockCartResponse);
 
       const response = await request(app)
@@ -142,7 +165,9 @@ describe('E-Commerce Cart API (HU-041)', () => {
     });
 
     it('should handle missing item (Error Case)', async () => {
-      (prisma.cartItem.update as jest.Mock).mockRejectedValueOnce(new Error('Record to update not found.'));
+      (prisma.cartItem.update as jest.Mock).mockRejectedValueOnce(
+        new Error('Record to update not found.')
+      );
 
       const response = await request(app)
         .patch('/api/v1/cart/items/999')
@@ -155,7 +180,10 @@ describe('E-Commerce Cart API (HU-041)', () => {
 
   describe('DELETE /api/v1/cart/items/:id', () => {
     it('should remove item from cart (Happy Path)', async () => {
-      (prisma.cartItem.findUnique as jest.Mock).mockResolvedValue({ id: 1, cartId: 1 });
+      (prisma.cartItem.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        cartId: 1,
+      });
       (prisma.cart.findFirst as jest.Mock).mockResolvedValue(mockCartResponse);
       (prisma.cartItem.delete as jest.Mock).mockResolvedValue({ id: 1 });
       (prisma.cart.findUnique as jest.Mock).mockResolvedValue(mockCartResponse);
@@ -170,11 +198,19 @@ describe('E-Commerce Cart API (HU-041)', () => {
   describe('POST /api/v1/cart/merge', () => {
     it('should merge session cart with user cart (Happy Path)', async () => {
       (prisma.cart.findUnique as jest.Mock)
-        .mockResolvedValueOnce({ id: 2, sessionId: 'sess123', items: [{ variantId: 1, quantity: 1 }] }) // anonymousCart
+        .mockResolvedValueOnce({
+          id: 2,
+          sessionId: 'sess123',
+          items: [{ variantId: 1, quantity: 1 }],
+        }) // anonymousCart
         .mockResolvedValueOnce(mockCartResponse); // cartFull query at the end
-      
-      (prisma.cart.findFirst as jest.Mock).mockResolvedValueOnce({ id: 1, userId: 1, items: [] }); // userCart
-      
+
+      (prisma.cart.findFirst as jest.Mock).mockResolvedValueOnce({
+        id: 1,
+        userId: 1,
+        items: [],
+      }); // userCart
+
       (prisma.cartItem.findFirst as jest.Mock).mockResolvedValue(null);
       (prisma.cartItem.create as jest.Mock).mockResolvedValue({});
       (prisma.cart.delete as jest.Mock).mockResolvedValue({});

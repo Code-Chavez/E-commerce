@@ -10,8 +10,8 @@ export interface CreateVariantDTO {
 }
 
 export interface UpdateVariantDTO {
-  sku?: string;    // Editar SKU manualmente (se valida unicidad)
-  price?: number;  // Editar precio de venta
+  sku?: string; // Editar SKU manualmente (se valida unicidad)
+  price?: number; // Editar precio de venta
   costPrice?: number; // Editar precio de costo
   isActive?: boolean;
   minStock?: number;
@@ -22,7 +22,11 @@ export interface UpdateVariantDTO {
 export interface IProductRepository {
   findById(id: number): Promise<Product | null>;
   findByCode(code: string): Promise<Product | null>;
-  create(data: { code: string; name: string; description?: string }): Promise<Product>;
+  create(data: {
+    code: string;
+    name: string;
+    description?: string;
+  }): Promise<Product>;
   findAllActive(): Promise<Product[]>;
   updateStatus(id: number, isActive: boolean): Promise<Product>;
 }
@@ -40,8 +44,9 @@ export interface IProductVariantRepository {
   findById(id: number): Promise<ProductVariant | null>;
   findBySku(sku: string): Promise<ProductVariant | null>;
   findByProductId(productId: number): Promise<ProductVariant[]>;
-  createMany(variants: (CreateVariantDTO & { productId: number; sku: string })[]): Promise<ProductVariant[]>;
+  createMany(
+    variants: (CreateVariantDTO & { productId: number; sku: string })[]
+  ): Promise<ProductVariant[]>;
   update(id: number, data: UpdateVariantDTO): Promise<ProductVariant>;
   search(query: string, limit: number): Promise<VariantSearchResult[]>;
 }
-

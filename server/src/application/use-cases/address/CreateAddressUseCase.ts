@@ -6,9 +6,9 @@ export class CreateAddressUseCase {
 
   async execute(userId: number, data: CreateAddressDTO): Promise<Address> {
     const count = await this.addressRepository.countByUserId(userId);
-    
+
     let isDefault = data.isDefault ?? false;
-    
+
     // First address must always be default
     if (count === 0) {
       isDefault = true;

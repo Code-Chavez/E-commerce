@@ -19,7 +19,11 @@ const discountAuditController = new DiscountAuditController();
 const sellerRankingController = new SellerRankingController();
 const inventoryValuationController = new InventoryValuationController();
 
-router.get('/reports/inventory-rotation', requirePermission('products:read'), ctrl.inventoryRotation.bind(ctrl));
+router.get(
+  '/reports/inventory-rotation',
+  requirePermission('products:read'),
+  ctrl.inventoryRotation.bind(ctrl)
+);
 
 /**
  * T-207: Export reports in standard formats (PDF, Excel, CSV)
@@ -34,7 +38,7 @@ router.get(
 router.get(
   '/reports/dispatch-efficiency',
   requirePermission('sales:read'),
-  dispatchReportController.getEfficiency,
+  dispatchReportController.getEfficiency
 );
 
 // T-240: Reporte de utilidad bruta y rentabilidad por marca y categoría (HU-069)
@@ -62,21 +66,21 @@ router.get(
 router.get(
   '/admin/reports/discounts',
   requirePermission('sales:read'),
-  discountAuditController.getDiscountAudit,
+  discountAuditController.getDiscountAudit
 );
 
 // T-250: Ranking de vendedores por desempeño (HU-076)
 router.get(
   '/admin/reports/seller-ranking',
   requirePermission('sales:read'),
-  sellerRankingController.getRanking,
+  sellerRankingController.getRanking
 );
 
 // T-252: Valorización del inventario en tiempo real (HU-077)
 router.get(
   '/admin/reports/inventory-valuation',
   requirePermission('products:read'),
-  inventoryValuationController.getValuation,
+  inventoryValuationController.getValuation
 );
 
 // T-287 / HU-091: Modelo de Predicción de Demanda
@@ -94,5 +98,3 @@ router.get(
 );
 
 export default router;
-
-

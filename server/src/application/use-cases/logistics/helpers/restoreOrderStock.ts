@@ -14,7 +14,7 @@ export async function restoreOrderStock(
   tx: Prisma.TransactionClient,
   items: RestorableItem[],
   userId: number | null,
-  notes?: string,
+  notes?: string
 ): Promise<void> {
   let mainBranch = await tx.branch.findFirst({
     where: { isMain: true, isActive: true },
@@ -28,7 +28,9 @@ export async function restoreOrderStock(
   }
 
   if (!mainBranch) {
-    throw new Error('No se encontró ninguna sucursal activa para reincorporar el stock');
+    throw new Error(
+      'No se encontró ninguna sucursal activa para reincorporar el stock'
+    );
   }
 
   for (const item of items) {
@@ -67,7 +69,7 @@ export async function restoreOrderStock(
 
     const unitCost = lastKardex?.unitCost ?? 0;
     const lastBalanceCost = lastKardex?.balanceCost ?? 0;
-    const newBalanceCost = lastBalanceCost + (item.qty * unitCost);
+    const newBalanceCost = lastBalanceCost + item.qty * unitCost;
 
     await tx.kardexEntry.create({
       data: {

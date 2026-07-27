@@ -42,7 +42,7 @@ export const seedData = {
       "id": 1,
       "ruc": "20608765432",
       "razonSocial": "Distribuidora Intercontinental de Calzado S.A.C.",
-      "contacto": "Alejandro Mendoza",
+      "contacto": "E-Commerce",
       "direccion": "Jr. Amazonas 456, Chachapoyas",
       "isActive": true
     }

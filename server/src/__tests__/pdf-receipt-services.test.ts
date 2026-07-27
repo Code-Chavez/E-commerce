@@ -34,14 +34,15 @@ describe('PDFKit Receipt Services', () => {
     seller: null,
     client: null,
     items: [],
-    payments: []
+    payments: [],
   };
 
-  const expectedLegend = "PARA RECOJO EN TIENDA: Conserve este comprobante. Preséntelo junto con su documento de identidad en la sucursal seleccionada para retirar su pedido. Plazo máximo de recojo: 7 días calendario desde la fecha de emisión.";
+  const expectedLegend =
+    'PARA RECOJO EN TIENDA: Conserve este comprobante. Preséntelo junto con su documento de identidad en la sucursal seleccionada para retirar su pedido. Plazo máximo de recojo: 7 días calendario desde la fecha de emisión.';
 
   describe('PDFKitPosReceiptService', () => {
     let service: PDFKitPosReceiptService;
-    
+
     beforeEach(() => {
       service = new PDFKitPosReceiptService();
       jest.clearAllMocks();
@@ -49,26 +50,28 @@ describe('PDFKit Receipt Services', () => {
 
     it('should NOT print the legend if isPickup is false or undefined', () => {
       service.generate({ ...mockReceipt, isPickup: false });
-      
-      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0].value as any;
+
+      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0]
+        .value as any;
       const textCalls = pdfMock.text.mock.calls.map((call: any[]) => call[0]);
-      
+
       expect(textCalls).not.toContain(expectedLegend);
     });
 
     it('should print the legend EXACTLY if isPickup is true (recojo en tienda)', () => {
       service.generate({ ...mockReceipt, isPickup: true });
-      
-      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0].value as any;
+
+      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0]
+        .value as any;
       const textCalls = pdfMock.text.mock.calls.map((call: any[]) => call[0]);
-      
+
       expect(textCalls).toContain(expectedLegend);
     });
   });
 
   describe('PDFKitTicketReceiptService', () => {
     let service: PDFKitTicketReceiptService;
-    
+
     beforeEach(() => {
       service = new PDFKitTicketReceiptService();
       jest.clearAllMocks();
@@ -76,19 +79,21 @@ describe('PDFKit Receipt Services', () => {
 
     it('should NOT print the legend if isPickup is false or undefined', () => {
       service.generate({ ...mockReceipt, isPickup: false });
-      
-      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0].value as any;
+
+      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0]
+        .value as any;
       const textCalls = pdfMock.text.mock.calls.map((call: any[]) => call[0]);
-      
+
       expect(textCalls).not.toContain(expectedLegend);
     });
 
     it('should print the legend EXACTLY if isPickup is true (recojo en tienda)', () => {
       service.generate({ ...mockReceipt, isPickup: true });
-      
-      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0].value as any;
+
+      const pdfMock = (PDFDocument as unknown as jest.Mock).mock.results[0]
+        .value as any;
       const textCalls = pdfMock.text.mock.calls.map((call: any[]) => call[0]);
-      
+
       expect(textCalls).toContain(expectedLegend);
     });
   });

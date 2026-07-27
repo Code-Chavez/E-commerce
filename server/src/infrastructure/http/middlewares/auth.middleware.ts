@@ -20,7 +20,8 @@ export const requirePermission = (requiredPermission: string) => {
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
           success: false,
-          error: 'Acceso no autorizado: Token faltante o con formato incorrecto',
+          error:
+            'Acceso no autorizado: Token faltante o con formato incorrecto',
         });
       }
 
@@ -106,7 +107,11 @@ export const requirePermission = (requiredPermission: string) => {
  * Generic authentication middleware.
  * Verifies JWT token integrity and attaches req.auth context without checking permission rules.
  */
-export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -165,7 +170,11 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
  * Optional authentication middleware.
  * If a valid JWT is provided, attaches req.auth context. Otherwise, continues without it.
  */
-export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
+export const optionalAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

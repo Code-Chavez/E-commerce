@@ -5,7 +5,11 @@ import prisma from '@infrastructure/database/prisma';
 const getUseCase = new GetSalesAnomaliesUseCase();
 
 export class SalesAnomalyController {
-  getAnomalies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAnomalies = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const onlyActive = req.query.onlyActive !== 'false';
       const anomalies = await getUseCase.execute(onlyActive);
@@ -15,7 +19,11 @@ export class SalesAnomalyController {
     }
   };
 
-  resolveAnomaly = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  resolveAnomaly = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = parseInt(req.params.id as string, 10);
       const updated = await prisma.salesAnomaly.update({

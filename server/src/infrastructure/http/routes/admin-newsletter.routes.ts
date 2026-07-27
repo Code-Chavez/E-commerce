@@ -11,8 +11,11 @@ const router = Router();
 const repository = new PrismaNewsletterRepository();
 const excelService = new ExcelReportService();
 
-const getNewsletterSubscribersUseCase = new GetNewsletterSubscribersUseCase(repository);
-const exportNewsletterSubscribersUseCase = new ExportNewsletterSubscribersUseCase(repository, excelService);
+const getNewsletterSubscribersUseCase = new GetNewsletterSubscribersUseCase(
+  repository
+);
+const exportNewsletterSubscribersUseCase =
+  new ExportNewsletterSubscribersUseCase(repository, excelService);
 
 const adminNewsletterController = new AdminNewsletterController(
   getNewsletterSubscribersUseCase,
@@ -24,13 +27,21 @@ const checkAdmin = (req: any, res: any, next: any) => {
   if (roleName === 'ADMIN' || roleName === 'Admin') {
     return next();
   }
-  return res.status(403).json({ success: false, message: 'No autorizado. Solo ADMIN.' });
+  return res
+    .status(403)
+    .json({ success: false, message: 'No autorizado. Solo ADMIN.' });
 };
 
 router.use(requireAuth);
 router.use(checkAdmin);
 
-router.get('/subscribers', adminNewsletterController.getAll.bind(adminNewsletterController));
-router.get('/subscribers/export', adminNewsletterController.export.bind(adminNewsletterController));
+router.get(
+  '/subscribers',
+  adminNewsletterController.getAll.bind(adminNewsletterController)
+);
+router.get(
+  '/subscribers/export',
+  adminNewsletterController.export.bind(adminNewsletterController)
+);
 
 export default router;

@@ -23,6 +23,10 @@ router.put('/users/:id/role', secureRbac, roleController.assignRoleToUser);
 /**
  * T-053 helper: List roles for selector
  */
-router.get('/roles', requirePermission('users:read'), roleController.getRoles.bind(roleController));
+router.get(
+  '/roles',
+  requirePermission('users:read'),
+  roleController.getRoles.bind(roleController)
+);
 
 export default router;

@@ -35,7 +35,7 @@ export class GetDiscountAuditUseCase {
     from: Date,
     to: Date,
     vendorId?: number,
-    branchId?: number,
+    branchId?: number
   ): Promise<DiscountAuditReport> {
     const where: any = {
       discountTotal: { gt: 0 },
@@ -54,20 +54,28 @@ export class GetDiscountAuditUseCase {
     });
 
     // Fetch user names separately since PosOrder.userId is nullable
-    const userIds = [...new Set(posOrders.map(o => o.userId).filter((id): id is number => id !== null))];
+    const userIds = [
+      ...new Set(
+        posOrders.map((o) => o.userId).filter((id): id is number => id !== null)
+      ),
+    ];
     const users = userIds.length
       ? await prisma.user.findMany({
           where: { id: { in: userIds } },
           select: { id: true, name: true, lastName: true },
         })
       : [];
-    const userMap = new Map(users.map(u => [u.id, `${u.name} ${u.lastName ?? ''}`.trim()]));
+    const userMap = new Map(
+      users.map((u) => [u.id, `${u.name} ${u.lastName ?? ''}`.trim()])
+    );
 
-    const orders: DiscountAuditOrder[] = posOrders.map(o => ({
+    const orders: DiscountAuditOrder[] = posOrders.map((o) => ({
       id: o.id,
       createdAt: o.createdAt,
       vendorId: o.userId,
-      vendorName: o.userId ? (userMap.get(o.userId) ?? `Usuario #${o.userId}`) : 'Sin asignar',
+      vendorName: o.userId
+        ? (userMap.get(o.userId) ?? `Usuario #${o.userId}`)
+        : 'Sin asignar',
       branchId: o.branchId,
       branchName: o.branch.name,
       subtotal: Number(o.subtotal),
@@ -75,11 +83,19 @@ export class GetDiscountAuditUseCase {
       total: Number(o.total),
     }));
 
-    const totalDiscountAmount = orders.reduce((sum, o) => sum + o.discountTotal, 0);
-    const avgDiscountPerOrder = orders.length ? totalDiscountAmount / orders.length : 0;
+    const totalDiscountAmount = orders.reduce(
+      (sum, o) => sum + o.discountTotal,
+      0
+    );
+    const avgDiscountPerOrder = orders.length
+      ? totalDiscountAmount / orders.length
+      : 0;
 
     // Group by vendor
-    const vendorMap = new Map<number | null, { name: string; count: number; discount: number }>();
+    const vendorMap = new Map<
+      number | null,
+      { name: string; count: number; discount: number }
+    >();
     for (const o of orders) {
       const key = o.vendorId;
       if (!vendorMap.has(key)) {
@@ -96,7 +112,8 @@ export class GetDiscountAuditUseCase {
         vendorName: s.name,
         orderCount: s.count,
         totalDiscount: Number(s.discount.toFixed(2)),
-        avgDiscount: s.count > 0 ? Number((s.discount / s.count).toFixed(2)) : 0,
+        avgDiscount:
+          s.count > 0 ? Number((s.discount / s.count).toFixed(2)) : 0,
       }))
       .sort((a, b) => b.totalDiscount - a.totalDiscount);
 

@@ -21,7 +21,7 @@ export const configurePassport = (): void => {
     // if called without a configured strategy, which is acceptable.
     if (process.env.NODE_ENV !== 'test') {
       console.warn(
-        '⚠️ Google OAuth credentials not found. Skipping Passport Google strategy configuration.',
+        '⚠️ Google OAuth credentials not found. Skipping Passport Google strategy configuration.'
       );
     }
     return;
@@ -34,12 +34,12 @@ export const configurePassport = (): void => {
         _accessToken: string,
         _refreshToken: string,
         profile: Profile,
-        done: (error: Error | null, user?: Profile) => void,
+        done: (error: Error | null, user?: Profile) => void
       ) => {
         // Pass the raw Google profile to the controller.
         // Business logic (find/create user) lives in GoogleLoginUseCase.
         return done(null, profile);
-      },
-    ),
+      }
+    )
   );
 };

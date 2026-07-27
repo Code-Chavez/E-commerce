@@ -20,20 +20,33 @@ export class UpdateDeliveryStatusUseCase {
     DeliveryStateMachine.validateTransition(delivery.status, newStatus);
 
     // Update in Database
-    const updatedDelivery = await this.deliveryRepository.updateStatus(deliveryId, newStatus);
+    const updatedDelivery = await this.deliveryRepository.updateStatus(
+      deliveryId,
+      newStatus
+    );
 
     // If there is an associated customer email, send a notification
     const customerEmail = (updatedDelivery as any).orderUser?.email;
     const customerName = (updatedDelivery as any).orderUser?.name || 'Cliente';
 
     if (customerEmail) {
-      await this.sendNotificationEmail(customerEmail, customerName, newStatus, updatedDelivery.orderId);
+      await this.sendNotificationEmail(
+        customerEmail,
+        customerName,
+        newStatus,
+        updatedDelivery.orderId
+      );
     }
 
     return updatedDelivery;
   }
 
-  private async sendNotificationEmail(to: string, name: string, status: string, orderId: number): Promise<void> {
+  private async sendNotificationEmail(
+    to: string,
+    name: string,
+    status: string,
+    orderId: number
+  ): Promise<void> {
     let subject = `Actualización de su pedido #${orderId}`;
     let message = `<p>Hola ${name},</p><p>El estado de su envío ha sido actualizado.</p>`;
 

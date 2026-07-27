@@ -26,14 +26,20 @@ router.post('/reset-password', authController.resetPassword);
 // Google OAuth 2.0 — Initiate flow (HU-001 / T-033)
 router.get(
   '/google',
-  passport.authenticate('google', { scope: ['profile', 'email'], session: false }),
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false,
+  })
 );
 
 // Google OAuth 2.0 — Callback (HU-001 / T-033)
 router.get(
   '/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
-  authController.googleCallback,
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: '/login',
+  }),
+  authController.googleCallback
 );
 
 // Session extraction from cookie (HU-001 / T-036)

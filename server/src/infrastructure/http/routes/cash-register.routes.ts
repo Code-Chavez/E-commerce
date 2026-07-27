@@ -6,18 +6,10 @@ const router = Router();
 const controller = new CashRegisterController();
 
 // POST /api/v1/cash-registers — Crear caja registradora (Solo ADMIN)
-router.post(
-  '/cash-registers',
-  requireAuth,
-  controller.create.bind(controller)
-);
+router.post('/cash-registers', requireAuth, controller.create.bind(controller));
 
 // GET /api/v1/cash-registers — Listar todas las cajas registradoras o filtrar por branchId (ADMIN o SELLER)
-router.get(
-  '/cash-registers',
-  requireAuth,
-  controller.findAll.bind(controller)
-);
+router.get('/cash-registers', requireAuth, controller.findAll.bind(controller));
 
 // PATCH /api/v1/cash-registers/:id — Editar caja registradora (Solo ADMIN)
 router.patch(

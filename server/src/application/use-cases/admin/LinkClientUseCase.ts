@@ -17,7 +17,10 @@ export class LinkClientUseCase {
     private readonly jwtService: JwtService
   ) {}
 
-  async execute(clientId: number, email?: string): Promise<{ success: boolean; message: string }> {
+  async execute(
+    clientId: number,
+    email?: string
+  ): Promise<{ success: boolean; message: string }> {
     const client = await this.clientRepository.findById(clientId);
     if (!client) {
       throw new Error('Cliente no encontrado');
@@ -31,7 +34,9 @@ export class LinkClientUseCase {
     const clientEmail = client.email || email?.trim() || null;
 
     if (!clientEmail) {
-      throw new Error('El cliente debe tener un correo electrónico registrado para poder vincular su cuenta');
+      throw new Error(
+        'El cliente debe tener un correo electrónico registrado para poder vincular su cuenta'
+      );
     }
 
     // If the client had no email, persist the provided one before linking
@@ -55,20 +60,27 @@ export class LinkClientUseCase {
     let newUserId = 0;
 
     await this.transactionManager.run(async (tx) => {
-      const newUser = await this.userRepository.create({
-        email: clientEmail,
-        name: client.name,
-        password: hashedPassword,
-        isActive: true, // Activamos la cuenta directamente
-        authProvider: 'local',
-        mustChangePassword: true // Forzado de cambio en primer inicio
-      }, tx);
+      const newUser = await this.userRepository.create(
+        {
+          email: clientEmail,
+          name: client.name,
+          password: hashedPassword,
+          isActive: true, // Activamos la cuenta directamente
+          authProvider: 'local',
+          mustChangePassword: true, // Forzado de cambio en primer inicio
+        },
+        tx
+      );
       newUserId = newUser.id;
 
       // Asignar rol CLIENT
       const clientRole = await this.roleRepository.findByName('CLIENT');
       if (clientRole) {
-        await this.roleRepository.assignRoleToUser(newUser.id, clientRole.id, tx);
+        await this.roleRepository.assignRoleToUser(
+          newUser.id,
+          clientRole.id,
+          tx
+        );
       }
 
       // Vincular cliente con usuario
@@ -80,7 +92,11 @@ export class LinkClientUseCase {
     // already-committed DB transaction. The admin will be notified of partial
     // success and can manually trigger a credential re-send if needed.
     try {
-      const resetToken = this.jwtService.generateWelcomePasswordToken(newUserId, clientEmail, hashedPassword);
+      const resetToken = this.jwtService.generateWelcomePasswordToken(
+        newUserId,
+        clientEmail,
+        hashedPassword
+      );
       const clientUrl = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
       const resetLink = `${clientUrl}/reset-password?token=${resetToken}`;
 
@@ -131,10 +147,14 @@ export class LinkClientUseCase {
       );
       return {
         success: true,
-        message: 'Cliente vinculado. Advertencia: no se pudo enviar el correo de credenciales.',
+        message:
+          'Cliente vinculado. Advertencia: no se pudo enviar el correo de credenciales.',
       };
     }
 
-    return { success: true, message: 'Cliente vinculado y credenciales enviadas' };
+    return {
+      success: true,
+      message: 'Cliente vinculado y credenciales enviadas',
+    };
   }
 }

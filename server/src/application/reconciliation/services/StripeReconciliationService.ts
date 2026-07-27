@@ -1,6 +1,11 @@
 import { IStripePaymentPort } from '@domain/reconciliation/ports/IStripePaymentPort';
 import { IOrderRepositoryPort } from '@domain/reconciliation/ports/IOrderRepositoryPort';
-import { ReconciliationResult, ReconciliationMatch, StripePaymentIntentInfo, LocalOrderInfo } from '@domain/reconciliation/models/ReconciliationResult';
+import {
+  ReconciliationResult,
+  ReconciliationMatch,
+  StripePaymentIntentInfo,
+  LocalOrderInfo,
+} from '@domain/reconciliation/models/ReconciliationResult';
 
 export class StripeReconciliationService {
   constructor(
@@ -50,7 +55,10 @@ export class StripeReconciliationService {
     }
 
     for (const order of localOrders) {
-      if (order.paymentIntentId && !matchedStripeIntentIds.has(order.paymentIntentId)) {
+      if (
+        order.paymentIntentId &&
+        !matchedStripeIntentIds.has(order.paymentIntentId)
+      ) {
         if (['PAID', 'SHIPPED', 'DELIVERED'].includes(order.status)) {
           dbOnly.push(order);
         }

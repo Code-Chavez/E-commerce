@@ -22,7 +22,6 @@ export interface CreateAuditLogDTO {
   details?: Record<string, unknown>;
 }
 
-
 /**
  * Filtros opcionales para consultar logs de auditoría.
  */

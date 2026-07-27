@@ -1,5 +1,8 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { RecordAuditUseCase, GetAuditLogsUseCase } from '@application/use-cases/AuditUseCases';
+import {
+  RecordAuditUseCase,
+  GetAuditLogsUseCase,
+} from '@application/use-cases/AuditUseCases';
 import { PrismaAuditService } from '@infrastructure/services/PrismaAuditService';
 import { IAuditLogRepository } from '@domain/repositories/IAuditLogRepository';
 import { AuditModule, AuditAction } from '@domain/services/AuditService';
@@ -54,7 +57,7 @@ describe('Audit System (RF-84)', () => {
           module: AuditModule.PRICES,
           userId: 1,
           details: expect.objectContaining({ productId: 42 }),
-        }),
+        })
       );
     });
 
@@ -79,7 +82,7 @@ describe('Audit System (RF-84)', () => {
           action: AuditAction.UPDATE_STOCK,
           module: AuditModule.STOCK,
           userId: 2,
-        }),
+        })
       );
     });
 
@@ -104,7 +107,7 @@ describe('Audit System (RF-84)', () => {
           action: AuditAction.CREATE_SALE,
           module: AuditModule.SALES,
           userId: 3,
-        }),
+        })
       );
     });
 
@@ -121,7 +124,7 @@ describe('Audit System (RF-84)', () => {
       expect(mockAuditLogRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: 5,
-        }),
+        })
       );
     });
   });
@@ -130,7 +133,12 @@ describe('Audit System (RF-84)', () => {
     it('debería retornar todos los logs sin filtros', async () => {
       const logs: AuditLog[] = [
         fakeAuditLog,
-        { ...fakeAuditLog, id: 2, action: AuditAction.UPDATE_STOCK, module: AuditModule.STOCK },
+        {
+          ...fakeAuditLog,
+          id: 2,
+          action: AuditAction.UPDATE_STOCK,
+          module: AuditModule.STOCK,
+        },
       ];
       mockAuditLogRepository.findAll.mockResolvedValue(logs);
 
@@ -144,9 +152,13 @@ describe('Audit System (RF-84)', () => {
     it('debería filtrar logs por módulo', async () => {
       mockAuditLogRepository.findAll.mockResolvedValue([fakeAuditLog]);
 
-      const result = await getAuditLogsUseCase.execute({ module: AuditModule.PRICES });
+      const result = await getAuditLogsUseCase.execute({
+        module: AuditModule.PRICES,
+      });
 
-      expect(mockAuditLogRepository.findAll).toHaveBeenCalledWith({ module: AuditModule.PRICES });
+      expect(mockAuditLogRepository.findAll).toHaveBeenCalledWith({
+        module: AuditModule.PRICES,
+      });
       expect(result).toHaveLength(1);
       expect(result[0].module).toBe(AuditModule.PRICES);
     });
@@ -187,5 +199,3 @@ describe('Audit System (RF-84)', () => {
     });
   });
 });
-
-

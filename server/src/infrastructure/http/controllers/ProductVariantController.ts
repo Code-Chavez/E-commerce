@@ -14,10 +14,15 @@ const variantRepository = new PrismaProductVariantRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const auditService = new PrismaAuditService(auditLogRepository);
 
-const createVariantsUseCase = new CreateVariantsUseCase(productRepository, variantRepository);
-const updateVariantUseCase = new UpdateVariantUseCase(variantRepository, auditService);
+const createVariantsUseCase = new CreateVariantsUseCase(
+  productRepository,
+  variantRepository
+);
+const updateVariantUseCase = new UpdateVariantUseCase(
+  variantRepository,
+  auditService
+);
 const searchVariantsUseCase = new SearchVariantsUseCase(variantRepository);
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Zod Schemas de Validación — T-077 / T-078
@@ -32,7 +37,8 @@ const CreateVariantsSchema = z.object({
   attributes: z
     .record(
       z.string().min(1, 'El nombre del atributo no puede estar vacío'),
-      z.array(z.string().min(1, 'El valor del atributo no puede estar vacío'))
+      z
+        .array(z.string().min(1, 'El valor del atributo no puede estar vacío'))
         .min(1, 'Cada atributo debe tener al menos un valor')
     )
     .refine((attrs) => Object.keys(attrs).length > 0, {
@@ -59,7 +65,10 @@ const UpdateVariantSchema = z
       .string()
       .min(2, 'El SKU debe tener al menos 2 caracteres')
       .max(100, 'El SKU no puede exceder 100 caracteres')
-      .regex(/^[A-Z0-9_\-]+$/i, 'El SKU solo puede contener letras, números, guiones y guiones bajos')
+      .regex(
+        /^[A-Z0-9_\-]+$/i,
+        'El SKU solo puede contener letras, números, guiones y guiones bajos'
+      )
       .optional(),
     price: z
       .number()
@@ -78,15 +87,24 @@ const UpdateVariantSchema = z
       .max(99, 'El descuento no puede ser mayor a 99')
       .optional(),
   })
-  .refine((data) => data.sku !== undefined || data.price !== undefined || data.costPrice !== undefined || data.isActive !== undefined || data.discountPercent !== undefined, {
-    message: 'Debes proporcionar al menos un campo a actualizar (sku, price, costPrice, discountPercent o isActive)',
-  });
+  .refine(
+    (data) =>
+      data.sku !== undefined ||
+      data.price !== undefined ||
+      data.costPrice !== undefined ||
+      data.isActive !== undefined ||
+      data.discountPercent !== undefined,
+    {
+      message:
+        'Debes proporcionar al menos un campo a actualizar (sku, price, costPrice, discountPercent o isActive)',
+    }
+  );
 
 const UpdateVariantMinStockSchema = z.object({
   minStock: z
     .number()
     .int('El stock mínimo debe ser un número entero')
-    .min(0, 'El stock mínimo no puede ser negativo')
+    .min(0, 'El stock mínimo no puede ser negativo'),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -101,12 +119,16 @@ export class ProductVariantController {
     try {
       const productId = parseInt(String(req.params.id), 10);
       if (isNaN(productId)) {
-        return res.status(400).json({ success: false, error: 'ID de producto inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de producto inválido' });
       }
 
       const product = await productRepository.findById(productId);
       if (!product) {
-        return res.status(404).json({ success: false, error: 'El producto no existe' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'El producto no existe' });
       }
 
       const variants = await variantRepository.findByProductId(productId);
@@ -127,7 +149,9 @@ export class ProductVariantController {
     try {
       const productId = parseInt(String(req.params.id), 10);
       if (isNaN(productId)) {
-        return res.status(400).json({ success: false, error: 'ID de producto inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de producto inválido' });
       }
 
       const validation = CreateVariantsSchema.safeParse(req.body);
@@ -141,13 +165,19 @@ export class ProductVariantController {
         });
       }
 
-      const result = await createVariantsUseCase.execute(productId, validation.data);
+      const result = await createVariantsUseCase.execute(
+        productId,
+        validation.data
+      );
       return res.status(201).json({ success: true, data: result });
     } catch (error: any) {
       if (error.message.includes('no existe')) {
         return res.status(404).json({ success: false, error: error.message });
       }
-      if (error.message.includes('ya existen') || error.message.includes('ya está asignado')) {
+      if (
+        error.message.includes('ya existen') ||
+        error.message.includes('ya está asignado')
+      ) {
         return res.status(409).json({ success: false, error: error.message });
       }
       next(error);
@@ -163,7 +193,9 @@ export class ProductVariantController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de variante inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de variante inválido' });
       }
 
       const validation = UpdateVariantSchema.safeParse(req.body);
@@ -177,7 +209,11 @@ export class ProductVariantController {
         });
       }
 
-      const variant = await updateVariantUseCase.execute(id, validation.data, (req as any).auth?.userId);
+      const variant = await updateVariantUseCase.execute(
+        id,
+        validation.data,
+        (req as any).auth?.userId
+      );
       return res.status(200).json({ success: true, data: variant });
     } catch (error: any) {
       if (error.message.includes('no existe')) {
@@ -186,7 +222,11 @@ export class ProductVariantController {
       if (error.message.includes('ya está asignado')) {
         return res.status(409).json({ success: false, error: error.message });
       }
-      if (error.message.includes('mayor a 0') || error.message.includes('mayor al precio de venta') || error.message.includes('no puede ser negativo')) {
+      if (
+        error.message.includes('mayor a 0') ||
+        error.message.includes('mayor al precio de venta') ||
+        error.message.includes('no puede ser negativo')
+      ) {
         return res.status(400).json({ success: false, error: error.message });
       }
       next(error);
@@ -201,7 +241,9 @@ export class ProductVariantController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de variante inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de variante inválido' });
       }
 
       const validation = UpdateVariantMinStockSchema.safeParse(req.body);
@@ -215,7 +257,9 @@ export class ProductVariantController {
         });
       }
 
-      const variant = await updateVariantUseCase.execute(id, { minStock: validation.data.minStock });
+      const variant = await updateVariantUseCase.execute(id, {
+        minStock: validation.data.minStock,
+      });
       return res.status(200).json({ success: true, data: variant });
     } catch (error: any) {
       if (error.message.includes('no existe')) {
@@ -233,7 +277,11 @@ export class ProductVariantController {
     try {
       const q = req.query.q;
       if (typeof q !== 'string' || q.trim() === '') {
-        return res.status(400).json({ success: false, error: 'El parámetro de búsqueda "q" es requerido y no puede estar vacío' });
+        return res.status(400).json({
+          success: false,
+          error:
+            'El parámetro de búsqueda "q" es requerido y no puede estar vacío',
+        });
       }
 
       let limit = 10;

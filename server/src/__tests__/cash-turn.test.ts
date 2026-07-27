@@ -3,19 +3,38 @@ import app from '../app';
 
 jest.mock('@application/use-cases/pos/OpenCashTurnUseCase', () => ({
   OpenCashTurnUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, registerId: 1, userId: 1, openAmount: 100, status: 'OPEN' } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      registerId: 1,
+      userId: 1,
+      openAmount: 100,
+      status: 'OPEN',
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/pos/RegisterCashMovementUseCase', () => ({
   RegisterCashMovementUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, turnId: 1, type: 'INGRESO', amount: 50, reason: 'Cambio' } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      turnId: 1,
+      type: 'INGRESO',
+      amount: 50,
+      reason: 'Cambio',
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/pos/CloseCashTurnUseCase', () => ({
   CloseCashTurnUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, registerId: 1, userId: 1, closeAmount: 150, expectedAmount: 150, status: 'CLOSED' } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      registerId: 1,
+      userId: 1,
+      closeAmount: 150,
+      expectedAmount: 150,
+      status: 'CLOSED',
+    } as never),
   })),
 }));
 

@@ -19,40 +19,58 @@ export class AdminBackupConfigController {
   async getConfig(req: Request, res: Response): Promise<void> {
     const role = req.auth?.role;
     if (role !== 'ADMIN' && role !== 'SUPERADMIN') {
-      res.status(403).json({ success: false, error: 'Acceso denegado. Se requiere rol de administrador.' });
+      res.status(403).json({
+        success: false,
+        error: 'Acceso denegado. Se requiere rol de administrador.',
+      });
       return;
     }
     try {
       const config = await this.getUseCase.execute();
       res.status(200).json({ success: true, data: config });
     } catch {
-      res.status(500).json({ success: false, error: 'Error interno al obtener configuración de backup' });
+      res.status(500).json({
+        success: false,
+        error: 'Error interno al obtener configuración de backup',
+      });
     }
   }
 
   async updateConfig(req: Request, res: Response): Promise<void> {
     const role = req.auth?.role;
     if (role !== 'ADMIN' && role !== 'SUPERADMIN') {
-      res.status(403).json({ success: false, error: 'Acceso denegado. Se requiere rol de administrador.' });
+      res.status(403).json({
+        success: false,
+        error: 'Acceso denegado. Se requiere rol de administrador.',
+      });
       return;
     }
     try {
       const { retentionDays, adminEmail, cronExpression } = req.body;
-      const config = await this.updateUseCase.execute({ retentionDays, adminEmail, cronExpression });
+      const config = await this.updateUseCase.execute({
+        retentionDays,
+        adminEmail,
+        cronExpression,
+      });
       res.status(200).json({ success: true, data: config });
     } catch (error: any) {
       if (error.message?.includes('mayor a 0')) {
         res.status(400).json({ success: false, error: error.message });
         return;
       }
-      res.status(500).json({ success: false, error: 'Error interno al actualizar configuración de backup' });
+      res.status(500).json({
+        success: false,
+        error: 'Error interno al actualizar configuración de backup',
+      });
     }
   }
 
   async notifyFailure(req: Request, res: Response): Promise<void> {
     const secret = req.headers['x-backup-secret'];
     if (!secret || secret !== process.env.BACKUP_WEBHOOK_SECRET) {
-      res.status(401).json({ success: false, error: 'Secreto de backup inválido' });
+      res
+        .status(401)
+        .json({ success: false, error: 'Secreto de backup inválido' });
       return;
     }
     try {
@@ -69,7 +87,10 @@ export class AdminBackupConfigController {
       await this.emailService.sendEmail(config.adminEmail, subject, html);
       res.status(200).json({ success: true, message: 'Notificación enviada' });
     } catch {
-      res.status(500).json({ success: false, error: 'Error interno al enviar notificación de backup' });
+      res.status(500).json({
+        success: false,
+        error: 'Error interno al enviar notificación de backup',
+      });
     }
   }
 }

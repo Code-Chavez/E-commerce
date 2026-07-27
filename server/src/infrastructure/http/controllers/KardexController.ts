@@ -2,7 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '@infrastructure/database/prisma';
 
-const KARDEX_TYPES = ['COMPRA', 'VENTA', 'TRANSFERENCIA', 'DEVOLUCION', 'AJUSTE'] as const;
+const KARDEX_TYPES = [
+  'COMPRA',
+  'VENTA',
+  'TRANSFERENCIA',
+  'DEVOLUCION',
+  'AJUSTE',
+] as const;
 
 const QuerySchema = z.object({
   variantId: z.string().regex(/^\d+$/).transform(Number),
@@ -21,7 +27,9 @@ export class KardexController {
     try {
       const parsed = QuerySchema.safeParse(req.query);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const { variantId, branchId, from, to, type } = parsed.data;
@@ -31,12 +39,14 @@ export class KardexController {
           variantId,
           branchId,
           ...(type ? { type } : {}),
-          ...(from || to ? {
-            createdAt: {
-              ...(from ? { gte: new Date(from) } : {}),
-              ...(to ? { lte: new Date(to) } : {}),
-            },
-          } : {}),
+          ...(from || to
+            ? {
+                createdAt: {
+                  ...(from ? { gte: new Date(from) } : {}),
+                  ...(to ? { lte: new Date(to) } : {}),
+                },
+              }
+            : {}),
         },
         orderBy: { createdAt: 'asc' },
         include: {
@@ -48,7 +58,7 @@ export class KardexController {
 
       return res.status(200).json({
         success: true,
-        data: entries.map(e => ({
+        data: entries.map((e) => ({
           id: e.id,
           type: e.type,
           quantity: e.quantity,
@@ -58,10 +68,14 @@ export class KardexController {
           balanceCost: e.balanceCost,
           sku: e.variant.sku,
           branch: e.branch.name,
-          userName: e.user ? `${e.user.name} ${e.user.lastName || ''}`.trim() || e.user.email : null,
+          userName: e.user
+            ? `${e.user.name} ${e.user.lastName || ''}`.trim() || e.user.email
+            : null,
           createdAt: e.createdAt,
         })),
       });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 }

@@ -63,15 +63,24 @@ export class GetInventoryValuationUseCase {
     });
 
     if (stocks.length === 0) {
-      return { totalValor: 0, totalVariantes: 0, byBranch: [], byCategory: [], items: [] };
+      return {
+        totalValor: 0,
+        totalVariantes: 0,
+        byBranch: [],
+        byCategory: [],
+        items: [],
+      };
     }
 
     // Get last KardexEntry unitCost per variantId+branchId
-    const variantBranchPairs = stocks.map(s => ({ variantId: s.variantId, branchId: s.branchId }));
+    const variantBranchPairs = stocks.map((s) => ({
+      variantId: s.variantId,
+      branchId: s.branchId,
+    }));
 
     // Query last kardex entry for each variant+branch combination
     const lastKardexEntries = await Promise.all(
-      variantBranchPairs.map(pair =>
+      variantBranchPairs.map((pair) =>
         prisma.kardexEntry.findFirst({
           where: { variantId: pair.variantId, branchId: pair.branchId },
           orderBy: { createdAt: 'desc' },
@@ -109,9 +118,16 @@ export class GetInventoryValuationUseCase {
     }
 
     // Group by branch
-    const branchMap = new Map<number, { name: string; variantes: number; valor: number }>();
+    const branchMap = new Map<
+      number,
+      { name: string; variantes: number; valor: number }
+    >();
     for (const item of items) {
-      const entry = branchMap.get(item.branchId) ?? { name: item.branchName, variantes: 0, valor: 0 };
+      const entry = branchMap.get(item.branchId) ?? {
+        name: item.branchName,
+        variantes: 0,
+        valor: 0,
+      };
       entry.variantes += 1;
       entry.valor += item.valorTotal;
       branchMap.set(item.branchId, entry);
@@ -129,7 +145,10 @@ export class GetInventoryValuationUseCase {
     // Group by category
     const categoryMap = new Map<string, { variantes: number; valor: number }>();
     for (const item of items) {
-      const entry = categoryMap.get(item.categoryName) ?? { variantes: 0, valor: 0 };
+      const entry = categoryMap.get(item.categoryName) ?? {
+        variantes: 0,
+        valor: 0,
+      };
       entry.variantes += 1;
       entry.valor += item.valorTotal;
       categoryMap.set(item.categoryName, entry);
@@ -143,7 +162,9 @@ export class GetInventoryValuationUseCase {
       }))
       .sort((a, b) => b.valor - a.valor);
 
-    const totalValor = Number(items.reduce((sum, i) => sum + i.valorTotal, 0).toFixed(2));
+    const totalValor = Number(
+      items.reduce((sum, i) => sum + i.valorTotal, 0).toFixed(2)
+    );
 
     return {
       totalValor,

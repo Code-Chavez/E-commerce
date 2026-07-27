@@ -41,7 +41,6 @@ import genderRoutes from '@infrastructure/http/routes/gender.routes';
 import adminExpenseRoutes from '@infrastructure/http/routes/admin-expense.routes';
 import creditRoutes from '@infrastructure/http/routes/credit.routes';
 
-
 import ecommerceCartRoutes from '@infrastructure/http/routes/ecommerce-cart.routes';
 import deliveryZoneRoutes from '@infrastructure/http/routes/delivery-zone.routes';
 import checkoutRoutes from '@infrastructure/http/routes/checkout.routes';
@@ -70,15 +69,19 @@ const app = express();
 configurePassport();
 
 // Middlewares
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true, // Allow cookies cross-origin for OAuth flow
-}));
-app.use(express.json({
-  verify: (req: any, res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true, // Allow cookies cross-origin for OAuth flow
+  })
+);
+app.use(
+  express.json({
+    verify: (req: any, res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());

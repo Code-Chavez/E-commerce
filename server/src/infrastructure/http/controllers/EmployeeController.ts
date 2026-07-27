@@ -17,7 +17,11 @@ const CreateEmployeeSchema = z.object({
   userId: z.number().optional().nullable(),
   roleId: z.number().optional().nullable(),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
-  password: z.string().min(6, 'Contraseña muy corta').optional().or(z.literal('')),
+  password: z
+    .string()
+    .min(6, 'Contraseña muy corta')
+    .optional()
+    .or(z.literal('')),
 });
 
 const UpdateEmployeeSchema = z.object({
@@ -49,14 +53,18 @@ export class EmployeeController {
     try {
       const validation = CreateEmployeeSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
       const { roleId, email, password, ...employeeData } = validation.data;
 
       const existing = await employeeRepository.findByDni(employeeData.dni);
       if (existing) {
-        return res.status(400).json({ success: false, error: 'El DNI ya está registrado' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'El DNI ya está registrado' });
       }
 
       // Si se proporciona email y password, creamos el usuario primero
@@ -65,7 +73,10 @@ export class EmployeeController {
         // Verificar si el email ya existe
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-          return res.status(400).json({ success: false, error: 'El email ya está registrado en otra cuenta' });
+          return res.status(400).json({
+            success: false,
+            error: 'El email ya está registrado en otra cuenta',
+          });
         }
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await prisma.user.create({
@@ -74,20 +85,24 @@ export class EmployeeController {
             password: hashedPassword,
             name: employeeData.name,
             isActive: true,
-          }
+          },
         });
         userId = newUser.id;
       }
 
       // Si se selecciona un rol pero no se proporciona ni se crea userId, informamos el error lógico
       if (roleId && !userId) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'No se puede asignar un rol a un empleado que no tiene una cuenta de usuario vinculada.' 
+        return res.status(400).json({
+          success: false,
+          error:
+            'No se puede asignar un rol a un empleado que no tiene una cuenta de usuario vinculada.',
         });
       }
 
-      const employee = await employeeRepository.create({ ...employeeData, userId });
+      const employee = await employeeRepository.create({
+        ...employeeData,
+        userId,
+      });
 
       // Sincronización de roles (Solo si tiene userId)
       if (employee.userId) {
@@ -109,7 +124,9 @@ export class EmployeeController {
       const id = parseInt(String(req.params.id), 10);
       const validation = UpdateEmployeeSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
       const { roleId, ...updateData } = validation.data;
@@ -135,14 +152,17 @@ export class EmployeeController {
       const id = parseInt(String(req.params.id), 10);
       const validation = ToggleStatusSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
       await employeeRepository.toggleStatus(id, validation.data.isActive);
-      return res.status(200).json({ success: true, message: 'Estado actualizado' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Estado actualizado' });
     } catch (error: any) {
       next(error);
     }
   }
 }
-

@@ -19,10 +19,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   return { __esModule: true, default: mockPrisma };
 });
 
-
 // Mock Auth Middleware
 jest.mock('@infrastructure/http/middlewares/auth.middleware', () => ({
-  requirePermission: jest.fn(() => (req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), requireAuth: jest.fn((req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
+  requirePermission: jest.fn(() => (req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  requireAuth: jest.fn((req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
 }));
 
 import prisma from '@infrastructure/database/prisma';
@@ -35,12 +42,14 @@ describe('HU-021: Inventory View', () => {
 
   it('should get global stock successfully (Happy Path)', async () => {
     (prisma.productVariant.findMany as jest.Mock).mockResolvedValue([
-      { 
-        id: 1, 
-        sku: 'PROD-1', 
-        product: { name: 'Prod 1' }, 
-        branchStock: [{ branchId: 1, quantity: 10, branch: { name: 'Main Branch' } }] 
-      }
+      {
+        id: 1,
+        sku: 'PROD-1',
+        product: { name: 'Prod 1' },
+        branchStock: [
+          { branchId: 1, quantity: 10, branch: { name: 'Main Branch' } },
+        ],
+      },
     ] as never);
 
     const response = await request(app).get('/api/v1/stock');
@@ -51,7 +60,9 @@ describe('HU-021: Inventory View', () => {
   });
 
   it('should return empty array if no stock found (Happy Path)', async () => {
-    (prisma.productVariant.findMany as jest.Mock).mockResolvedValue([] as never);
+    (prisma.productVariant.findMany as jest.Mock).mockResolvedValue(
+      [] as never
+    );
 
     const response = await request(app).get('/api/v1/stock');
 
@@ -60,7 +71,9 @@ describe('HU-021: Inventory View', () => {
   });
 
   it('should handle database errors gracefully (Error Case)', async () => {
-    (prisma.productVariant.findMany as jest.Mock).mockRejectedValue(new Error('DB connection failed') as never);
+    (prisma.productVariant.findMany as jest.Mock).mockRejectedValue(
+      new Error('DB connection failed') as never
+    );
 
     const response = await request(app).get('/api/v1/stock');
 
@@ -68,5 +81,3 @@ describe('HU-021: Inventory View', () => {
     expect(response.body.success).toBe(false);
   });
 });
-
-

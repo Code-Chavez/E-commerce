@@ -9,9 +9,15 @@ import { GetPendingBalanceUseCase } from '@application/use-cases/credits/GetPend
 const creditRepository = new PrismaClientCreditRepository();
 const clientRepository = new PrismaClientRepository();
 
-const registerCreditUseCase = new RegisterCreditUseCase(creditRepository, clientRepository);
+const registerCreditUseCase = new RegisterCreditUseCase(
+  creditRepository,
+  clientRepository
+);
 const registerPaymentUseCase = new RegisterPaymentUseCase(creditRepository);
-const getPendingBalanceUseCase = new GetPendingBalanceUseCase(creditRepository, clientRepository);
+const getPendingBalanceUseCase = new GetPendingBalanceUseCase(
+  creditRepository,
+  clientRepository
+);
 
 const controller = new CreditController(
   registerCreditUseCase,
@@ -22,7 +28,10 @@ const controller = new CreditController(
 const router = Router();
 
 router.post('/credits', controller.registerCredit.bind(controller));
-router.post('/credits/:id/payments', controller.registerPayment.bind(controller));
+router.post(
+  '/credits/:id/payments',
+  controller.registerPayment.bind(controller)
+);
 router.get('/credits', controller.getPendingBalance.bind(controller));
 
 export default router;

@@ -6,11 +6,7 @@ const router = Router();
 const controller = new CashTurnController();
 
 // POST /api/v1/cash-turns/open — Abrir turno de caja (HU-032)
-router.post(
-  '/cash-turns/open',
-  requireAuth,
-  controller.open.bind(controller)
-);
+router.post('/cash-turns/open', requireAuth, controller.open.bind(controller));
 
 // GET /api/v1/cash-turns/active — Obtener turno activo del usuario (HU-032)
 router.get(
@@ -41,5 +37,3 @@ router.post(
 );
 
 export default router;
-
-

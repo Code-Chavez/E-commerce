@@ -8,7 +8,9 @@ import { ToggleBranchStatusUseCase } from '@application/use-cases/branch/ToggleB
 const branchRepository = new PrismaBranchRepository();
 const createBranchUseCase = new CreateBranchUseCase(branchRepository);
 const updateBranchUseCase = new UpdateBranchUseCase(branchRepository);
-const toggleBranchStatusUseCase = new ToggleBranchStatusUseCase(branchRepository);
+const toggleBranchStatusUseCase = new ToggleBranchStatusUseCase(
+  branchRepository
+);
 
 // Schemas de Validación con Zod
 const CreateBranchSchema = z.object({
@@ -16,8 +18,14 @@ const CreateBranchSchema = z.object({
     .string()
     .min(2, 'El nombre debe tener al menos 2 caracteres')
     .max(100, 'El nombre no puede exceder 100 caracteres'),
-  address: z.string().max(255, 'La dirección no puede exceder 255 caracteres').optional(),
-  phone: z.string().max(20, 'El teléfono no puede exceder 20 caracteres').optional(),
+  address: z
+    .string()
+    .max(255, 'La dirección no puede exceder 255 caracteres')
+    .optional(),
+  phone: z
+    .string()
+    .max(20, 'El teléfono no puede exceder 20 caracteres')
+    .optional(),
   isMain: z.boolean().optional(),
   igvExempt: z.boolean().optional(),
 });
@@ -28,8 +36,16 @@ const UpdateBranchSchema = z.object({
     .min(2, 'El nombre debe tener al menos 2 caracteres')
     .max(100, 'El nombre no puede exceder 100 caracteres')
     .optional(),
-  address: z.string().max(255, 'La dirección no puede exceder 255 caracteres').optional().nullable(),
-  phone: z.string().max(20, 'El teléfono no puede exceder 20 caracteres').optional().nullable(),
+  address: z
+    .string()
+    .max(255, 'La dirección no puede exceder 255 caracteres')
+    .optional()
+    .nullable(),
+  phone: z
+    .string()
+    .max(20, 'El teléfono no puede exceder 20 caracteres')
+    .optional()
+    .nullable(),
   isMain: z.boolean().optional(),
   igvExempt: z.boolean().optional(),
 });
@@ -87,7 +103,9 @@ export class BranchController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de sucursal inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de sucursal inválido' });
       }
 
       const validation = UpdateBranchSchema.safeParse(req.body);
@@ -122,7 +140,9 @@ export class BranchController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de sucursal inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de sucursal inválido' });
       }
 
       const validation = ToggleStatusSchema.safeParse(req.body);
@@ -136,7 +156,10 @@ export class BranchController {
         });
       }
 
-      const branch = await toggleBranchStatusUseCase.execute(id, validation.data.isActive);
+      const branch = await toggleBranchStatusUseCase.execute(
+        id,
+        validation.data.isActive
+      );
       return res.status(200).json({
         success: true,
         message: `Sucursal ${validation.data.isActive ? 'activada' : 'inactivada'} correctamente`,

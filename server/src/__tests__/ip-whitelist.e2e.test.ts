@@ -1,4 +1,11 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
 import { Request, Response, NextFunction } from 'express';
 
 /**
@@ -81,13 +88,17 @@ describe('ipWhitelist middleware (RSK-003 / T-048)', () => {
           module: 'SECURITY',
           details: expect.objectContaining({ ip: '9.9.9.9' }),
         }),
-      }),
+      })
     );
   });
 
   it('should include userId in AuditLog when a valid JWT is present', async () => {
     mockAuditLogCreate.mockResolvedValue({ id: 2 } as never);
-    mockVerifyAccessToken.mockReturnValue({ userId: 42, email: 'u@test.com', role: 'ADMIN' });
+    mockVerifyAccessToken.mockReturnValue({
+      userId: 42,
+      email: 'u@test.com',
+      role: 'ADMIN',
+    });
 
     const req = makeReq('9.9.9.9', 'Bearer some.valid.token');
     const res = makeRes();
@@ -99,7 +110,7 @@ describe('ipWhitelist middleware (RSK-003 / T-048)', () => {
     expect(mockAuditLogCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ userId: 42 }),
-      }),
+      })
     );
   });
 
@@ -128,5 +139,3 @@ describe('ipWhitelist middleware (RSK-003 / T-048)', () => {
     expect(mockAuditLogCreate).not.toHaveBeenCalled();
   });
 });
-
-

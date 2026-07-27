@@ -8,10 +8,22 @@ const complaintController = new ComplaintController();
 
 // T-271: Endpoints cliente (requiere autenticación)
 router.post('/complaints', requireAuth, complaintController.createComplaint);
-router.get('/complaints/my', requireAuth, complaintController.getUserComplaints);
+router.get(
+  '/complaints/my',
+  requireAuth,
+  complaintController.getUserComplaints
+);
 
 // T-271: Endpoints admin
-router.get('/admin/complaints', requirePermission('users:read'), complaintController.getAdminComplaints);
-router.patch('/admin/complaints/:id/status', requirePermission('users:write'), complaintController.updateStatus);
+router.get(
+  '/admin/complaints',
+  requirePermission('users:read'),
+  complaintController.getAdminComplaints
+);
+router.patch(
+  '/admin/complaints/:id/status',
+  requirePermission('users:write'),
+  complaintController.updateStatus
+);
 
 export default router;

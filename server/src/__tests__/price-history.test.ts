@@ -60,9 +60,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
       roles: [
         {
           name: 'ADMIN',
-          permissions: [
-            { name: 'products:read' },
-          ],
+          permissions: [{ name: 'products:read' }],
         },
       ],
     };

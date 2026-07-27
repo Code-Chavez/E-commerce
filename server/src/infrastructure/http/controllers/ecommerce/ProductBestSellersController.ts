@@ -4,7 +4,10 @@ import prisma from '@infrastructure/database/prisma';
 import { normalizeAttributesJson } from '@infrastructure/database/utils/AttributeNormalizer';
 
 const BestSellersQuerySchema = z.object({
-  limit: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().default(10)),
+  limit: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().default(10)
+  ),
 });
 
 export class ProductBestSellersController {
@@ -81,7 +84,10 @@ export class ProductBestSellersController {
           const variant = variantsData.find((v) => v.id === tv.variantId);
           if (!variant) return null;
 
-          const stockQuantity = variant.branchStock.reduce((sum, bs) => sum + bs.quantity, 0);
+          const stockQuantity = variant.branchStock.reduce(
+            (sum, bs) => sum + bs.quantity,
+            0
+          );
 
           return {
             id: variant.id,

@@ -1,5 +1,9 @@
 import prisma from '@infrastructure/database/prisma';
-import { Gender, CreateGenderDTO, UpdateGenderDTO } from '@domain/entities/Gender';
+import {
+  Gender,
+  CreateGenderDTO,
+  UpdateGenderDTO,
+} from '@domain/entities/Gender';
 import { IGenderRepository } from '@domain/repositories/IGenderRepository';
 
 export class PrismaGenderRepository implements IGenderRepository {

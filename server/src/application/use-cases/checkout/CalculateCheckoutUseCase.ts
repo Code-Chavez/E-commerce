@@ -26,14 +26,15 @@ export class CalculateCheckoutUseCase {
     }
 
     let subtotal = 0;
-    cart.items.forEach(item => {
+    cart.items.forEach((item) => {
       const itemPrice = Number(item.variant.price);
       const itemDiscount = item.variant.discountPercent || 0;
-      
-      const finalPrice = itemDiscount > 0 
-        ? itemPrice - (itemPrice * itemDiscount) / 100 
-        : itemPrice;
-        
+
+      const finalPrice =
+        itemDiscount > 0
+          ? itemPrice - (itemPrice * itemDiscount) / 100
+          : itemPrice;
+
       subtotal += finalPrice * item.quantity;
     });
 
@@ -57,7 +58,10 @@ export class CalculateCheckoutUseCase {
     for (const zone of deliveryZones) {
       // districts es un Json Array: ["Miraflores", "San Isidro"]
       const districtsArray = zone.districts as string[];
-      if (Array.isArray(districtsArray) && districtsArray.includes(address.district)) {
+      if (
+        Array.isArray(districtsArray) &&
+        districtsArray.includes(address.district)
+      ) {
         shippingCost = Number(zone.deliveryCost);
         estimatedDays = zone.estimatedDays;
         hasCoverage = true;
@@ -66,7 +70,9 @@ export class CalculateCheckoutUseCase {
     }
 
     if (!hasCoverage) {
-      throw new Error('Lo sentimos, tu distrito actual no cuenta con cobertura de envío.');
+      throw new Error(
+        'Lo sentimos, tu distrito actual no cuenta con cobertura de envío.'
+      );
     }
 
     const total = subtotal + shippingCost;
@@ -76,7 +82,7 @@ export class CalculateCheckoutUseCase {
       shippingCost,
       estimatedDays,
       total,
-      hasCoverage
+      hasCoverage,
     };
   }
 }

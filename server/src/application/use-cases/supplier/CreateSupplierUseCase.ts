@@ -2,7 +2,10 @@
 
 import { ISupplierRepository } from '@domain/repositories/ISupplierRepository';
 import { Supplier } from '@domain/entities/Supplier';
-import { CreateSupplierRequestDTO, SupplierResponseDTO } from '../../dtos/SupplierDTOs';
+import {
+  CreateSupplierRequestDTO,
+  SupplierResponseDTO,
+} from '../../dtos/SupplierDTOs';
 
 export class CreateSupplierUseCase {
   constructor(private readonly supplierRepository: ISupplierRepository) {}

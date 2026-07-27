@@ -5,7 +5,7 @@ import {
   getAdminSocialProofs,
   createSocialProof,
   approveSocialProof,
-  deleteSocialProof
+  deleteSocialProof,
 } from '../controllers/SocialProofController';
 import { requireAuth } from '../middlewares/auth.middleware';
 

@@ -6,7 +6,9 @@ import { UpdateSystemSettingUseCase } from '@application/use-cases/admin/UpdateS
 export class SystemSettingController {
   private repository = new PrismaSystemSettingRepository();
   private getSettingsUseCase = new GetSystemSettingsUseCase(this.repository);
-  private updateSettingUseCase = new UpdateSystemSettingUseCase(this.repository);
+  private updateSettingUseCase = new UpdateSystemSettingUseCase(
+    this.repository
+  );
 
   public getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -31,7 +33,11 @@ export class SystemSettingController {
         return res.status(400).json({ message: 'El valor es requerido' });
       }
 
-      const updated = await this.updateSettingUseCase.execute(adminId, key as string, value.toString());
+      const updated = await this.updateSettingUseCase.execute(
+        adminId,
+        key as string,
+        value.toString()
+      );
       res.json(updated);
     } catch (error: any) {
       if (error.status === 400) {

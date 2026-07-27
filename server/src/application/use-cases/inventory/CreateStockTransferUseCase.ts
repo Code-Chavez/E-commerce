@@ -20,7 +20,9 @@ export class CreateStockTransferUseCase {
     }
 
     if (fromBranchId === toBranchId) {
-      const err = new Error('La sucursal de origen y destino no pueden ser la misma');
+      const err = new Error(
+        'La sucursal de origen y destino no pueden ser la misma'
+      );
       (err as any).statusCode = 400;
       throw err;
     }
@@ -33,19 +35,25 @@ export class CreateStockTransferUseCase {
     ]);
 
     if (!fromBranch || !fromBranch.isActive) {
-      const err = new Error('La sucursal de origen no existe o se encuentra inactiva');
+      const err = new Error(
+        'La sucursal de origen no existe o se encuentra inactiva'
+      );
       (err as any).statusCode = 404;
       throw err;
     }
 
     if (!toBranch || !toBranch.isActive) {
-      const err = new Error('La sucursal de destino no existe o se encuentra inactiva');
+      const err = new Error(
+        'La sucursal de destino no existe o se encuentra inactiva'
+      );
       (err as any).statusCode = 404;
       throw err;
     }
 
     if (!variant || !variant.isActive) {
-      const err = new Error('La variante del producto no existe o se encuentra inactiva');
+      const err = new Error(
+        'La variante del producto no existe o se encuentra inactiva'
+      );
       (err as any).statusCode = 404;
       throw err;
     }
@@ -54,11 +62,19 @@ export class CreateStockTransferUseCase {
     return await prisma.$transaction(async (tx) => {
       // Validar stock disponible en la sucursal de origen
       const sourceStock = await tx.branchStock.findUnique({
-        where: { variantId_branchId_status: { variantId, branchId: fromBranchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId,
+            branchId: fromBranchId,
+            status: 'AVAILABLE',
+          },
+        },
       });
 
       if (!sourceStock || sourceStock.quantity < quantity) {
-        const err = new Error(`Stock insuficiente en la sucursal de origen. Stock disponible: ${sourceStock?.quantity ?? 0}`);
+        const err = new Error(
+          `Stock insuficiente en la sucursal de origen. Stock disponible: ${sourceStock?.quantity ?? 0}`
+        );
         (err as any).statusCode = 400;
         throw err;
       }
@@ -66,7 +82,13 @@ export class CreateStockTransferUseCase {
       // --- SUCURSAL DE ORIGEN (SALIDA) ---
       // Decrementar stock de origen
       const updatedSourceStock = await tx.branchStock.update({
-        where: { variantId_branchId_status: { variantId, branchId: fromBranchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId,
+            branchId: fromBranchId,
+            status: 'AVAILABLE',
+          },
+        },
         data: { quantity: { decrement: quantity } },
       });
 
@@ -90,7 +112,7 @@ export class CreateStockTransferUseCase {
           quantity,
           unitCost: originUnitCost,
           balanceQty: updatedSourceStock.quantity,
-          balanceCost: originBalanceCost - (quantity * originUnitCost),
+          balanceCost: originBalanceCost - quantity * originUnitCost,
           userId: transferUserId,
         },
       });
@@ -98,7 +120,13 @@ export class CreateStockTransferUseCase {
       // --- SUCURSAL DE DESTINO (ENTRADA) ---
       // Obtener stock actual de destino
       const destStock = await tx.branchStock.findUnique({
-        where: { variantId_branchId_status: { variantId, branchId: toBranchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId,
+            branchId: toBranchId,
+            status: 'AVAILABLE',
+          },
+        },
       });
 
       const currentDestQty = destStock?.quantity ?? 0;
@@ -117,14 +145,27 @@ export class CreateStockTransferUseCase {
       // Calcular CPP para el destino
       let cppDest = transferUnitCost;
       if (currentDestQty > 0) {
-        cppDest = ((currentDestQty * lastUnitCostDest) + (quantity * transferUnitCost)) / (currentDestQty + quantity);
+        cppDest =
+          (currentDestQty * lastUnitCostDest + quantity * transferUnitCost) /
+          (currentDestQty + quantity);
         cppDest = Math.round(cppDest * 100) / 100;
       }
 
       // Incrementar stock en destino
       const updatedDestStock = await tx.branchStock.upsert({
-        where: { variantId_branchId_status: { variantId, branchId: toBranchId, status: 'AVAILABLE' } },
-        create: { variantId, branchId: toBranchId, quantity, status: 'AVAILABLE' },
+        where: {
+          variantId_branchId_status: {
+            variantId,
+            branchId: toBranchId,
+            status: 'AVAILABLE',
+          },
+        },
+        create: {
+          variantId,
+          branchId: toBranchId,
+          quantity,
+          status: 'AVAILABLE',
+        },
         update: { quantity: { increment: quantity } },
       });
 
@@ -137,7 +178,7 @@ export class CreateStockTransferUseCase {
           quantity,
           unitCost: cppDest,
           balanceQty: updatedDestStock.quantity,
-          balanceCost: (lastEntryDest?.balanceCost ?? 0) + (quantity * cppDest),
+          balanceCost: (lastEntryDest?.balanceCost ?? 0) + quantity * cppDest,
           userId: transferUserId,
         },
       });
@@ -154,7 +195,7 @@ export class CreateStockTransferUseCase {
       });
 
       const guideNumber = `TR-${String(transfer.id).padStart(6, '0')}`;
-      
+
       const updatedTransfer = await tx.stockTransfer.update({
         where: { id: transfer.id },
         data: { guideNumber },

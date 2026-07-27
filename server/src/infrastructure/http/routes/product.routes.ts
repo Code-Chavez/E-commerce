@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { ProductVariantController } from '@infrastructure/http/controllers/ProductVariantController';
-import { ProductController, productUpload } from '@infrastructure/http/controllers/ProductController';
+import {
+  ProductController,
+  productUpload,
+} from '@infrastructure/http/controllers/ProductController';
 import { requirePermission } from '@infrastructure/http/middlewares/auth.middleware';
 
 const router = Router();

@@ -6,7 +6,9 @@ export interface RedeemLoyaltyPointsInput {
 }
 
 export class RedeemLoyaltyPointsUseCase {
-  async execute(input: RedeemLoyaltyPointsInput): Promise<{ discountAmount: number; newBalance: number }> {
+  async execute(
+    input: RedeemLoyaltyPointsInput
+  ): Promise<{ discountAmount: number; newBalance: number }> {
     const { userId, pointsToRedeem } = input;
 
     if (pointsToRedeem <= 0) {
@@ -25,7 +27,7 @@ export class RedeemLoyaltyPointsUseCase {
 
       // La regla de equivalencia en dinero para el descuento: 1 punto = 1 sol (asumido).
       // Se podría leer de LoyaltyConfig si en el futuro se hace dinámico.
-      const discountAmount = pointsToRedeem; 
+      const discountAmount = pointsToRedeem;
 
       // Descontar puntos
       const updatedAccount = await tx.loyaltyAccount.update({

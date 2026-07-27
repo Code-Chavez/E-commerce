@@ -26,15 +26,17 @@ jest.mock('@infrastructure/database/prisma', () => {
     client: mockClient,
     productVariant: mockProductVariant,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -61,9 +63,7 @@ describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', (
     roles: [
       {
         name: 'ADMIN',
-        permissions: [
-          { name: 'sales:read' },
-        ],
+        permissions: [{ name: 'sales:read' }],
       },
     ],
   };
@@ -164,7 +164,9 @@ describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', (
       (prisma.posOrder.findMany as any).mockResolvedValue(dummyPosOrders);
 
       const response = await request(app)
-        .get('/api/v1/reports/export?type=sales&format=excel&from=2026-06-01&to=2026-06-30')
+        .get(
+          '/api/v1/reports/export?type=sales&format=excel&from=2026-06-01&to=2026-06-30'
+        )
         .set('Authorization', 'Bearer dummy-admin-token');
 
       expect(response.status).toBe(200);
@@ -172,15 +174,19 @@ describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', (
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       );
       expect(response.headers['content-disposition']).toContain('attachment');
-      expect(response.headers['content-disposition']).toContain('reporte-sales');
+      expect(response.headers['content-disposition']).toContain(
+        'reporte-sales'
+      );
       expect(response.headers['content-disposition']).toContain('.xlsx');
-      
+
       expect(prisma.order.findMany).toHaveBeenCalled();
       expect(prisma.posOrder.findMany).toHaveBeenCalled();
     });
 
     it('debería exportar reporte de inventario en PDF (.pdf) correctamente', async () => {
-      (prisma.productVariant.findMany as any).mockResolvedValue(dummyStockAlerts);
+      (prisma.productVariant.findMany as any).mockResolvedValue(
+        dummyStockAlerts
+      );
 
       const response = await request(app)
         .get('/api/v1/reports/export?type=inventory&format=pdf')
@@ -251,5 +257,3 @@ describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', (
     });
   });
 });
-
-

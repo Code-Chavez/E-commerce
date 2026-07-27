@@ -6,5 +6,7 @@ export interface ShippingLabelData {
 }
 
 export interface IShippingLabelService {
-  generateLabelPdfStream(data: ShippingLabelData): Promise<NodeJS.ReadableStream>;
+  generateLabelPdfStream(
+    data: ShippingLabelData
+  ): Promise<NodeJS.ReadableStream>;
 }

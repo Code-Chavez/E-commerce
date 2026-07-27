@@ -1,5 +1,5 @@
-import { INewsletterRepository } from "../../domain/repositories/INewsletterRepository";
-import { NewsletterSubscriber } from "../../domain/entities/NewsletterSubscriber";
+import { INewsletterRepository } from '../../domain/repositories/INewsletterRepository';
+import { NewsletterSubscriber } from '../../domain/entities/NewsletterSubscriber';
 
 export class UnsubscribeFromNewsletterUseCase {
   constructor(private newsletterRepository: INewsletterRepository) {}
@@ -8,7 +8,7 @@ export class UnsubscribeFromNewsletterUseCase {
     const existing = await this.newsletterRepository.findByEmail(email);
 
     if (!existing) {
-      throw new Error("Subscriber not found");
+      throw new Error('Subscriber not found');
     }
 
     if (existing.isActive) {

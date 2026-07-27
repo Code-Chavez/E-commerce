@@ -7,7 +7,9 @@ const AdjustmentSchema = z.object({
   variantId: z.number().int().positive(),
   branchId: z.number().int().positive(),
   newQuantity: z.number().min(0, 'La cantidad no puede ser negativa'),
-  reason: z.string().min(10, 'La justificación debe tener al menos 10 caracteres'),
+  reason: z
+    .string()
+    .min(10, 'La justificación debe tener al menos 10 caracteres'),
 });
 
 export class StockAdjustmentController {
@@ -19,14 +21,22 @@ export class StockAdjustmentController {
     try {
       const parsed = AdjustmentSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const { variantId, branchId, newQuantity, reason } = parsed.data;
 
-      const result = await prisma.$transaction(async tx => {
+      const result = await prisma.$transaction(async (tx) => {
         const current = await tx.branchStock.findUnique({
-          where: { variantId_branchId_status: { variantId, branchId, status: 'AVAILABLE' } },
+          where: {
+            variantId_branchId_status: {
+              variantId,
+              branchId,
+              status: 'AVAILABLE',
+            },
+          },
         });
 
         const prevQty = current?.quantity ?? 0;
@@ -41,8 +51,19 @@ export class StockAdjustmentController {
         const prevBalanceCost = lastEntry?.balanceCost ?? 0;
 
         const stock = await tx.branchStock.upsert({
-          where: { variantId_branchId_status: { variantId, branchId, status: 'AVAILABLE' } },
-          create: { variantId, branchId, quantity: newQuantity, status: 'AVAILABLE' },
+          where: {
+            variantId_branchId_status: {
+              variantId,
+              branchId,
+              status: 'AVAILABLE',
+            },
+          },
+          create: {
+            variantId,
+            branchId,
+            quantity: newQuantity,
+            status: 'AVAILABLE',
+          },
           update: { quantity: newQuantity },
         });
 
@@ -63,6 +84,8 @@ export class StockAdjustmentController {
       });
 
       return res.status(201).json({ success: true, data: result });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 }

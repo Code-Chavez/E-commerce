@@ -1,5 +1,10 @@
 import prisma from '@infrastructure/database/prisma';
-import { ICashRegisterRepository, CreateCashRegisterDTO, UpdateCashRegisterDTO, CashRegisterWithBranchName } from '@domain/repositories/ICashRegisterRepository';
+import {
+  ICashRegisterRepository,
+  CreateCashRegisterDTO,
+  UpdateCashRegisterDTO,
+  CashRegisterWithBranchName,
+} from '@domain/repositories/ICashRegisterRepository';
 import { CashRegister } from '@domain/entities/CashTurn';
 
 export class PrismaCashRegisterRepository implements ICashRegisterRepository {

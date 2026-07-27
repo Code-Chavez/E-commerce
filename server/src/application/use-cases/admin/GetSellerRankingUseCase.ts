@@ -19,7 +19,11 @@ export interface SellerRankingReport {
 }
 
 export class GetSellerRankingUseCase {
-  async execute(from: Date, to: Date, branchId?: number): Promise<SellerRankingReport> {
+  async execute(
+    from: Date,
+    to: Date,
+    branchId?: number
+  ): Promise<SellerRankingReport> {
     const where: any = {
       status: 'COMPLETED',
       createdAt: { gte: from, lte: to },
@@ -37,7 +41,14 @@ export class GetSellerRankingUseCase {
     });
 
     if (orders.length === 0) {
-      return { from, to, totalSellers: 0, globalAvgTicket: 0, topTotalVendido: 0, sellers: [] };
+      return {
+        from,
+        to,
+        totalSellers: 0,
+        globalAvgTicket: 0,
+        topTotalVendido: 0,
+        sellers: [],
+      };
     }
 
     // Aggregate by seller
@@ -56,7 +67,9 @@ export class GetSellerRankingUseCase {
       where: { id: { in: userIds } },
       select: { id: true, name: true, lastName: true },
     });
-    const userMap = new Map(users.map(u => [u.id, `${u.name} ${u.lastName ?? ''}`.trim()]));
+    const userMap = new Map(
+      users.map((u) => [u.id, `${u.name} ${u.lastName ?? ''}`.trim()])
+    );
 
     // Build sorted ranking
     const sorted = Array.from(sellerMap.entries())
@@ -69,16 +82,28 @@ export class GetSellerRankingUseCase {
       }))
       .sort((a, b) => b.totalVendido - a.totalVendido);
 
-    const sellers: SellerRankingStat[] = sorted.map((s, i) => ({ rank: i + 1, ...s }));
+    const sellers: SellerRankingStat[] = sorted.map((s, i) => ({
+      rank: i + 1,
+      ...s,
+    }));
 
-    const globalTotalVendido = sellers.reduce((sum, s) => sum + s.totalVendido, 0);
-    const totalTransactions = sellers.reduce((sum, s) => sum + s.transactions, 0);
+    const globalTotalVendido = sellers.reduce(
+      (sum, s) => sum + s.totalVendido,
+      0
+    );
+    const totalTransactions = sellers.reduce(
+      (sum, s) => sum + s.transactions,
+      0
+    );
 
     return {
       from,
       to,
       totalSellers: sellers.length,
-      globalAvgTicket: totalTransactions > 0 ? Number((globalTotalVendido / totalTransactions).toFixed(2)) : 0,
+      globalAvgTicket:
+        totalTransactions > 0
+          ? Number((globalTotalVendido / totalTransactions).toFixed(2))
+          : 0,
       topTotalVendido: sellers[0]?.totalVendido ?? 0,
       sellers,
     };

@@ -14,7 +14,9 @@ export class LoyaltyController {
     try {
       const userId = req.auth?.userId;
       if (!userId) {
-        res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
         return;
       }
 
@@ -40,20 +42,29 @@ export class LoyaltyController {
     try {
       const { points } = req.body;
       let { userId } = req.body;
-      
+
       const authUserId = req.auth?.userId;
       const userRole = req.auth?.role;
 
       if (!authUserId) {
-        res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
         return;
       }
 
       // If POS seller is trying to redeem points for a specific client
-      if (userRole === 'ADMIN' || userRole === 'SELLER' || userRole === 'SUPERADMIN') {
+      if (
+        userRole === 'ADMIN' ||
+        userRole === 'SELLER' ||
+        userRole === 'SUPERADMIN'
+      ) {
         if (!userId) {
-           res.status(400).json({ success: false, error: 'Se requiere userId del cliente en POS' });
-           return;
+          res.status(400).json({
+            success: false,
+            error: 'Se requiere userId del cliente en POS',
+          });
+          return;
         }
       } else {
         // Standard E-commerce user
@@ -61,7 +72,10 @@ export class LoyaltyController {
       }
 
       if (!points || isNaN(Number(points))) {
-        res.status(400).json({ success: false, error: 'Se requiere cantidad de puntos válida' });
+        res.status(400).json({
+          success: false,
+          error: 'Se requiere cantidad de puntos válida',
+        });
         return;
       }
 
@@ -72,7 +86,10 @@ export class LoyaltyController {
 
       res.status(200).json({ success: true, data: result });
     } catch (error: any) {
-      if (error.message.includes('insuficientes') || error.message.includes('mayor a 0')) {
+      if (
+        error.message.includes('insuficientes') ||
+        error.message.includes('mayor a 0')
+      ) {
         res.status(400).json({ success: false, error: error.message });
         return;
       }

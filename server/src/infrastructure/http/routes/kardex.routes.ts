@@ -5,6 +5,10 @@ import { requirePermission } from '@infrastructure/http/middlewares/auth.middlew
 const router = Router();
 const ctrl = new KardexController();
 
-router.get('/kardex', requirePermission('products:read'), ctrl.getMovements.bind(ctrl));
+router.get(
+  '/kardex',
+  requirePermission('products:read'),
+  ctrl.getMovements.bind(ctrl)
+);
 
 export default router;

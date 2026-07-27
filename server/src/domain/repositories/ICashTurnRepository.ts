@@ -15,4 +15,3 @@ export interface ICashTurnRepository {
   findRegistersByBranch(branchId: number): Promise<CashRegister[]>;
   close(id: number, closeAmount: number): Promise<CashTurn>;
 }
-

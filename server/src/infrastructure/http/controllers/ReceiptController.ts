@@ -17,14 +17,20 @@ export class ReceiptController {
   async getReceiptPdf(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseInt(String(req.params.id), 10);
-      if (isNaN(id)) return res.status(400).json({ success: false, error: 'ID inválido' });
+      if (isNaN(id))
+        return res.status(400).json({ success: false, error: 'ID inválido' });
 
       const isTicket = req.query.format === 'ticket';
       const receipt = await getPosReceiptPdfUseCase.execute(id);
-      const doc = isTicket ? ticketService.generate(receipt) : pdfService.generate(receipt);
+      const doc = isTicket
+        ? ticketService.generate(receipt)
+        : pdfService.generate(receipt);
 
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="comprobante-${id}.pdf"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="comprobante-${id}.pdf"`
+      );
 
       doc.pipe(res);
     } catch (error: any) {
@@ -41,10 +47,17 @@ export class ReceiptController {
    */
   async getReceipts(req: Request, res: Response, next: NextFunction) {
     try {
-      const branchId = req.query.branchId ? parseInt(String(req.query.branchId), 10) : undefined;
-      const type = req.query.type === 'cross-branch' || req.query.type === 'normal' ? req.query.type : undefined;
+      const branchId = req.query.branchId
+        ? parseInt(String(req.query.branchId), 10)
+        : undefined;
+      const type =
+        req.query.type === 'cross-branch' || req.query.type === 'normal'
+          ? req.query.type
+          : undefined;
       const page = req.query.page ? parseInt(String(req.query.page), 10) : 1;
-      const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 10;
+      const limit = req.query.limit
+        ? parseInt(String(req.query.limit), 10)
+        : 10;
 
       let from: Date | undefined = undefined;
       if (req.query.from) {
