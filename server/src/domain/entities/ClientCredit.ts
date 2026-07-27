@@ -12,7 +12,10 @@ export interface ClientCredit {
 }
 
 export function calculatePendingBalance(credit: ClientCredit): number {
-  const totalPaid = (credit.payments || []).reduce((sum, payment) => sum + Number(payment.amount), 0);
+  const totalPaid = (credit.payments || []).reduce(
+    (sum, payment) => sum + Number(payment.amount),
+    0
+  );
   return Number((Number(credit.totalAmount) - totalPaid).toFixed(2));
 }
 

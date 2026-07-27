@@ -48,7 +48,9 @@ export class GenderController {
     try {
       const parsed = CreateGenderSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const data = await createGenderUseCase.execute(parsed.data);
@@ -67,7 +69,9 @@ export class GenderController {
 
       const parsed = UpdateGenderSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const data = await updateGenderUseCase.execute(id, parsed.data);
@@ -88,7 +92,9 @@ export class GenderController {
       }
 
       await deleteGenderUseCase.execute(id);
-      return res.status(200).json({ success: true, message: 'Género inactivado exitosamente' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Género inactivado exitosamente' });
     } catch (e: any) {
       if (e.message.includes('no existe')) {
         return res.status(404).json({ success: false, error: e.message });

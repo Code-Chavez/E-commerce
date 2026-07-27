@@ -17,8 +17,12 @@ const updateBlogPostUseCase = new UpdateBlogPostUseCase(blogPostRepository);
 const getBlogPostUseCase = new GetBlogPostUseCase(blogPostRepository);
 const listBlogPostsUseCase = new ListBlogPostsUseCase(blogPostRepository);
 const deleteBlogPostUseCase = new DeleteBlogPostUseCase(blogPostRepository);
-const listPublicBlogPostsUseCase = new ListPublicBlogPostsUseCase(blogPostRepository);
-const getPublicBlogPostBySlugUseCase = new GetPublicBlogPostBySlugUseCase(blogPostRepository);
+const listPublicBlogPostsUseCase = new ListPublicBlogPostsUseCase(
+  blogPostRepository
+);
+const getPublicBlogPostBySlugUseCase = new GetPublicBlogPostBySlugUseCase(
+  blogPostRepository
+);
 
 const CreateBlogPostSchema = z.object({
   title: z.string().min(1, 'El título es obligatorio'),
@@ -27,7 +31,12 @@ const CreateBlogPostSchema = z.object({
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   tags: z.array(z.any()).nullable().optional(),
-  publishedAt: z.string().datetime({ offset: true }).or(z.date()).nullable().optional(),
+  publishedAt: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.date())
+    .nullable()
+    .optional(),
 });
 
 const UpdateBlogPostSchema = CreateBlogPostSchema.partial();
@@ -59,7 +68,9 @@ export class BlogPostController {
     try {
       const parsed = CreateBlogPostSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
       const authorId = req.auth?.userId;
       if (!authorId) {
@@ -80,7 +91,9 @@ export class BlogPostController {
       }
       const parsed = UpdateBlogPostSchema.safeParse(req.body);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
       const post = await updateBlogPostUseCase.execute(id, parsed.data);
       return res.status(200).json({ success: true, data: post });
@@ -96,7 +109,9 @@ export class BlogPostController {
         return res.status(400).json({ success: false, error: 'ID inválido' });
       }
       await deleteBlogPostUseCase.execute(id);
-      return res.status(200).json({ success: true, message: 'Artículo eliminado exitosamente' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Artículo eliminado exitosamente' });
     } catch (e) {
       next(e);
     }
@@ -116,7 +131,10 @@ export class BlogPostController {
       const slug = String(req.params.slug);
       const post = await getPublicBlogPostBySlugUseCase.execute(slug);
       if (!post) {
-        return res.status(404).json({ success: false, error: 'El artículo no existe o no está publicado' });
+        return res.status(404).json({
+          success: false,
+          error: 'El artículo no existe o no está publicado',
+        });
       }
       return res.status(200).json({ success: true, data: post });
     } catch (e) {

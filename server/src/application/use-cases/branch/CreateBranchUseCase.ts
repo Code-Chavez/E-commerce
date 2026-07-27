@@ -1,6 +1,9 @@
 import { IBranchRepository } from '@domain/repositories/IBranchRepository';
 import { Branch } from '@domain/entities/Branch';
-import { CreateBranchRequestDTO, BranchResponseDTO } from '../../dtos/BranchDTOs';
+import {
+  CreateBranchRequestDTO,
+  BranchResponseDTO,
+} from '../../dtos/BranchDTOs';
 
 export class CreateBranchUseCase {
   constructor(private readonly branchRepository: IBranchRepository) {}
@@ -28,10 +31,12 @@ export class CreateBranchUseCase {
       isActive: branch.isActive,
       isMain: branch.isMain,
       igvExempt: branch.igvExempt,
-      warehouse: branch.warehouse ? {
-        id: branch.warehouse.id,
-        createdAt: branch.warehouse.createdAt,
-      } : null,
+      warehouse: branch.warehouse
+        ? {
+            id: branch.warehouse.id,
+            createdAt: branch.warehouse.createdAt,
+          }
+        : null,
       createdAt: branch.createdAt,
       updatedAt: branch.updatedAt,
     };

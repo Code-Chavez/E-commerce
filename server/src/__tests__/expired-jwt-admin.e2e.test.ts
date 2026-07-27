@@ -13,7 +13,7 @@ import app from '../app';
  * simulating a token whose TTL has elapsed without hitting a real DB or clock.
  */
 
-var mockVerifyAccessToken = jest.fn();
+let mockVerifyAccessToken = jest.fn();
 
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
@@ -33,7 +33,9 @@ jest.mock('@infrastructure/database/prisma', () => ({
 
 // Email service is never reached — the RBAC middleware returns 401 before any controller logic
 jest.mock('@infrastructure/services/ResendEmailService', () => ({
-  ResendEmailService: jest.fn().mockImplementation(() => ({ sendEmail: jest.fn() })),
+  ResendEmailService: jest
+    .fn()
+    .mockImplementation(() => ({ sendEmail: jest.fn() })),
 }));
 
 describe('Admin panel — expired JWT → HTTP 401 (RSK-001 / T-045)', () => {
@@ -86,5 +88,3 @@ describe('Admin panel — expired JWT → HTTP 401 (RSK-001 / T-045)', () => {
     expect(res.body.success).toBe(false);
   });
 });
-
-

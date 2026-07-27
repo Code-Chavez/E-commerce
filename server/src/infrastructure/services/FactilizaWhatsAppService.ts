@@ -11,13 +11,22 @@ class BaseFactilizaWhatsAppService implements IWhatsAppService {
     this.apiToken = process.env.FACTILIZA_TOKEN;
 
     if (!this.apiToken) {
-      console.warn('Factiliza credentials not fully configured. WhatsApp notifications will be mocked/ignored.');
+      console.warn(
+        'Factiliza credentials not fully configured. WhatsApp notifications will be mocked/ignored.'
+      );
     }
   }
 
-  async sendMessage(phone: string, template: string, params: Record<string, string>): Promise<boolean> {
+  async sendMessage(
+    phone: string,
+    template: string,
+    params: Record<string, string>
+  ): Promise<boolean> {
     if (!this.apiToken) {
-      console.log(`[Mock WhatsApp Factiliza] To: ${phone}, Template: ${template}, Params:`, params);
+      console.log(
+        `[Mock WhatsApp Factiliza] To: ${phone}, Template: ${template}, Params:`,
+        params
+      );
       return true; // Simulate success if not configured
     }
 
@@ -40,7 +49,7 @@ class BaseFactilizaWhatsAppService implements IWhatsAppService {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiToken}`,
+            Authorization: `Bearer ${this.apiToken}`,
           },
         }
       );
@@ -62,23 +71,27 @@ export class FactilizaWhatsAppService implements IWhatsAppService {
     this.logRepo = new PrismaCommunicationLogRepository();
   }
 
-  async sendMessage(phone: string, template: string, params: Record<string, string>): Promise<boolean> {
+  async sendMessage(
+    phone: string,
+    template: string,
+    params: Record<string, string>
+  ): Promise<boolean> {
     const success = await this.baseService.sendMessage(phone, template, params);
-    this.logCommunication(phone, template).catch(err => {
+    this.logCommunication(phone, template).catch((err) => {
       console.error(`Failed to log WhatsApp communication for ${phone}:`, err);
     });
     return success;
   }
 
-  private async logCommunication(phone: string, template: string): Promise<void> {
+  private async logCommunication(
+    phone: string,
+    template: string
+  ): Promise<void> {
     const cleanPhone = phone.replace(/\D/g, '');
     const client = await prisma.client.findFirst({
       where: {
-        OR: [
-          { phone: cleanPhone },
-          { phone: phone }
-        ]
-      }
+        OR: [{ phone: cleanPhone }, { phone: phone }],
+      },
     });
 
     if (client && client.userId) {
@@ -86,7 +99,7 @@ export class FactilizaWhatsAppService implements IWhatsAppService {
         userId: client.userId,
         channel: CommunicationChannel.WHATSAPP,
         subject: `Template: ${template}`,
-        type: 'NOTIFICATION'
+        type: 'NOTIFICATION',
       });
     }
   }

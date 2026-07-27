@@ -34,7 +34,10 @@ export const getAbandonedCartEmailTemplate = (
     )
     .join('');
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return `
     <!DOCTYPE html>

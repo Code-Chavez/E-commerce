@@ -9,11 +9,17 @@ export class CouponController {
       const { code, subtotal } = req.body;
 
       if (!code || typeof subtotal !== 'number') {
-        res.status(400).json({ error: 'El código y el subtotal son requeridos y deben tener un formato válido.' });
+        res.status(400).json({
+          error:
+            'El código y el subtotal son requeridos y deben tener un formato válido.',
+        });
         return;
       }
 
-      const result = await this.validateCouponUseCase.execute({ code, subtotal });
+      const result = await this.validateCouponUseCase.execute({
+        code,
+        subtotal,
+      });
 
       if (!result.valid) {
         res.status(400).json(result);

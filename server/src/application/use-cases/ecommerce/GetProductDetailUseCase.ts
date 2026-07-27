@@ -68,7 +68,10 @@ export class GetProductDetailUseCase {
     // 3. Map variants to compute stock and outOfStock flag for the main branch
     const mappedVariants = (product.variants || []).map((variant: any) => {
       const branchStocks = variant.branchStock || [];
-      const stockQuantity = branchStocks.reduce((sum: number, bs: any) => sum + bs.quantity, 0);
+      const stockQuantity = branchStocks.reduce(
+        (sum: number, bs: any) => sum + bs.quantity,
+        0
+      );
 
       return {
         id: variant.id,

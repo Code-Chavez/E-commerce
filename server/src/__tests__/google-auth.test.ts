@@ -66,47 +66,73 @@ const mockTokens = {
 };
 
 // Factory for mock repository
-const createMockRepository = (overrides: Partial<IUserRepository> = {}): IUserRepository => ({
+const createMockRepository = (
+  overrides: Partial<IUserRepository> = {}
+): IUserRepository => ({
   findById: jest.fn<IUserRepository['findById']>().mockResolvedValue(null),
-  findByEmail: jest.fn<IUserRepository['findByEmail']>().mockResolvedValue(null),
-  findByGoogleId: jest.fn<IUserRepository['findByGoogleId']>().mockResolvedValue(null),
-  create: jest.fn<IUserRepository['create']>().mockImplementation(async (data) => ({
-    id: 99,
-    email: data.email,
-    name: data.name ?? null,
-    password: data.password,
-    googleId: data.googleId ?? null,
-    avatarUrl: data.avatarUrl ?? null,
-    authProvider: data.authProvider ?? 'local',
-    lastLogin: null,
-    isActive: false,
-    verificationPin: null,
-    pinExpiresAt: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  })),
-  updateLastLogin: jest.fn<IUserRepository['updateLastLogin']>().mockResolvedValue(undefined),
-  updateVerificationPin: jest.fn<IUserRepository['updateVerificationPin']>().mockResolvedValue(undefined),
-  deleteById: jest.fn<IUserRepository['deleteById']>().mockResolvedValue(undefined),
-  activateUser: jest.fn<IUserRepository['activateUser']>().mockResolvedValue(undefined),
-  updatePassword: jest.fn<IUserRepository['updatePassword']>().mockResolvedValue(undefined),
-  updateGoogleId: jest.fn<IUserRepository['updateGoogleId']>().mockResolvedValue(undefined),
-  updateStatus: jest.fn<IUserRepository['updateStatus']>().mockResolvedValue(undefined),
-  updateProfile: jest.fn<IUserRepository['updateProfile']>().mockImplementation(async (userId) => ({
-    id: userId,
-    email: 'mock@domain.com',
-    name: 'Mock',
-    lastName: 'User',
-    phone: '+51999999999',
-    password: '',
-    googleId: null,
-    avatarUrl: null,
-    authProvider: 'local',
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  })),
-  findUsersByRoleName: jest.fn<IUserRepository['findUsersByRoleName']>().mockResolvedValue([]),
+  findByEmail: jest
+    .fn<IUserRepository['findByEmail']>()
+    .mockResolvedValue(null),
+  findByGoogleId: jest
+    .fn<IUserRepository['findByGoogleId']>()
+    .mockResolvedValue(null),
+  create: jest
+    .fn<IUserRepository['create']>()
+    .mockImplementation(async (data) => ({
+      id: 99,
+      email: data.email,
+      name: data.name ?? null,
+      password: data.password,
+      googleId: data.googleId ?? null,
+      avatarUrl: data.avatarUrl ?? null,
+      authProvider: data.authProvider ?? 'local',
+      lastLogin: null,
+      isActive: false,
+      verificationPin: null,
+      pinExpiresAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })),
+  updateLastLogin: jest
+    .fn<IUserRepository['updateLastLogin']>()
+    .mockResolvedValue(undefined),
+  updateVerificationPin: jest
+    .fn<IUserRepository['updateVerificationPin']>()
+    .mockResolvedValue(undefined),
+  deleteById: jest
+    .fn<IUserRepository['deleteById']>()
+    .mockResolvedValue(undefined),
+  activateUser: jest
+    .fn<IUserRepository['activateUser']>()
+    .mockResolvedValue(undefined),
+  updatePassword: jest
+    .fn<IUserRepository['updatePassword']>()
+    .mockResolvedValue(undefined),
+  updateGoogleId: jest
+    .fn<IUserRepository['updateGoogleId']>()
+    .mockResolvedValue(undefined),
+  updateStatus: jest
+    .fn<IUserRepository['updateStatus']>()
+    .mockResolvedValue(undefined),
+  updateProfile: jest
+    .fn<IUserRepository['updateProfile']>()
+    .mockImplementation(async (userId) => ({
+      id: userId,
+      email: 'mock@domain.com',
+      name: 'Mock',
+      lastName: 'User',
+      phone: '+51999999999',
+      password: '',
+      googleId: null,
+      avatarUrl: null,
+      authProvider: 'local',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })),
+  findUsersByRoleName: jest
+    .fn<IUserRepository['findUsersByRoleName']>()
+    .mockResolvedValue([]),
   ...overrides,
 });
 
@@ -140,7 +166,8 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
 
     // Verify user was created
     expect(mockRepo.create).toHaveBeenCalledTimes(1);
-    const createCall = (mockRepo.create as jest.Mock).mock.calls[0][0] as CreateUserDTO;
+    const createCall = (mockRepo.create as jest.Mock).mock
+      .calls[0][0] as CreateUserDTO;
     expect(createCall.email).toBe(mockGoogleProfile.email);
     expect(createCall.name).toBe(mockGoogleProfile.name);
     expect(createCall.googleId).toBe(mockGoogleProfile.googleId);
@@ -155,8 +182,12 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
 
   it('should link googleId when email exists without googleId', async () => {
     mockRepo = createMockRepository({
-      findByGoogleId: jest.fn<IUserRepository['findByGoogleId']>().mockResolvedValue(null),
-      findByEmail: jest.fn<IUserRepository['findByEmail']>().mockResolvedValue(mockExistingUser),
+      findByGoogleId: jest
+        .fn<IUserRepository['findByGoogleId']>()
+        .mockResolvedValue(null),
+      findByEmail: jest
+        .fn<IUserRepository['findByEmail']>()
+        .mockResolvedValue(mockExistingUser),
     });
     useCase = new GoogleLoginUseCase(mockRepo, mockJwt);
 
@@ -169,7 +200,7 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
     expect(mockRepo.updateGoogleId).toHaveBeenCalledWith(
       mockExistingUser.id,
       mockGoogleProfile.googleId,
-      mockGoogleProfile.avatarUrl,
+      mockGoogleProfile.avatarUrl
     );
 
     expect(result.user.id).toBe(mockExistingUser.id);
@@ -199,7 +230,7 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
     expect(mockRepo.updateLastLogin).toHaveBeenCalledTimes(1);
     expect(mockRepo.updateLastLogin).toHaveBeenCalledWith(
       expect.any(Number),
-      expect.any(Date),
+      expect.any(Date)
     );
   });
 
@@ -208,7 +239,8 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
   it('should set authProvider to "google" for new users', async () => {
     await useCase.execute(mockGoogleProfile);
 
-    const createCall = (mockRepo.create as jest.Mock).mock.calls[0][0] as CreateUserDTO;
+    const createCall = (mockRepo.create as jest.Mock).mock
+      .calls[0][0] as CreateUserDTO;
     expect(createCall.authProvider).toBe('google');
   });
 
@@ -217,7 +249,8 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
   it('should generate a random bcrypt-hashed password for new Google users', async () => {
     await useCase.execute(mockGoogleProfile);
 
-    const createCall = (mockRepo.create as jest.Mock).mock.calls[0][0] as CreateUserDTO;
+    const createCall = (mockRepo.create as jest.Mock).mock
+      .calls[0][0] as CreateUserDTO;
     // Password should be a bcrypt hash (starts with $2b$)
     expect(createCall.password).toMatch(/^\$2[aby]\$/);
     // Password should NOT be empty
@@ -235,7 +268,9 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
     };
 
     mockRepo = createMockRepository({
-      findByGoogleId: jest.fn<IUserRepository['findByGoogleId']>().mockResolvedValue(mockGoogleUser),
+      findByGoogleId: jest
+        .fn<IUserRepository['findByGoogleId']>()
+        .mockResolvedValue(mockGoogleUser),
     });
     useCase = new GoogleLoginUseCase(mockRepo, mockJwt);
 
@@ -260,5 +295,3 @@ describe('GoogleLoginUseCase (HU-001 / T-034)', () => {
     expect(mockRepo.activateUser).toHaveBeenCalledWith(99); // created user id
   });
 });
-
-

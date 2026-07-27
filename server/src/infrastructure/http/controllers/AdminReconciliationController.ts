@@ -10,10 +10,17 @@ export class AdminReconciliationController {
   constructor() {
     const stripePaymentPort = new StripePaymentAdapter();
     const orderRepositoryPort = new PrismaOrderReconciliationAdapter();
-    this.service = new StripeReconciliationService(stripePaymentPort, orderRepositoryPort);
+    this.service = new StripeReconciliationService(
+      stripePaymentPort,
+      orderRepositoryPort
+    );
   }
 
-  reconcileStripe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  reconcileStripe = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const validation = ReconcileStripeDTOSchema.safeParse(req.body);
       if (!validation.success) {

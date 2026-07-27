@@ -28,15 +28,17 @@ jest.mock('@infrastructure/database/prisma', () => {
     stockAlert: mockStockAlert,
     branch: mockBranch,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -63,9 +65,7 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
     roles: [
       {
         name: 'ADMIN',
-        permissions: [
-          { name: 'sales:read' },
-        ],
+        permissions: [{ name: 'sales:read' }],
       },
     ],
   };
@@ -79,7 +79,7 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
     it('debe retornar HTTP 200 y los KPIs acumulados con la estructura correcta', async () => {
       // Mock de POS order aggregate
       (prisma.posOrder.aggregate as any).mockResolvedValue({
-        _sum: { total: 1000.50 },
+        _sum: { total: 1000.5 },
       });
 
       // Mock de ecommerce order aggregate
@@ -101,20 +101,18 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
             sku: 'CAM-M-ROJO',
             minStock: 5,
             product: { name: 'Camisa Casual' },
-            branchStock: [
-              { branchId: 1, quantity: 2, status: 'AVAILABLE' }
-            ]
+            branchStock: [{ branchId: 1, quantity: 2, status: 'AVAILABLE' }],
           },
-          branch: { name: 'Sede Miraflores' }
-        }
+          branch: { name: 'Sede Miraflores' },
+        },
       ]);
 
       // Mock de posOrder.groupBy
       (prisma.posOrder.groupBy as any).mockResolvedValue([
         {
           branchId: 1,
-          _sum: { total: 1000.50 }
-        }
+          _sum: { total: 1000.5 },
+        },
       ]);
 
       // Mock de branch.findMany (sucursales activas para cruce)
@@ -128,7 +126,7 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
           id: 2,
           name: 'Sede San Isidro',
           isActive: true,
-        }
+        },
       ]);
 
       const response = await request(app)
@@ -140,7 +138,7 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
       expect(response.body.data).toHaveProperty('todaySales');
       expect(response.body.data.todaySales).toEqual({
         total: 1500.75,
-        pos: 1000.50,
+        pos: 1000.5,
         ecommerce: 500.25,
       });
       expect(response.body.data).toHaveProperty('pendingOrdersCount', 3);
@@ -157,13 +155,13 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
         {
           branchId: 1,
           branchName: 'Sede Miraflores',
-          totalSales: 1000.50,
+          totalSales: 1000.5,
         },
         {
           branchId: 2,
           branchName: 'Sede San Isidro',
           totalSales: 0,
-        }
+        },
       ]);
     });
 
@@ -187,9 +185,9 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
 
       expect(response.status).toBe(403);
       expect(response.body).toHaveProperty('success', false);
-      expect(response.body.error).toContain("Acceso denegado: Se requiere el permiso 'sales:read'");
+      expect(response.body.error).toContain(
+        "Acceso denegado: Se requiere el permiso 'sales:read'"
+      );
     });
   });
 });
-
-

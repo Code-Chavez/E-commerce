@@ -22,4 +22,3 @@ export interface ICreditNoteRepository {
   findByReturnRequestId(returnRequestId: number): Promise<CreditNote | null>;
   findAll(): Promise<CreditNoteWithClient[]>;
 }
-

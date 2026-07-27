@@ -20,7 +20,7 @@ export class ForgotPasswordUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly emailService: IEmailService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async execute(dto: ForgotPasswordDTO): Promise<void> {
@@ -32,7 +32,11 @@ export class ForgotPasswordUseCase {
     }
 
     // Generate a tamper-proof reset token valid for 1 hour
-    const resetToken = this.jwtService.generatePasswordResetToken(user.id, user.email, user.password);
+    const resetToken = this.jwtService.generatePasswordResetToken(
+      user.id,
+      user.email,
+      user.password
+    );
 
     // Build the reset URL pointing to the frontend reset-password page
     const clientUrl = process.env.CORS_ORIGIN ?? 'http://localhost:5173';

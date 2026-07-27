@@ -8,9 +8,13 @@ export interface GetOperatingExpensesFilter {
 }
 
 export class GetOperatingExpensesUseCase {
-  constructor(private readonly expenseRepository: IOperatingExpenseRepository) {}
+  constructor(
+    private readonly expenseRepository: IOperatingExpenseRepository
+  ) {}
 
-  async execute(filters: GetOperatingExpensesFilter): Promise<OperatingExpense[]> {
+  async execute(
+    filters: GetOperatingExpensesFilter
+  ): Promise<OperatingExpense[]> {
     return this.expenseRepository.findAll(filters);
   }
 }

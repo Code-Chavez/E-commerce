@@ -1,5 +1,8 @@
 import prisma from '@infrastructure/database/prisma';
-import { ICashMovementRepository, CreateCashMovementDTO } from '@domain/repositories/ICashMovementRepository';
+import {
+  ICashMovementRepository,
+  CreateCashMovementDTO,
+} from '@domain/repositories/ICashMovementRepository';
 import { CashMovement } from '@domain/entities/CashMovement';
 
 export class PrismaCashMovementRepository implements ICashMovementRepository {
@@ -24,7 +27,10 @@ export class PrismaCashMovementRepository implements ICashMovementRepository {
     return records.map((record) => this.toDomain(record));
   }
 
-  async sumByTurnAndType(turnId: number, type: 'INGRESO' | 'EGRESO'): Promise<number> {
+  async sumByTurnAndType(
+    turnId: number,
+    type: 'INGRESO' | 'EGRESO'
+  ): Promise<number> {
     const result = await prisma.cashMovement.aggregate({
       where: { turnId, type },
       _sum: { amount: true },

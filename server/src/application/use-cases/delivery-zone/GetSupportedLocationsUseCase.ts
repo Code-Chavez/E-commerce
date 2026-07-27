@@ -15,11 +15,13 @@ export interface SupportedLocationsResponse {
 }
 
 export class GetSupportedLocationsUseCase {
-  constructor(private readonly deliveryZoneRepository: IDeliveryZoneRepository) {}
+  constructor(
+    private readonly deliveryZoneRepository: IDeliveryZoneRepository
+  ) {}
 
   async execute(): Promise<SupportedLocationsResponse> {
     const zones = await this.deliveryZoneRepository.findAll();
-    
+
     // We need to parse "Departamento|Provincia|Distrito" and group them
     const departmentMap = new Map<string, Map<string, any[]>>();
 
@@ -36,30 +38,30 @@ export class GetSupportedLocationsUseCase {
             departmentMap.set(dept, new Map());
           }
           const provMap = departmentMap.get(dept)!;
-          
+
           if (!provMap.has(prov)) {
             provMap.set(prov, []);
           }
-          
+
           provMap.get(prov)!.push({
             name: dist,
             cost: zone.deliveryCost,
-            estimatedDays: zone.estimatedDays
+            estimatedDays: zone.estimatedDays,
           });
         } else if (parts.length === 1) {
           // Fallback gracefully
-          const dept = "Otros";
-          const prov = "Otros";
+          const dept = 'Otros';
+          const prov = 'Otros';
           const dist = parts[0].trim();
-          
+
           if (!departmentMap.has(dept)) departmentMap.set(dept, new Map());
           const provMap = departmentMap.get(dept)!;
           if (!provMap.has(prov)) provMap.set(prov, []);
-          
+
           provMap.get(prov)!.push({
             name: dist,
             cost: zone.deliveryCost,
-            estimatedDays: zone.estimatedDays
+            estimatedDays: zone.estimatedDays,
           });
         }
       }
@@ -72,13 +74,13 @@ export class GetSupportedLocationsUseCase {
       for (const [provName, districts] of provMap.entries()) {
         provinces.push({
           name: provName,
-          districts: districts.sort((a, b) => a.name.localeCompare(b.name))
+          districts: districts.sort((a, b) => a.name.localeCompare(b.name)),
         });
       }
       provinces.sort((a, b) => a.name.localeCompare(b.name));
       response.departments.push({
         name: deptName,
-        provinces
+        provinces,
       });
     }
 

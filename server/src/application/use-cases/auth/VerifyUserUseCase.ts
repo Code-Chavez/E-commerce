@@ -21,12 +21,16 @@ export class VerifyUserUseCase {
     }
 
     if (!user.verificationPin || !user.pinExpiresAt) {
-      throw new Error('No existe un código de verificación activo para esta cuenta');
+      throw new Error(
+        'No existe un código de verificación activo para esta cuenta'
+      );
     }
 
     // Verificar expiración
     if (new Date() > user.pinExpiresAt) {
-      throw new Error('El código de verificación ha expirado. Por favor, regístrese nuevamente.');
+      throw new Error(
+        'El código de verificación ha expirado. Por favor, regístrese nuevamente.'
+      );
     }
 
     // Verificar coincidencia del PIN

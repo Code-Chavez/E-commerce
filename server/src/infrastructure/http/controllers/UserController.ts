@@ -18,17 +18,23 @@ export class UserController {
    */
   async updateStatus(req: Request, res: Response, next: NextFunction) {
     // requirePermission sets req.user as { id, email, role } — cast to access it
-    const adminUser = req.user as { id: number; email: string; role: string } | undefined;
+    const adminUser = req.user as
+      | { id: number; email: string; role: string }
+      | undefined;
 
     try {
       const targetId = parseInt(String(req.params.id), 10);
       if (isNaN(targetId)) {
-        return res.status(400).json({ success: false, error: 'ID de usuario inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de usuario inválido' });
       }
 
       const validation = UpdateStatusSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
       const { isActive } = validation.data;
@@ -36,7 +42,9 @@ export class UserController {
       // Verify the target user exists
       const target = await userRepository.findById(targetId);
       if (!target) {
-        return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Usuario no encontrado' });
       }
 
       // Prevent admin from disabling their own account

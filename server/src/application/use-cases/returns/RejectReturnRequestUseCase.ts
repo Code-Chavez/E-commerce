@@ -2,7 +2,9 @@ import { IReturnRequestRepository } from '@domain/repositories/IReturnRequestRep
 import { ReturnRequest } from '@domain/entities/ReturnRequest';
 
 export class RejectReturnRequestUseCase {
-  constructor(private readonly returnRequestRepository: IReturnRequestRepository) {}
+  constructor(
+    private readonly returnRequestRepository: IReturnRequestRepository
+  ) {}
 
   async execute(id: number): Promise<ReturnRequest> {
     const returnRequest = await this.returnRequestRepository.findById(id);

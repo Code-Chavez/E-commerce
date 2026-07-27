@@ -3,7 +3,9 @@ import { Brand, CreateBrandDTO } from '@domain/entities/Brand';
 
 export class PrismaBrandRepository {
   async findAll(): Promise<Brand[]> {
-    return prisma.brand.findMany({ orderBy: { name: 'asc' } }) as Promise<Brand[]>;
+    return prisma.brand.findMany({ orderBy: { name: 'asc' } }) as Promise<
+      Brand[]
+    >;
   }
 
   async findById(id: number): Promise<Brand | null> {
@@ -14,7 +16,10 @@ export class PrismaBrandRepository {
     return prisma.brand.create({ data }) as Promise<Brand>;
   }
 
-  async update(id: number, data: Partial<CreateBrandDTO & { isActive: boolean }>): Promise<Brand> {
+  async update(
+    id: number,
+    data: Partial<CreateBrandDTO & { isActive: boolean }>
+  ): Promise<Brand> {
     return prisma.brand.update({ where: { id }, data }) as Promise<Brand>;
   }
 

@@ -33,7 +33,9 @@ const MAX_FAILED_ATTEMPTS = 2;
 export class RegisterFailedAttemptUseCase {
   constructor(private readonly emailService?: IEmailService) {}
 
-  async execute(input: RegisterFailedAttemptInput): Promise<FailedAttemptResult> {
+  async execute(
+    input: RegisterFailedAttemptInput
+  ): Promise<FailedAttemptResult> {
     const delivery = await prisma.delivery.findUnique({
       where: { id: input.deliveryId },
       include: {
@@ -85,8 +87,11 @@ export class RegisterFailedAttemptUseCase {
         });
         await restoreOrderStock(
           tx,
-          delivery.order.items.map(i => ({ variantId: i.variantId, qty: i.qty })),
-          requestContext.getStore()?.userId ?? null,
+          delivery.order.items.map((i) => ({
+            variantId: i.variantId,
+            qty: i.qty,
+          })),
+          requestContext.getStore()?.userId ?? null
         );
       } else {
         // Aún hay intentos disponibles: el cliente decide reenvío o devolución
@@ -115,7 +120,11 @@ export class RegisterFailedAttemptUseCase {
       const userName = delivery.order.user.name || 'Cliente';
       try {
         const email = forcedReturn
-          ? buildForcedReturnEmail({ userName, orderId: delivery.orderId, attemptNumber })
+          ? buildForcedReturnEmail({
+              userName,
+              orderId: delivery.orderId,
+              attemptNumber,
+            })
           : buildFailedDeliveryDecisionEmail({
               userName,
               orderId: delivery.orderId,
@@ -123,9 +132,16 @@ export class RegisterFailedAttemptUseCase {
               attemptNumber,
               rescheduledFor: input.rescheduledFor ?? null,
             });
-        await this.emailService.sendEmail(delivery.order.user.email, email.subject, email.html);
+        await this.emailService.sendEmail(
+          delivery.order.user.email,
+          email.subject,
+          email.html
+        );
       } catch (emailErr) {
-        console.error(`Error enviando email de intento fallido para orden #${delivery.orderId}:`, emailErr);
+        console.error(
+          `Error enviando email de intento fallido para orden #${delivery.orderId}:`,
+          emailErr
+        );
       }
     }
 

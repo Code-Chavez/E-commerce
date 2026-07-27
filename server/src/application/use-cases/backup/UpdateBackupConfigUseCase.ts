@@ -8,7 +8,9 @@ interface UpdateBackupConfigInput {
 }
 
 export class UpdateBackupConfigUseCase {
-  constructor(private readonly backupConfigRepository: IBackupConfigRepository) {}
+  constructor(
+    private readonly backupConfigRepository: IBackupConfigRepository
+  ) {}
 
   async execute(input: UpdateBackupConfigInput): Promise<BackupConfig> {
     if (input.retentionDays !== undefined && input.retentionDays < 1) {

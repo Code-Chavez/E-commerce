@@ -7,10 +7,10 @@ export class Encryption {
    * Por defecto es 10 si no se especifica.
    */
   static async hashPassword(password: string): Promise<string> {
-    const saltRounds = process.env.BCRYPT_SALT_ROUNDS 
-      ? parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) 
+    const saltRounds = process.env.BCRYPT_SALT_ROUNDS
+      ? parseInt(process.env.BCRYPT_SALT_ROUNDS, 10)
       : 10;
-      
+
     const salt = await bcrypt.genSalt(saltRounds);
     return bcrypt.hash(password, salt);
   }
@@ -19,7 +19,10 @@ export class Encryption {
    * Compara una contraseña en texto plano con un hash almacenado.
    * Retorna true si coinciden, false en caso contrario.
    */
-  static async comparePassword(password: string, hash: string): Promise<boolean> {
+  static async comparePassword(
+    password: string,
+    hash: string
+  ): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 }

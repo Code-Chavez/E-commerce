@@ -9,5 +9,8 @@ export interface InventorySettingsData {
 
 export interface IInventorySettingsRepository {
   get(): Promise<InventorySettingsData>;
-  update(method: ValuationMethod, userId?: number): Promise<InventorySettingsData>;
+  update(
+    method: ValuationMethod,
+    userId?: number
+  ): Promise<InventorySettingsData>;
 }

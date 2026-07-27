@@ -117,7 +117,9 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   // ---- HTTP 401: Invalid credentials (prevents enumeration) ----
 
   it('should return 401 with generic error for non-existent email', async () => {
-    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(null);
+    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+      null
+    );
 
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -129,7 +131,9 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   });
 
   it('should return 401 with generic error for wrong password', async () => {
-    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(activeUser);
+    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+      activeUser
+    );
 
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -143,7 +147,9 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   // ---- HTTP 403: Inactive / unverified account ----
 
   it('should return 403 for an inactive (unverified) account', async () => {
-    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(inactiveUser);
+    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+      inactiveUser
+    );
 
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -157,7 +163,9 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   // ---- HTTP 200: Successful login ----
 
   it('should return 200 with accessToken and refreshToken on valid credentials', async () => {
-    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(activeUser);
+    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+      activeUser
+    );
 
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -170,7 +178,9 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   });
 
   it('should return 200 with user data (without password) on successful login', async () => {
-    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(activeUser);
+    (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+      activeUser
+    );
 
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -182,5 +192,3 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
     expect(res.body.data.user.password).toBeUndefined();
   });
 });
-
-

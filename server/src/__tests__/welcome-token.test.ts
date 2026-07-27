@@ -23,8 +23,12 @@ describe('Welcome Token (HU-008)', () => {
     const email = 'test@example.com';
     const passwordHash = await bcrypt.hash('temp_password', 10);
 
-    const token = jwtService.generateWelcomePasswordToken(userId, email, passwordHash);
-    
+    const token = jwtService.generateWelcomePasswordToken(
+      userId,
+      email,
+      passwordHash
+    );
+
     // Decode without verifying to check the payload
     const decoded = jwt.decode(token) as any;
 
@@ -32,7 +36,7 @@ describe('Welcome Token (HU-008)', () => {
     expect(decoded.userId).toBe(userId);
     expect(decoded.email).toBe(email);
     expect(decoded.hashFragment).toBe(passwordHash.slice(-10));
-    
+
     // Check expiration difference is approx 48h (in seconds)
     const diffInHours = (decoded.exp - decoded.iat) / 3600;
     expect(diffInHours).toBe(48);
@@ -43,7 +47,11 @@ describe('Welcome Token (HU-008)', () => {
     const email = 'client@example.com';
     const passwordHash = await bcrypt.hash('secret', 10);
 
-    const token = jwtService.generateWelcomePasswordToken(userId, email, passwordHash);
+    const token = jwtService.generateWelcomePasswordToken(
+      userId,
+      email,
+      passwordHash
+    );
     const verified = jwtService.verifyPasswordResetToken(token); // dual validator
 
     expect(verified.purpose).toBe('welcome-password');

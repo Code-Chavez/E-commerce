@@ -40,4 +40,3 @@ export interface CreateUserDTO {
   isActive?: boolean;
   mustChangePassword?: boolean;
 }
-

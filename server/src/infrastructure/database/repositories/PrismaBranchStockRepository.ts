@@ -1,5 +1,9 @@
 import prisma from '@infrastructure/database/prisma';
-import { IBranchStockRepository, StockFilter, StockGroupedResult } from '@domain/repositories/IBranchStockRepository';
+import {
+  IBranchStockRepository,
+  StockFilter,
+  StockGroupedResult,
+} from '@domain/repositories/IBranchStockRepository';
 
 export class PrismaBranchStockRepository implements IBranchStockRepository {
   async getStockReport(filter: StockFilter): Promise<StockGroupedResult[]> {
@@ -15,7 +19,7 @@ export class PrismaBranchStockRepository implements IBranchStockRepository {
 
     if (filter.branchId) {
       whereClause.branchStock = {
-        some: { branchId: filter.branchId }
+        some: { branchId: filter.branchId },
       };
     }
 
@@ -38,7 +42,10 @@ export class PrismaBranchStockRepository implements IBranchStockRepository {
         quantity: bs.quantity,
       }));
 
-      const globalStock = byBranch.reduce((sum: number, item: any) => sum + item.quantity, 0);
+      const globalStock = byBranch.reduce(
+        (sum: number, item: any) => sum + item.quantity,
+        0
+      );
 
       return {
         variantId: v.id,

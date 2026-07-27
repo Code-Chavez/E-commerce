@@ -18,7 +18,9 @@ export class GetFinancialDashboardUseCase {
     private readonly consolidationService: FinancialConsolidationService
   ) {}
 
-  async execute(dto: GetFinancialDashboardDTO): Promise<FinancialDashboardSummary> {
+  async execute(
+    dto: GetFinancialDashboardDTO
+  ): Promise<FinancialDashboardSummary> {
     let fromDate: Date;
     let toDate: Date;
 
@@ -49,12 +51,13 @@ export class GetFinancialDashboardUseCase {
     const prevToDate = new Date(fromDate.getTime() - 1);
 
     // Fetch current period data in parallel
-    const [currentOrders, currentPosOrders, prevOrders, prevPosOrders] = await Promise.all([
-      this.orderRepository.getFinancialSales(fromDate, toDate),
-      this.posOrderRepository.getFinancialSales(fromDate, toDate),
-      this.orderRepository.getFinancialSales(prevFromDate, prevToDate),
-      this.posOrderRepository.getFinancialSales(prevFromDate, prevToDate),
-    ]);
+    const [currentOrders, currentPosOrders, prevOrders, prevPosOrders] =
+      await Promise.all([
+        this.orderRepository.getFinancialSales(fromDate, toDate),
+        this.posOrderRepository.getFinancialSales(fromDate, toDate),
+        this.orderRepository.getFinancialSales(prevFromDate, prevToDate),
+        this.posOrderRepository.getFinancialSales(prevFromDate, prevToDate),
+      ]);
 
     // Map to domain inputs
     const currentInputs: FinancialSaleInput[] = [

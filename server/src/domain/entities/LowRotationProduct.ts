@@ -1,4 +1,4 @@
-import { ProductVariant } from "./ProductVariant";
+import { ProductVariant } from './ProductVariant';
 
 export interface LowRotationProduct {
   variantId: string;

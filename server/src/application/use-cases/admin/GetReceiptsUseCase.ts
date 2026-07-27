@@ -114,7 +114,7 @@ export class GetReceiptsUseCase {
       }
 
       // Resolver cliente (Client)
-      // Buscamos si existe un registro en Client vinculado al userId del cajero/comprador 
+      // Buscamos si existe un registro en Client vinculado al userId del cajero/comprador
       // o buscamos si el perfil tiene algún cliente asignado.
       let client = null;
       if (order.userId) {

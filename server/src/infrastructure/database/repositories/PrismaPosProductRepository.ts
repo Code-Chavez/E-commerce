@@ -1,8 +1,14 @@
 import prisma from '@infrastructure/database/prisma';
-import { IPosProductRepository, PosProductResult } from '@domain/repositories/IPosProductRepository';
+import {
+  IPosProductRepository,
+  PosProductResult,
+} from '@domain/repositories/IPosProductRepository';
 
 export class PrismaPosProductRepository implements IPosProductRepository {
-  async searchProducts(query: string, branchId: number): Promise<PosProductResult[]> {
+  async searchProducts(
+    query: string,
+    branchId: number
+  ): Promise<PosProductResult[]> {
     // 1. Buscar todas las variantes activas de productos activos que coincidan por SKU o por nombre de producto
     const records = await prisma.productVariant.findMany({
       where: {
@@ -43,7 +49,7 @@ export class PrismaPosProductRepository implements IPosProductRepository {
       // Normalizar attributes a un Record<string, string> plano
       const attributes = record.attributesJson as any;
       const flatAttributes: Record<string, string> = {};
-      
+
       if (attributes && typeof attributes === 'object') {
         Object.entries(attributes).forEach(([key, val]) => {
           if (val && typeof val === 'object' && 'value' in (val as any)) {

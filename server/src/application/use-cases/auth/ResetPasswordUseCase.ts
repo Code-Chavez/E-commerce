@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 export class ResetPasswordUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async execute(dto: ResetPasswordDTO): Promise<void> {
@@ -26,8 +26,13 @@ export class ResetPasswordUseCase {
     }
 
     // 2.5 Security Rule: check if the token has already been used by comparing the hash fragment
-    if (payload.hashFragment && payload.hashFragment !== user.password.slice(-10)) {
-      throw new Error('El enlace de recuperación ya fue utilizado o no es válido');
+    if (
+      payload.hashFragment &&
+      payload.hashFragment !== user.password.slice(-10)
+    ) {
+      throw new Error(
+        'El enlace de recuperación ya fue utilizado o no es válido'
+      );
     }
 
     // 3. Security Rule: verify new password is not identical to current one

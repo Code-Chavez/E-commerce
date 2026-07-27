@@ -32,8 +32,12 @@ jest.mock('@infrastructure/http/middlewares/auth.middleware', () => ({
 describe('Social Proof API (HU-054)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (CloudinaryStorageService.prototype.uploadImage as any).mockResolvedValue('http://mock.img/file.jpg');
-    (CloudinaryStorageService.prototype.deleteImage as any).mockResolvedValue(undefined);
+    (CloudinaryStorageService.prototype.uploadImage as any).mockResolvedValue(
+      'http://mock.img/file.jpg'
+    );
+    (CloudinaryStorageService.prototype.deleteImage as any).mockResolvedValue(
+      undefined
+    );
   });
 
   describe('GET /api/v1/social-proof', () => {
@@ -74,7 +78,12 @@ describe('Social Proof API (HU-054)', () => {
 
   describe('POST /api/v1/social-proof/admin', () => {
     it('should create a new social proof with an image', async () => {
-      const mockProof = { id: 1, clientName: 'Test', imageUrl: 'http://mock.img/file.jpg', isApproved: false };
+      const mockProof = {
+        id: 1,
+        clientName: 'Test',
+        imageUrl: 'http://mock.img/file.jpg',
+        isApproved: false,
+      };
       (prisma.socialProofPhoto.create as any).mockResolvedValue(mockProof);
 
       const response = await request(app)
@@ -86,7 +95,11 @@ describe('Social Proof API (HU-054)', () => {
       expect(response.body).toEqual(mockProof);
       expect(CloudinaryStorageService.prototype.uploadImage).toHaveBeenCalled();
       expect(prisma.socialProofPhoto.create).toHaveBeenCalledWith({
-        data: { clientName: 'Test', imageUrl: 'http://mock.img/file.jpg', isApproved: false },
+        data: {
+          clientName: 'Test',
+          imageUrl: 'http://mock.img/file.jpg',
+          isApproved: false,
+        },
       });
     });
 
@@ -141,17 +154,25 @@ describe('Social Proof API (HU-054)', () => {
       (prisma.socialProofPhoto.findUnique as any).mockResolvedValue(mockProof);
       (prisma.socialProofPhoto.delete as any).mockResolvedValue({});
 
-      const response = await request(app).delete('/api/v1/social-proof/admin/1');
+      const response = await request(app).delete(
+        '/api/v1/social-proof/admin/1'
+      );
 
       expect(response.status).toBe(204);
-      expect(CloudinaryStorageService.prototype.deleteImage).toHaveBeenCalledWith('url1');
-      expect(prisma.socialProofPhoto.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(
+        CloudinaryStorageService.prototype.deleteImage
+      ).toHaveBeenCalledWith('url1');
+      expect(prisma.socialProofPhoto.delete).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
     });
 
     it('should return 404 if not found', async () => {
       (prisma.socialProofPhoto.findUnique as any).mockResolvedValue(null);
 
-      const response = await request(app).delete('/api/v1/social-proofs/admin/999');
+      const response = await request(app).delete(
+        '/api/v1/social-proofs/admin/999'
+      );
 
       expect(response.status).toBe(404);
     });

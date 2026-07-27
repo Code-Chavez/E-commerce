@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
-import { IAuditService, AuditModule, AuditAction } from '@domain/services/AuditService';
+import {
+  IAuditService,
+  AuditModule,
+  AuditAction,
+} from '@domain/services/AuditService';
 import { LoginDTO } from '@application/dtos/AuthDTO';
 import { UserResponseDTO } from '@application/dtos/user.dto';
 import { JwtService, AuthTokens } from '@infrastructure/services/JwtService';
@@ -30,7 +34,7 @@ export class LoginUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
-    private readonly auditService?: IAuditService,
+    private readonly auditService?: IAuditService
   ) {}
 
   async execute(dto: LoginDTO): Promise<LoginResultDTO> {
@@ -44,7 +48,9 @@ export class LoginUseCase {
 
     // Guard: user registered via Google OAuth — has a random password they don't know
     if (user.authProvider === 'google') {
-      throw new Error('Esta cuenta fue registrada con Google. Usa "Continuar con Google" para iniciar sesión.');
+      throw new Error(
+        'Esta cuenta fue registrada con Google. Usa "Continuar con Google" para iniciar sesión.'
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);

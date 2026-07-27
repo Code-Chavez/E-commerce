@@ -2,12 +2,18 @@
 
 import { ISupplierRepository } from '@domain/repositories/ISupplierRepository';
 import { Supplier } from '@domain/entities/Supplier';
-import { UpdateSupplierRequestDTO, SupplierResponseDTO } from '../../dtos/SupplierDTOs';
+import {
+  UpdateSupplierRequestDTO,
+  SupplierResponseDTO,
+} from '../../dtos/SupplierDTOs';
 
 export class UpdateSupplierUseCase {
   constructor(private readonly supplierRepository: ISupplierRepository) {}
 
-  async execute(id: number, dto: UpdateSupplierRequestDTO): Promise<SupplierResponseDTO> {
+  async execute(
+    id: number,
+    dto: UpdateSupplierRequestDTO
+  ): Promise<SupplierResponseDTO> {
     const existing = await this.supplierRepository.findById(id);
     if (!existing) {
       throw new Error(`El proveedor con ID ${id} no existe`);

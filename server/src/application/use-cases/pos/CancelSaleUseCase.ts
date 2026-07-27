@@ -33,14 +33,18 @@ export class CancelSaleUseCase {
     }
 
     if (order.status !== 'COMPLETED') {
-      throw new Error(`Solo se pueden anular ventas completadas. Estado actual: ${order.status}`);
+      throw new Error(
+        `Solo se pueden anular ventas completadas. Estado actual: ${order.status}`
+      );
     }
 
     // 2. Verificar permisos
     if (dto.userRole !== 'ADMIN') {
       // Vendedor necesita credenciales de un admin
       if (!dto.adminEmail || !dto.adminPassword) {
-        throw new Error('Se requiere autorización de un administrador para anular esta venta');
+        throw new Error(
+          'Se requiere autorización de un administrador para anular esta venta'
+        );
       }
 
       // Verificar que las credenciales correspondan a un admin
@@ -55,10 +59,15 @@ export class CancelSaleUseCase {
 
       const isAdmin = adminUser.roles.some((role) => role.name === 'ADMIN');
       if (!isAdmin) {
-        throw new Error('El usuario proporcionado no tiene rol de administrador');
+        throw new Error(
+          'El usuario proporcionado no tiene rol de administrador'
+        );
       }
 
-      const isPasswordValid = await bcrypt.compare(dto.adminPassword, adminUser.password);
+      const isPasswordValid = await bcrypt.compare(
+        dto.adminPassword,
+        adminUser.password
+      );
       if (!isPasswordValid) {
         throw new Error('Las credenciales de administrador no son válidas');
       }
@@ -74,7 +83,10 @@ export class CancelSaleUseCase {
 
       // B) Revertir stock y generar Kardex ENTRADA por cada ítem
       for (const item of order.items) {
-        const targetBranchId = order.isCrossBranch && order.sourceBranchId ? order.sourceBranchId : order.branchId;
+        const targetBranchId =
+          order.isCrossBranch && order.sourceBranchId
+            ? order.sourceBranchId
+            : order.branchId;
 
         if (order.isCrossBranch) {
           // Si es venta cruzada, determinar si revertir de RESERVED o SOLD
@@ -89,7 +101,8 @@ export class CancelSaleUseCase {
           });
 
           const reservedQty = reservedStock?.quantity ?? 0;
-          const statusToDecrement = reservedQty >= item.quantity ? 'RESERVED' : 'SOLD';
+          const statusToDecrement =
+            reservedQty >= item.quantity ? 'RESERVED' : 'SOLD';
 
           await tx.branchStock.update({
             where: {

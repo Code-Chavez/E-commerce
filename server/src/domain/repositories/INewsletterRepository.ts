@@ -1,4 +1,4 @@
-import { NewsletterSubscriber } from "../entities/NewsletterSubscriber";
+import { NewsletterSubscriber } from '../entities/NewsletterSubscriber';
 
 export interface INewsletterRepository {
   findByEmail(email: string): Promise<NewsletterSubscriber | null>;

@@ -11,13 +11,19 @@ export class PendingOrderAlertJob {
         await PendingOrderAlertJob.processAlerts();
         console.log('✅ [Cron Job] Pending Order Alert check finished.');
       } catch (error) {
-        console.error('❌ [Cron Job] Error checking pending order alerts:', error);
+        console.error(
+          '❌ [Cron Job] Error checking pending order alerts:',
+          error
+        );
       }
     });
   }
 
   public static async processAlerts() {
-    const hoursStr = await SystemSettingCacheService.getSetting('PENDING_ORDER_TOLERANCE_HOURS', '2');
+    const hoursStr = await SystemSettingCacheService.getSetting(
+      'PENDING_ORDER_TOLERANCE_HOURS',
+      '2'
+    );
     const hours = parseInt(hoursStr, 10);
     const thresholdDate = new Date();
     thresholdDate.setHours(thresholdDate.getHours() - hours);
@@ -28,31 +34,31 @@ export class PendingOrderAlertJob {
         status: 'PAID',
         deliveries: {
           none: {
-            type: 'DELIVERY'
-          }
+            type: 'DELIVERY',
+          },
         },
         createdAt: {
-          lt: thresholdDate
-        }
+          lt: thresholdDate,
+        },
       },
       select: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     for (const order of orders) {
       // Upsert the alert
       await prisma.pendingOrderAlert.upsert({
         where: {
-          orderId: order.id
+          orderId: order.id,
         },
         update: {
-          isActive: true
+          isActive: true,
         },
         create: {
           orderId: order.id,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
     }
 
@@ -60,26 +66,29 @@ export class PendingOrderAlertJob {
     // An alert should be inactive if the order now has a delivery or is no longer PAID
     const activeAlerts = await prisma.pendingOrderAlert.findMany({
       where: {
-        isActive: true
+        isActive: true,
       },
       include: {
         order: {
           include: {
-            deliveries: true
-          }
-        }
-      }
+            deliveries: true,
+          },
+        },
+      },
     });
 
     for (const alert of activeAlerts) {
-      if (alert.order.status !== 'PAID' || alert.order.deliveries.some(d => d.type === 'DELIVERY')) {
+      if (
+        alert.order.status !== 'PAID' ||
+        alert.order.deliveries.some((d) => d.type === 'DELIVERY')
+      ) {
         await prisma.pendingOrderAlert.update({
           where: {
-            id: alert.id
+            id: alert.id,
           },
           data: {
-            isActive: false
-          }
+            isActive: false,
+          },
         });
       }
     }

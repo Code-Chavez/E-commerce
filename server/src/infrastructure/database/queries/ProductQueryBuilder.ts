@@ -121,7 +121,10 @@ export class ProductQueryBuilder {
     };
 
     // Sorting & Pagination Strategy
-    let prismaOrderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[] | undefined;
+    let prismaOrderBy:
+      | Prisma.ProductOrderByWithRelationInput
+      | Prisma.ProductOrderByWithRelationInput[]
+      | undefined;
     let takeParam: number | undefined;
     let skipParam: number | undefined;
     let cursorParam: Prisma.ProductWhereUniqueInput | undefined;

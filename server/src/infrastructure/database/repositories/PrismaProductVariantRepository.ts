@@ -10,7 +10,6 @@ import {
 import { Product } from '@domain/entities/Product';
 import { ProductVariant } from '@domain/entities/ProductVariant';
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // PrismaProductVariantRepository — HU-014
 // ─────────────────────────────────────────────────────────────────────────────
@@ -39,7 +38,7 @@ export class PrismaProductVariantRepository implements IProductVariantRepository
    * NOTA: createMany no soporta select/include en MySQL, por eso hacemos findMany posterior.
    */
   async createMany(
-    variants: (CreateVariantDTO & { productId: number; sku: string })[],
+    variants: (CreateVariantDTO & { productId: number; sku: string })[]
   ): Promise<ProductVariant[]> {
     await prisma.productVariant.createMany({
       data: variants.map((v) => ({
@@ -116,4 +115,3 @@ export class PrismaProductVariantRepository implements IProductVariantRepository
     };
   }
 }
-

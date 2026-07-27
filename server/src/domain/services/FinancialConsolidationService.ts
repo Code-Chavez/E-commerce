@@ -41,10 +41,12 @@ export class FinancialConsolidationService {
     const currentTotals = this.calculatePeriodTotals(currentSales);
     const previousTotals = this.calculatePeriodTotals(previousSales);
 
-    const revenueDifference = currentTotals.totalRevenue - previousTotals.totalRevenue;
+    const revenueDifference =
+      currentTotals.totalRevenue - previousTotals.totalRevenue;
     let revenuePercentageChange = 0;
     if (previousTotals.totalRevenue > 0) {
-      revenuePercentageChange = (revenueDifference / previousTotals.totalRevenue) * 100;
+      revenuePercentageChange =
+        (revenueDifference / previousTotals.totalRevenue) * 100;
     }
 
     return {
@@ -52,7 +54,8 @@ export class FinancialConsolidationService {
       previousPeriod: previousTotals,
       comparison: {
         revenueDifference: Math.round(revenueDifference * 100) / 100,
-        revenuePercentageChange: Math.round(revenuePercentageChange * 100) / 100,
+        revenuePercentageChange:
+          Math.round(revenuePercentageChange * 100) / 100,
       },
     };
   }
@@ -62,7 +65,10 @@ export class FinancialConsolidationService {
     let posRevenue = 0;
     let ecommerceRevenue = 0;
 
-    const branchMap = new Map<string, { branchId: number | null; total: number }>();
+    const branchMap = new Map<
+      string,
+      { branchId: number | null; total: number }
+    >();
 
     for (const sale of sales) {
       totalRevenue += sale.amount;
@@ -85,13 +91,13 @@ export class FinancialConsolidationService {
       }
     }
 
-    const revenueByBranch: BranchRevenueBreakdown[] = Array.from(branchMap.entries()).map(
-      ([branchName, data]) => ({
-        branchId: data.branchId,
-        branchName,
-        total: Math.round(data.total * 100) / 100,
-      })
-    );
+    const revenueByBranch: BranchRevenueBreakdown[] = Array.from(
+      branchMap.entries()
+    ).map(([branchName, data]) => ({
+      branchId: data.branchId,
+      branchName,
+      total: Math.round(data.total * 100) / 100,
+    }));
 
     // Sort by revenue descending
     revenueByBranch.sort((a, b) => b.total - a.total);

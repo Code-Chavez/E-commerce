@@ -15,25 +15,43 @@ interface ValidateCouponResponse {
 export class ValidateCouponUseCase {
   constructor(private couponRepository: ICouponRepository) {}
 
-  async execute(request: ValidateCouponRequest): Promise<ValidateCouponResponse> {
+  async execute(
+    request: ValidateCouponRequest
+  ): Promise<ValidateCouponResponse> {
     const { code, subtotal } = request;
-    
+
     const coupon = await this.couponRepository.findByCode(code.trim());
 
     if (!coupon) {
-      return { valid: false, discountAmount: 0, message: 'El cupón no existe.' };
+      return {
+        valid: false,
+        discountAmount: 0,
+        message: 'El cupón no existe.',
+      };
     }
 
     if (!coupon.isActive) {
-      return { valid: false, discountAmount: 0, message: 'El cupón está inactivo.' };
+      return {
+        valid: false,
+        discountAmount: 0,
+        message: 'El cupón está inactivo.',
+      };
     }
 
     if (coupon.expiresAt && coupon.expiresAt < new Date()) {
-      return { valid: false, discountAmount: 0, message: 'El cupón ha expirado.' };
+      return {
+        valid: false,
+        discountAmount: 0,
+        message: 'El cupón ha expirado.',
+      };
     }
 
     if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
-      return { valid: false, discountAmount: 0, message: 'El cupón ha alcanzado su límite de usos.' };
+      return {
+        valid: false,
+        discountAmount: 0,
+        message: 'El cupón ha alcanzado su límite de usos.',
+      };
     }
 
     let discountAmount = 0;

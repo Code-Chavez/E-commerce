@@ -24,7 +24,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     inventorySettings: {
       upsert: jest.fn(),
     },
-    $transaction: jest.fn().mockImplementation(async (cb: any) => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any) => cb(mockPrisma)),
     $executeRaw: jest.fn(),
   };
   return { __esModule: true, default: mockPrisma };
@@ -35,7 +37,9 @@ jest.mock('@infrastructure/context/RequestContext', () => ({
     getStore: jest.fn().mockReturnValue({ userId: 5 }),
     run: jest.fn((_store: any, cb: any) => cb()),
   },
-  requestContextMiddleware: jest.fn((_req: any, _res: any, next: any) => next()),
+  requestContextMiddleware: jest.fn((_req: any, _res: any, next: any) =>
+    next()
+  ),
 }));
 
 import prisma from '@infrastructure/database/prisma';
@@ -43,7 +47,9 @@ const p = prisma as any;
 
 // ─── Helper: tx con funciones async puras (no jest.Mock) ─────────────────────
 
-function makeTx(historial: Array<{ type: string; quantity: number; unitCost: number }>): any {
+function makeTx(
+  historial: Array<{ type: string; quantity: number; unitCost: number }>
+): any {
   return {
     kardexEntry: { findMany: async () => historial },
     $executeRaw: async () => 0,
@@ -53,7 +59,9 @@ function makeTx(historial: Array<{ type: string; quantity: number; unitCost: num
 // ─── CASO 3 — PepsStrategy (unitario puro) ───────────────────────────────────
 
 describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
-  beforeEach(() => { jest.clearAllMocks(); });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('PEPS core: 2 compras a distintos costos + 1 venta consume el lote más antiguo primero', async () => {
     /**
@@ -66,7 +74,9 @@ describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
      */
     const strategy = new PepsStrategy();
     const result = await strategy.calcularCostoSalida({
-      variantId: 1, branchId: 1, quantity: 12,
+      variantId: 1,
+      branchId: 1,
+      quantity: 12,
       tx: makeTx([
         { type: 'COMPRA', quantity: 10, unitCost: 100 },
         { type: 'COMPRA', quantity: 10, unitCost: 120 },
@@ -79,7 +89,9 @@ describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
   it('PEPS: venta cabe íntegramente en el primer lote → unitCost del lote 1', async () => {
     const strategy = new PepsStrategy();
     const result = await strategy.calcularCostoSalida({
-      variantId: 1, branchId: 1, quantity: 5,
+      variantId: 1,
+      branchId: 1,
+      quantity: 5,
       tx: makeTx([
         { type: 'COMPRA', quantity: 20, unitCost: 50 },
         { type: 'COMPRA', quantity: 10, unitCost: 80 },
@@ -96,11 +108,13 @@ describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
      */
     const strategy = new PepsStrategy();
     const result = await strategy.calcularCostoSalida({
-      variantId: 1, branchId: 1, quantity: 5,
+      variantId: 1,
+      branchId: 1,
+      quantity: 5,
       tx: makeTx([
         { type: 'COMPRA', quantity: 10, unitCost: 100 },
         { type: 'COMPRA', quantity: 10, unitCost: 120 },
-        { type: 'VENTA',  quantity: 8,  unitCost: 100 },
+        { type: 'VENTA', quantity: 8, unitCost: 100 },
       ]),
     });
 
@@ -111,17 +125,26 @@ describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
     const strategy = new PepsStrategy();
     await expect(
       strategy.calcularCostoSalida({
-        variantId: 1, branchId: 1, quantity: 10,
+        variantId: 1,
+        branchId: 1,
+        quantity: 10,
         tx: makeTx([{ type: 'COMPRA', quantity: 5, unitCost: 100 }]),
       })
     ).rejects.toThrow('Stock PEPS insuficiente');
   });
 
   it('KardexService.registrarSalida usa PEPS cuando el método activo es PEPS', async () => {
-    (p.inventorySettings.upsert as any).mockResolvedValue({ id: 1, valuationMethod: 'PEPS' });
+    (p.inventorySettings.upsert as any).mockResolvedValue({
+      id: 1,
+      valuationMethod: 'PEPS',
+    });
     (p.branchStock.findUnique as any).mockResolvedValue({ quantity: 20 });
     (p.branchStock.update as any).mockResolvedValue({ quantity: 8 });
-    (p.kardexEntry.findFirst as any).mockResolvedValue({ unitCost: 110, balanceCost: 2200, balanceQty: 20 });
+    (p.kardexEntry.findFirst as any).mockResolvedValue({
+      unitCost: 110,
+      balanceCost: 2200,
+      balanceQty: 20,
+    });
     (p.kardexEntry.create as any).mockResolvedValue({ id: 10 });
     (p.kardexEntry.findMany as any).mockResolvedValue([
       { type: 'COMPRA', quantity: 10, unitCost: 100 },
@@ -130,25 +153,51 @@ describe('HU-026 Caso 3 — Algoritmo PEPS (FIFO)', () => {
     (p.$executeRaw as any).mockResolvedValue(0);
 
     const service = new KardexService();
-    await service.registrarSalida({ variantId: 1, branchId: 1, quantity: 12, userId: 5 });
+    await service.registrarSalida({
+      variantId: 1,
+      branchId: 1,
+      quantity: 12,
+      userId: 5,
+    });
 
-    expect(p.kardexEntry.create).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ type: 'VENTA', quantity: 12, unitCost: 103.33, userId: 5 }),
-    }));
+    expect(p.kardexEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'VENTA',
+          quantity: 12,
+          unitCost: 103.33,
+          userId: 5,
+        }),
+      })
+    );
   });
 
   it('KardexService.registrarSalida usa CPP cuando el método activo es PROMEDIO_PONDERADO', async () => {
-    (p.inventorySettings.upsert as any).mockResolvedValue({ id: 1, valuationMethod: 'PROMEDIO_PONDERADO' });
+    (p.inventorySettings.upsert as any).mockResolvedValue({
+      id: 1,
+      valuationMethod: 'PROMEDIO_PONDERADO',
+    });
     (p.branchStock.findUnique as any).mockResolvedValue({ quantity: 15 });
     (p.branchStock.update as any).mockResolvedValue({ quantity: 10 });
-    (p.kardexEntry.findFirst as any).mockResolvedValue({ unitCost: 75, balanceCost: 1125, balanceQty: 15 });
+    (p.kardexEntry.findFirst as any).mockResolvedValue({
+      unitCost: 75,
+      balanceCost: 1125,
+      balanceQty: 15,
+    });
     (p.kardexEntry.create as any).mockResolvedValue({ id: 11 });
 
     const service = new KardexService();
-    await service.registrarSalida({ variantId: 1, branchId: 1, quantity: 5, userId: 5 });
+    await service.registrarSalida({
+      variantId: 1,
+      branchId: 1,
+      quantity: 5,
+      userId: 5,
+    });
 
-    expect(p.kardexEntry.create).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ type: 'VENTA', unitCost: 75 }),
-    }));
+    expect(p.kardexEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ type: 'VENTA', unitCost: 75 }),
+      })
+    );
   });
 });

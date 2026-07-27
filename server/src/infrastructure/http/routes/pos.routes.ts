@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { DiscountController } from '@infrastructure/http/controllers/pos/DiscountController';
 import { SaleController } from '@infrastructure/http/controllers/pos/SaleController';
-import { requireAuth, requirePermission } from '@infrastructure/http/middlewares/auth.middleware';
+import {
+  requireAuth,
+  requirePermission,
+} from '@infrastructure/http/middlewares/auth.middleware';
 
 /**
  * HU-034 / T-125: Rutas del módulo POS (Punto de Venta).

@@ -20,7 +20,10 @@ export class UpdateBrandConfigUseCase {
     private readonly auditLogRepository: IAuditLogRepository
   ) {}
 
-  async execute(dto: UpdateBrandConfigDTO, adminUserId: number | null): Promise<BrandConfig> {
+  async execute(
+    dto: UpdateBrandConfigDTO,
+    adminUserId: number | null
+  ): Promise<BrandConfig> {
     const config = await this.brandConfigRepository.upsert(dto);
 
     // Dynamic clean log registration for traceability in audit logs (DoD align)

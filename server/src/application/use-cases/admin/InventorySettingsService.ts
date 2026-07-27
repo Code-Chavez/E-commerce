@@ -1,5 +1,8 @@
 import type { ValuationMethod } from '@prisma/client';
-import type { IInventorySettingsRepository, InventorySettingsData } from '@domain/repositories/IInventorySettingsRepository';
+import type {
+  IInventorySettingsRepository,
+  InventorySettingsData,
+} from '@domain/repositories/IInventorySettingsRepository';
 import { PrismaInventorySettingsRepository } from '@infrastructure/database/repositories/PrismaInventorySettingsRepository';
 
 export class InventorySettingsService {
@@ -13,7 +16,10 @@ export class InventorySettingsService {
     return this.repo.get();
   }
 
-  async updateMethod(method: ValuationMethod, userId?: number): Promise<InventorySettingsData> {
+  async updateMethod(
+    method: ValuationMethod,
+    userId?: number
+  ): Promise<InventorySettingsData> {
     if (method !== 'PEPS' && method !== 'PROMEDIO_PONDERADO') {
       throw new Error(`Método de valorización inválido: ${method}`);
     }

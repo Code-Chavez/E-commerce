@@ -1,4 +1,4 @@
-import { CommunicationLog } from "../entities/CommunicationLog";
+import { CommunicationLog } from '../entities/CommunicationLog';
 
 export interface ICommunicationLogRepository {
   save(log: Omit<CommunicationLog, 'id' | 'sentAt'>): Promise<CommunicationLog>;

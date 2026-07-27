@@ -30,7 +30,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     stockEntry: mockStockEntry,
     branchStock: mockBranchStock,
     kardexEntry: mockKardexEntry,
-    $transaction: jest.fn().mockImplementation(async (callback: any) => callback(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (callback: any) => callback(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -52,7 +54,9 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
 
   describe('GET /api/v1/suppliers', () => {
     it('should return a list of suppliers', async () => {
-      const mockSuppliers = [{ id: 1, ruc: '12345678901', razonSocial: 'Proveedor A' }];
+      const mockSuppliers = [
+        { id: 1, ruc: '12345678901', razonSocial: 'Proveedor A' },
+      ];
       (prisma.supplier.findMany as any).mockResolvedValue(mockSuppliers);
 
       const response = await request(app).get('/api/v1/suppliers');
@@ -65,7 +69,12 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
 
   describe('POST /api/v1/suppliers', () => {
     it('should create a new supplier', async () => {
-      const mockPayload = { ruc: '12345678901', razonSocial: 'Proveedor A', contacto: 'Juan', rubro: 'Tecnología' };
+      const mockPayload = {
+        ruc: '12345678901',
+        razonSocial: 'Proveedor A',
+        contacto: 'Juan',
+        rubro: 'Tecnología',
+      };
       const mockCreated = { id: 1, ...mockPayload };
 
       (prisma.supplier.findFirst as any).mockResolvedValue(null);
@@ -81,7 +90,12 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
     });
 
     it('should fail if RUC already exists', async () => {
-      const mockPayload = { ruc: '12345678901', razonSocial: 'Proveedor A', contacto: 'Juan', rubro: 'Tecnología' };
+      const mockPayload = {
+        ruc: '12345678901',
+        razonSocial: 'Proveedor A',
+        contacto: 'Juan',
+        rubro: 'Tecnología',
+      };
       (prisma.supplier.findUnique as any).mockResolvedValue({ id: 1 });
 
       const response = await request(app)
@@ -107,7 +121,12 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
   describe('PUT /api/v1/suppliers/:id', () => {
     it('should update a supplier', async () => {
       const mockPayload = { razonSocial: 'Proveedor B', rubro: 'Mobiliario' };
-      const mockUpdated = { id: 1, ruc: '12345678901', razonSocial: 'Proveedor B', rubro: 'Mobiliario' };
+      const mockUpdated = {
+        id: 1,
+        ruc: '12345678901',
+        razonSocial: 'Proveedor B',
+        rubro: 'Mobiliario',
+      };
 
       (prisma.supplier.findUnique as any).mockResolvedValue({ id: 1 });
       (prisma.supplier.update as any).mockResolvedValue(mockUpdated);
@@ -125,7 +144,10 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
   describe('PATCH /api/v1/suppliers/:id/status', () => {
     it('should toggle supplier status', async () => {
       (prisma.supplier.findUnique as any).mockResolvedValue({ id: 1 });
-      (prisma.supplier.update as any).mockResolvedValue({ id: 1, isActive: false });
+      (prisma.supplier.update as any).mockResolvedValue({
+        id: 1,
+        isActive: false,
+      });
 
       const response = await request(app)
         .patch('/api/v1/suppliers/1/status')
@@ -145,8 +167,15 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
         items: [{ variantId: 1, quantity: 10, unitCost: 10 }],
       };
 
-      (prisma.supplier.findUnique as any).mockResolvedValue({ id: 1, isActive: true, razonSocial: 'Proveedor A' });
-      (prisma.branchStock.findUnique as any).mockResolvedValue({ id: 1, quantity: 5 });
+      (prisma.supplier.findUnique as any).mockResolvedValue({
+        id: 1,
+        isActive: true,
+        razonSocial: 'Proveedor A',
+      });
+      (prisma.branchStock.findUnique as any).mockResolvedValue({
+        id: 1,
+        quantity: 5,
+      });
       (prisma.branchStock.upsert as any).mockResolvedValue({});
       (prisma.branchStock.update as any).mockResolvedValue({});
       (prisma.stockEntry.create as any).mockResolvedValue({
@@ -164,7 +193,9 @@ describe('Supplier & Stock Entry API (HU-051)', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        items: [{ id: 1, stockEntryId: 1, variantId: 1, quantity: 10, unitCost: 10 }],
+        items: [
+          { id: 1, stockEntryId: 1, variantId: 1, quantity: 10, unitCost: 10 },
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
       });

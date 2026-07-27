@@ -8,14 +8,19 @@ export interface CreateDeliveryZoneDTO {
 }
 
 export class CreateDeliveryZoneUseCase {
-  constructor(private readonly deliveryZoneRepository: IDeliveryZoneRepository) {}
+  constructor(
+    private readonly deliveryZoneRepository: IDeliveryZoneRepository
+  ) {}
 
   async execute(dto: CreateDeliveryZoneDTO): Promise<DeliveryZone> {
     // Check if any district already belongs to another zone
     for (const district of dto.districts) {
-      const existing = await this.deliveryZoneRepository.findByDistrict(district);
+      const existing =
+        await this.deliveryZoneRepository.findByDistrict(district);
       if (existing) {
-        throw new Error(`El distrito ${district} ya pertenece a otra zona de envío (ID: ${existing.id})`);
+        throw new Error(
+          `El distrito ${district} ya pertenece a otra zona de envío (ID: ${existing.id})`
+        );
       }
     }
 

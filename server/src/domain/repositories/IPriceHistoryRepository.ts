@@ -1,4 +1,7 @@
-import { PriceHistory, CreatePriceHistoryDTO } from '@domain/entities/PriceHistory';
+import {
+  PriceHistory,
+  CreatePriceHistoryDTO,
+} from '@domain/entities/PriceHistory';
 
 export interface IPriceHistoryRepository {
   create(data: CreatePriceHistoryDTO): Promise<PriceHistory>;

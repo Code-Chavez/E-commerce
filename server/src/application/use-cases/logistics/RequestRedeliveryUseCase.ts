@@ -22,7 +22,9 @@ export interface RequestRedeliveryResult {
 export class RequestRedeliveryUseCase {
   constructor(private readonly emailService?: IEmailService) {}
 
-  async execute(input: RequestRedeliveryInput): Promise<RequestRedeliveryResult> {
+  async execute(
+    input: RequestRedeliveryInput
+  ): Promise<RequestRedeliveryResult> {
     const order = await prisma.order.findUnique({
       where: { id: input.orderId },
       include: {
@@ -41,12 +43,16 @@ export class RequestRedeliveryUseCase {
     }
 
     if (order.userId !== input.userId) {
-      throw new Error('No autorizado: el pedido no pertenece al usuario autenticado');
+      throw new Error(
+        'No autorizado: el pedido no pertenece al usuario autenticado'
+      );
     }
 
     const lastDelivery = order.deliveries[0];
     if (!lastDelivery || lastDelivery.status !== 'AWAITING_CLIENT_DECISION') {
-      throw new Error('El pedido no tiene un envío pendiente de decisión del cliente');
+      throw new Error(
+        'El pedido no tiene un envío pendiente de decisión del cliente'
+      );
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -64,7 +70,7 @@ export class RequestRedeliveryUseCase {
           status: 'PENDING',
           parentDeliveryId: lastDelivery.id,
           pickingItems: {
-            create: lastDelivery.pickingItems.map(item => ({
+            create: lastDelivery.pickingItems.map((item) => ({
               variantId: item.variantId,
               qty: item.qty,
             })),
@@ -95,9 +101,16 @@ export class RequestRedeliveryUseCase {
           userName: order.user.name || 'Cliente',
           orderId: order.id,
         });
-        await this.emailService.sendEmail(order.user.email, email.subject, email.html);
+        await this.emailService.sendEmail(
+          order.user.email,
+          email.subject,
+          email.html
+        );
       } catch (emailErr) {
-        console.error(`Error enviando email de confirmación de reenvío para orden #${order.id}:`, emailErr);
+        console.error(
+          `Error enviando email de confirmación de reenvío para orden #${order.id}:`,
+          emailErr
+        );
       }
     }
 

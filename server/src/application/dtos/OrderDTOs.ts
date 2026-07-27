@@ -42,7 +42,6 @@ export interface OrderResponseDTO {
   statusLogs?: OrderStatusLogDTO[];
 }
 
-
 export interface ListOrdersResponseDTO {
   orders: OrderResponseDTO[];
   total: number;

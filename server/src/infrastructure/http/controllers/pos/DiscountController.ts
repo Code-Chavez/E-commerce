@@ -13,48 +13,61 @@ import { z } from 'zod';
 
 // ─── Esquema de validación Zod ─────────────────────────────────────────────────
 
-const ValidateDiscountSchema = z.object({
-  /**
-   * Lista de ítems del carrito de compra con sus precios y cantidades.
-   */
-  items: z
-    .array(
-      z.object({
-        variantId: z.number().int().positive('El variantId debe ser un entero positivo'),
-        quantity: z.number().int().positive('La cantidad debe ser un entero positivo'),
-        unitPrice: z.number().nonnegative('El precio unitario no puede ser negativo'),
-      })
-    )
-    .min(1, 'Se requiere al menos un ítem para calcular el descuento'),
+const ValidateDiscountSchema = z
+  .object({
+    /**
+     * Lista de ítems del carrito de compra con sus precios y cantidades.
+     */
+    items: z
+      .array(
+        z.object({
+          variantId: z
+            .number()
+            .int()
+            .positive('El variantId debe ser un entero positivo'),
+          quantity: z
+            .number()
+            .int()
+            .positive('La cantidad debe ser un entero positivo'),
+          unitPrice: z
+            .number()
+            .nonnegative('El precio unitario no puede ser negativo'),
+        })
+      )
+      .min(1, 'Se requiere al menos un ítem para calcular el descuento'),
 
-  /**
-   * Tipo de descuento a aplicar:
-   * - "percentage" → porcentaje sobre el subtotal (ej. 10 = 10%)
-   * - "fixed"      → monto fijo en moneda local (ej. 5.00 = S/. 5.00)
-   */
-  discountType: z.enum(['percentage', 'fixed']).refine(
-    (val) => val === 'percentage' || val === 'fixed',
-    { message: 'discountType debe ser "percentage" o "fixed"' }
-  ),
+    /**
+     * Tipo de descuento a aplicar:
+     * - "percentage" → porcentaje sobre el subtotal (ej. 10 = 10%)
+     * - "fixed"      → monto fijo en moneda local (ej. 5.00 = S/. 5.00)
+     */
+    discountType: z
+      .enum(['percentage', 'fixed'])
+      .refine((val) => val === 'percentage' || val === 'fixed', {
+        message: 'discountType debe ser "percentage" o "fixed"',
+      }),
 
-  /**
-   * Valor del descuento. Debe ser mayor que cero.
-   * - Si discountType es "percentage": valor entre 0.01 y 100.
-   * - Si discountType es "fixed": valor mayor que 0.
-   */
-  discountValue: z.number().positive('El valor del descuento debe ser mayor que cero'),
-}).refine(
-  (data) => {
-    if (data.discountType === 'percentage' && data.discountValue > 100) {
-      return false;
+    /**
+     * Valor del descuento. Debe ser mayor que cero.
+     * - Si discountType es "percentage": valor entre 0.01 y 100.
+     * - Si discountType es "fixed": valor mayor que 0.
+     */
+    discountValue: z
+      .number()
+      .positive('El valor del descuento debe ser mayor que cero'),
+  })
+  .refine(
+    (data) => {
+      if (data.discountType === 'percentage' && data.discountValue > 100) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'El porcentaje de descuento no puede exceder el 100%',
+      path: ['discountValue'],
     }
-    return true;
-  },
-  {
-    message: 'El porcentaje de descuento no puede exceder el 100%',
-    path: ['discountValue'],
-  }
-);
+  );
 
 // ─── Tipo inferido del esquema ────────────────────────────────────────────────
 
@@ -85,7 +98,8 @@ export class DiscountController {
         });
       }
 
-      const { items, discountType, discountValue }: ValidateDiscountInput = validation.data;
+      const { items, discountType, discountValue }: ValidateDiscountInput =
+        validation.data;
 
       // 2. Calcular el subtotal de los ítems del carrito
       const subtotal = items.reduce((acc, item) => {

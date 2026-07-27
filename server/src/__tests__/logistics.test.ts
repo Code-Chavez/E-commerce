@@ -45,12 +45,14 @@ jest.mock('@infrastructure/database/prisma', () => {
     order: mockOrder,
     delivery: mockDelivery,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -132,7 +134,9 @@ describe('Logistics Endpoints', () => {
         orderId: 101,
         deliveryManId: null,
         status: 'PENDING',
-        pickingItems: [{ id: 1, deliveryId: 1, variantId: 5, qty: 2, pickedAt: null }],
+        pickingItems: [
+          { id: 1, deliveryId: 1, variantId: 5, qty: 2, pickedAt: null },
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -288,7 +292,9 @@ describe('Logistics Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.header['content-type']).toBe('application/pdf');
-      expect(response.header['content-disposition']).toContain('shipping-label-1.pdf');
+      expect(response.header['content-disposition']).toContain(
+        'shipping-label-1.pdf'
+      );
     });
   });
   describe('PATCH /api/v1/logistics/deliveries/:id/status', () => {
@@ -352,32 +358,34 @@ describe('Logistics Endpoints', () => {
         status: 'FAILED',
         order: {
           id: 101,
-          items: [{ variantId: 5, qty: 2 }]
-        }
+          items: [{ variantId: 5, qty: 2 }],
+        },
       });
       (prisma.delivery.update as any).mockResolvedValue({
         id: 1,
         orderId: 101,
-        status: 'RETURNED'
+        status: 'RETURNED',
       });
-      
+
       const mockBranchStock = {
         findUnique: jest.fn<any>().mockResolvedValue({ id: 10, quantity: 5 }),
         update: jest.fn<any>().mockResolvedValue(true),
-        create: jest.fn<any>()
+        create: jest.fn<any>(),
       };
-      
+
       const mockBranch = {
-        findFirst: jest.fn<any>().mockResolvedValue({ id: 1 } as never)
+        findFirst: jest.fn<any>().mockResolvedValue({ id: 1 } as never),
       };
-      
+
       const mockKardex = {
-        findFirst: jest.fn<any>().mockResolvedValue({ unitCost: 10, balanceCost: 50 }),
-        create: jest.fn<any>().mockResolvedValue(true as never)
+        findFirst: jest
+          .fn<any>()
+          .mockResolvedValue({ unitCost: 10, balanceCost: 50 }),
+        create: jest.fn<any>().mockResolvedValue(true as never),
       };
 
       const mockOrderStatusLog = {
-        create: jest.fn<any>().mockResolvedValue(true as never)
+        create: jest.fn<any>().mockResolvedValue(true as never),
       };
 
       (prisma as any).branchStock = mockBranchStock;
@@ -391,14 +399,20 @@ describe('Logistics Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(mockBranchStock.update).toHaveBeenCalledWith(expect.objectContaining({
-        data: { quantity: 7 }
-      }));
-      expect(mockKardex.create).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({ type: 'DEVOLUCION', quantity: 2, unitCost: 10 })
-      }));
+      expect(mockBranchStock.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { quantity: 7 },
+        })
+      );
+      expect(mockKardex.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            type: 'DEVOLUCION',
+            quantity: 2,
+            unitCost: 10,
+          }),
+        })
+      );
     });
   });
 });
-
-

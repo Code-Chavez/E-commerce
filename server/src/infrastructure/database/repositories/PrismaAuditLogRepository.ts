@@ -50,7 +50,16 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
       orderBy: { createdAt: 'desc' },
     });
 
-    return records.map((r: { id: number; action: string; module: string; details: unknown; userId: number | null; createdAt: Date }) => this.toDomain(r));
+    return records.map(
+      (r: {
+        id: number;
+        action: string;
+        module: string;
+        details: unknown;
+        userId: number | null;
+        createdAt: Date;
+      }) => this.toDomain(r)
+    );
   }
 
   async findById(id: number): Promise<AuditLog | null> {

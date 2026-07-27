@@ -18,7 +18,7 @@ export class PrismaDeliveryZoneRepository implements IDeliveryZoneRepository {
 
   async findAll(): Promise<DeliveryZone[]> {
     const records = await this.prisma.deliveryZone.findMany({
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
     });
     return records.map(this.mapToEntity);
   }
@@ -36,36 +36,41 @@ export class PrismaDeliveryZoneRepository implements IDeliveryZoneRepository {
     // O mejor aún, buscar usando Raw en MySQL si Prisma JSON filters no funcionan bien para JSON arrays en MySQL.
     // Usaremos un filtro de string simple asumiendo que districts almacena un string stringificado de JSON.
     const records = await this.prisma.deliveryZone.findMany();
-    
-    const zone = records.find(record => {
+
+    const zone = records.find((record) => {
       const dists = record.districts as string[];
-      return dists.some(d => d.toLowerCase() === district.toLowerCase());
+      return dists.some((d) => d.toLowerCase() === district.toLowerCase());
     });
 
     if (!zone) return null;
     return this.mapToEntity(zone);
   }
 
-  async create(data: Omit<DeliveryZone, 'id' | 'createdAt' | 'updatedAt'>): Promise<DeliveryZone> {
+  async create(
+    data: Omit<DeliveryZone, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<DeliveryZone> {
     const record = await this.prisma.deliveryZone.create({
       data: {
         districts: data.districts,
         deliveryCost: data.deliveryCost,
         estimatedDays: data.estimatedDays,
-      }
+      },
     });
     return this.mapToEntity(record);
   }
 
-  async update(id: number, data: Partial<Omit<DeliveryZone, 'id' | 'createdAt' | 'updatedAt'>>): Promise<DeliveryZone> {
+  async update(
+    id: number,
+    data: Partial<Omit<DeliveryZone, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<DeliveryZone> {
     const updateData: any = { ...data };
     if (updateData.deliveryCost !== undefined) {
       updateData.deliveryCost = new Prisma.Decimal(updateData.deliveryCost);
     }
-    
+
     const record = await this.prisma.deliveryZone.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
     return this.mapToEntity(record);
   }

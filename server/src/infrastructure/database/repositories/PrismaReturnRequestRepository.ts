@@ -1,6 +1,10 @@
 import prisma from '@infrastructure/database/prisma';
 import { IReturnRequestRepository } from '@domain/repositories/IReturnRequestRepository';
-import { ReturnRequest, ReturnRequestItem, ReturnStatus } from '@domain/entities/ReturnRequest';
+import {
+  ReturnRequest,
+  ReturnRequestItem,
+  ReturnStatus,
+} from '@domain/entities/ReturnRequest';
 
 export class PrismaReturnRequestRepository implements IReturnRequestRepository {
   private toDomain(record: any): ReturnRequest {

@@ -6,10 +6,7 @@ const router = Router();
 const branchController = new BranchController();
 
 // Listar sucursales (mantenemos público para Catálogo/Footer)
-router.get(
-  '/branches',
-  branchController.getBranches.bind(branchController)
-);
+router.get('/branches', branchController.getBranches.bind(branchController));
 
 // Crear sucursal (requiere users:write)
 router.post(

@@ -9,7 +9,7 @@ const emailService = new ResendEmailService();
 export class NPSSurveyJob {
   public static start(): void {
     console.log('[Job] NPSSurveyJob inicializado (0 * * * *)');
-    
+
     // Ejecutar cada hora
     cron.schedule('0 * * * *', async () => {
       console.log('[Job] Ejecutando NPSSurveyJob...');
@@ -21,12 +21,19 @@ export class NPSSurveyJob {
     });
   }
 
-  public static validateSurveyPayload(payload: { orderId?: number | null, posOrderId?: number | null }) {
+  public static validateSurveyPayload(payload: {
+    orderId?: number | null;
+    posOrderId?: number | null;
+  }) {
     if (payload.orderId && payload.posOrderId) {
-      throw new Error("Una encuesta NPS no puede estar asociada a una orden E-commerce y a una venta POS simultáneamente.");
+      throw new Error(
+        'Una encuesta NPS no puede estar asociada a una orden E-commerce y a una venta POS simultáneamente.'
+      );
     }
     if (!payload.orderId && !payload.posOrderId) {
-      throw new Error("Una encuesta NPS debe estar asociada a una orden E-commerce o a una venta POS.");
+      throw new Error(
+        'Una encuesta NPS debe estar asociada a una orden E-commerce o a una venta POS.'
+      );
     }
   }
 
@@ -58,7 +65,7 @@ export class NPSSurveyJob {
 
       try {
         const token = crypto.randomBytes(32).toString('hex');
-        
+
         NPSSurveyJob.validateSurveyPayload({ orderId: order.id });
 
         await prisma.nPSSurvey.create({
@@ -66,16 +73,29 @@ export class NPSSurveyJob {
             orderId: order.id,
             userId: order.userId,
             token,
-            channel: 'ECOMMERCE'
-          }
+            channel: 'ECOMMERCE',
+          },
         });
 
         const surveyUrl = `${frontendUrl}/ecommerce/nps/${token}`;
-        const htmlContent = getNPSSurveyTemplate(order.user.name || 'Cliente', surveyUrl, order.user.email);
-        await emailService.sendEmail(order.user.email, "Tu opinión nos importa 🌟 - E-Commerce", htmlContent);
-        console.log(`[Job] Encuesta NPS ECOMMERCE enviada a ${order.user.email} (Orden: ${order.id})`);
+        const htmlContent = getNPSSurveyTemplate(
+          order.user.name || 'Cliente',
+          surveyUrl,
+          order.user.email
+        );
+        await emailService.sendEmail(
+          order.user.email,
+          'Tu opinión nos importa 🌟 - E-Commerce',
+          htmlContent
+        );
+        console.log(
+          `[Job] Encuesta NPS ECOMMERCE enviada a ${order.user.email} (Orden: ${order.id})`
+        );
       } catch (error) {
-        console.error(`[Job Error] Fallo al procesar encuesta NPS ECOMMERCE para ${order.user.email}:`, error);
+        console.error(
+          `[Job Error] Fallo al procesar encuesta NPS ECOMMERCE para ${order.user.email}:`,
+          error
+        );
       }
     }
 
@@ -97,7 +117,7 @@ export class NPSSurveyJob {
 
       try {
         const token = crypto.randomBytes(32).toString('hex');
-        
+
         NPSSurveyJob.validateSurveyPayload({ posOrderId: posOrder.id });
 
         await prisma.nPSSurvey.create({
@@ -105,16 +125,29 @@ export class NPSSurveyJob {
             posOrderId: posOrder.id,
             clientId: posOrder.clientId,
             token,
-            channel: 'POS'
-          }
+            channel: 'POS',
+          },
         });
 
         const surveyUrl = `${frontendUrl}/ecommerce/nps/${token}`;
-        const htmlContent = getNPSSurveyTemplate(posOrder.client.name || 'Cliente', surveyUrl, posOrder.client.email);
-        await emailService.sendEmail(posOrder.client.email, "Tu opinión nos importa 🌟 - E-Commerce (Tienda Física)", htmlContent);
-        console.log(`[Job] Encuesta NPS POS enviada a ${posOrder.client.email} (PosOrder: ${posOrder.id})`);
+        const htmlContent = getNPSSurveyTemplate(
+          posOrder.client.name || 'Cliente',
+          surveyUrl,
+          posOrder.client.email
+        );
+        await emailService.sendEmail(
+          posOrder.client.email,
+          'Tu opinión nos importa 🌟 - E-Commerce (Tienda Física)',
+          htmlContent
+        );
+        console.log(
+          `[Job] Encuesta NPS POS enviada a ${posOrder.client.email} (PosOrder: ${posOrder.id})`
+        );
       } catch (error) {
-        console.error(`[Job Error] Fallo al procesar encuesta NPS POS para ${posOrder.client.email}:`, error);
+        console.error(
+          `[Job Error] Fallo al procesar encuesta NPS POS para ${posOrder.client.email}:`,
+          error
+        );
       }
     }
   }

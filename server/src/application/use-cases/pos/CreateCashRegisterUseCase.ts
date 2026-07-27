@@ -1,13 +1,22 @@
 import { ICashRegisterRepository } from '@domain/repositories/ICashRegisterRepository';
-import { CreateCashRegisterRequestDTO, CashRegisterResponseDTO } from '../../dtos/CashRegisterDTOs';
+import {
+  CreateCashRegisterRequestDTO,
+  CashRegisterResponseDTO,
+} from '../../dtos/CashRegisterDTOs';
 import prisma from '@infrastructure/database/prisma';
 
 export class CreateCashRegisterUseCase {
-  constructor(private readonly cashRegisterRepository: ICashRegisterRepository) {}
+  constructor(
+    private readonly cashRegisterRepository: ICashRegisterRepository
+  ) {}
 
-  async execute(dto: CreateCashRegisterRequestDTO): Promise<CashRegisterResponseDTO> {
+  async execute(
+    dto: CreateCashRegisterRequestDTO
+  ): Promise<CashRegisterResponseDTO> {
     // 1. Validar que la sucursal exista y esté activa
-    const branch = await prisma.branch.findUnique({ where: { id: dto.branchId } });
+    const branch = await prisma.branch.findUnique({
+      where: { id: dto.branchId },
+    });
     if (!branch) {
       throw new Error(`La sucursal con ID ${dto.branchId} no existe`);
     }

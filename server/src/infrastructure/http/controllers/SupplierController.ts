@@ -15,7 +15,9 @@ const supplierRepository = new PrismaSupplierRepository();
 const getAllSuppliersUseCase = new GetAllSuppliersUseCase(supplierRepository);
 const createSupplierUseCase = new CreateSupplierUseCase(supplierRepository);
 const updateSupplierUseCase = new UpdateSupplierUseCase(supplierRepository);
-const toggleSupplierStatusUseCase = new ToggleSupplierStatusUseCase(supplierRepository);
+const toggleSupplierStatusUseCase = new ToggleSupplierStatusUseCase(
+  supplierRepository
+);
 
 // ── Schemas de validación Zod ─────────────────────────────────────────────────
 const CreateSupplierSchema = z.object({
@@ -32,7 +34,11 @@ const CreateSupplierSchema = z.object({
     .string()
     .min(2, 'El rubro debe tener al menos 2 caracteres')
     .max(100, 'El rubro no puede exceder 100 caracteres'),
-  direccion: z.string().max(255, 'La dirección no puede exceder 255 caracteres').optional().nullable(),
+  direccion: z
+    .string()
+    .max(255, 'La dirección no puede exceder 255 caracteres')
+    .optional()
+    .nullable(),
 });
 
 const UpdateSupplierSchema = z.object({
@@ -52,7 +58,11 @@ const UpdateSupplierSchema = z.object({
     .min(2, 'El rubro debe tener al menos 2 caracteres')
     .max(100, 'El rubro no puede exceder 100 caracteres')
     .optional(),
-  direccion: z.string().max(255, 'La dirección no puede exceder 255 caracteres').optional().nullable(),
+  direccion: z
+    .string()
+    .max(255, 'La dirección no puede exceder 255 caracteres')
+    .optional()
+    .nullable(),
 });
 
 const ToggleStatusSchema = z.object({
@@ -85,7 +95,10 @@ export class SupplierController {
     try {
       const validation = CreateSupplierSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const supplier = await createSupplierUseCase.execute(validation.data);
@@ -106,12 +119,17 @@ export class SupplierController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de proveedor inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de proveedor inválido' });
       }
 
       const validation = UpdateSupplierSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const supplier = await updateSupplierUseCase.execute(id, validation.data);
@@ -135,15 +153,23 @@ export class SupplierController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de proveedor inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de proveedor inválido' });
       }
 
       const validation = ToggleStatusSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
-      const supplier = await toggleSupplierStatusUseCase.execute(id, validation.data.isActive);
+      const supplier = await toggleSupplierStatusUseCase.execute(
+        id,
+        validation.data.isActive
+      );
       return res.status(200).json({
         success: true,
         message: `Proveedor ${validation.data.isActive ? 'activado' : 'inactivado'} correctamente`,

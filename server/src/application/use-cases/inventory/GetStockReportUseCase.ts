@@ -1,4 +1,8 @@
-import { IBranchStockRepository, StockFilter, StockGroupedResult } from '@domain/repositories/IBranchStockRepository';
+import {
+  IBranchStockRepository,
+  StockFilter,
+  StockGroupedResult,
+} from '@domain/repositories/IBranchStockRepository';
 
 export class GetStockReportUseCase {
   constructor(private readonly branchStockRepository: IBranchStockRepository) {}

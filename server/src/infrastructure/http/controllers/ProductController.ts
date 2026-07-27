@@ -51,7 +51,9 @@ export class ProductController {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de producto inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de producto inválido' });
       }
 
       const validation = ToggleStatusSchema.safeParse(req.body);
@@ -65,7 +67,10 @@ export class ProductController {
         });
       }
 
-      const updatedProduct = await toggleProductStatusUseCase.execute(id, validation.data.isActive);
+      const updatedProduct = await toggleProductStatusUseCase.execute(
+        id,
+        validation.data.isActive
+      );
       return res.status(200).json({ success: true, data: updatedProduct });
     } catch (error: any) {
       if (error.message && error.message.includes('no existe')) {
@@ -77,18 +82,28 @@ export class ProductController {
 
   async getAll(_req: Request, res: Response, next: NextFunction) {
     try {
-      return res.status(200).json({ success: true, data: await repo.findAll() });
-    } catch (e) { next(e); }
+      return res
+        .status(200)
+        .json({ success: true, data: await repo.findAll() });
+    } catch (e) {
+      next(e);
+    }
   }
 
   async getOne(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseInt(String(req.params.id), 10);
-      if (isNaN(id)) return res.status(400).json({ success: false, error: 'ID inválido' });
+      if (isNaN(id))
+        return res.status(400).json({ success: false, error: 'ID inválido' });
       const data = await repo.findById(id);
-      if (!data) return res.status(404).json({ success: false, error: 'Producto no encontrado' });
+      if (!data)
+        return res
+          .status(404)
+          .json({ success: false, error: 'Producto no encontrado' });
       return res.status(200).json({ success: true, data });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
@@ -100,70 +115,107 @@ export class ProductController {
         genderId: req.body.genderId ? Number(req.body.genderId) : null,
       };
       const parsed = CreateProductSchema.safeParse(body);
-      if (!parsed.success) return res.status(400).json({ success: false, error: parsed.error.issues });
+      if (!parsed.success)
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       const data = await repo.create(parsed.data);
       return res.status(201).json({ success: true, data });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseInt(String(req.params.id), 10);
-      if (isNaN(id)) return res.status(400).json({ success: false, error: 'ID inválido' });
+      if (isNaN(id))
+        return res.status(400).json({ success: false, error: 'ID inválido' });
       const body = {
         ...req.body,
-        categoryId: req.body.categoryId ? Number(req.body.categoryId) : undefined,
+        categoryId: req.body.categoryId
+          ? Number(req.body.categoryId)
+          : undefined,
         brandId: req.body.brandId ? Number(req.body.brandId) : undefined,
-        genderId: req.body.genderId !== undefined ? (req.body.genderId ? Number(req.body.genderId) : null) : undefined,
+        genderId:
+          req.body.genderId !== undefined
+            ? req.body.genderId
+              ? Number(req.body.genderId)
+              : null
+            : undefined,
       };
       const parsed = CreateProductSchema.partial().safeParse(body);
-      if (!parsed.success) return res.status(400).json({ success: false, error: parsed.error.issues });
+      if (!parsed.success)
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       const data = await repo.update(id, parsed.data);
       return res.status(200).json({ success: true, data });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 
   async uploadImages(req: Request, res: Response, next: NextFunction) {
     try {
       const productId = parseInt(String(req.params.id), 10);
-      if (isNaN(productId)) return res.status(400).json({ success: false, error: 'ID inválido' });
+      if (isNaN(productId))
+        return res.status(400).json({ success: false, error: 'ID inválido' });
 
       const product = await repo.findById(productId);
-      if (!product) return res.status(404).json({ success: false, error: 'Producto no encontrado' });
+      if (!product)
+        return res
+          .status(404)
+          .json({ success: false, error: 'Producto no encontrado' });
 
-      const attributeValueId = req.body.attributeValueId 
-        ? parseInt(String(req.body.attributeValueId), 10) 
+      const attributeValueId = req.body.attributeValueId
+        ? parseInt(String(req.body.attributeValueId), 10)
         : null;
       if (req.body.attributeValueId && isNaN(attributeValueId!)) {
-        return res.status(400).json({ success: false, error: 'attributeValueId inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'attributeValueId inválido' });
       }
 
       const files = req.files as Express.Multer.File[];
-      if (!files?.length) return res.status(400).json({ success: false, error: 'No se enviaron imágenes' });
+      if (!files?.length)
+        return res
+          .status(400)
+          .json({ success: false, error: 'No se enviaron imágenes' });
 
       // Validar límite de 4 imágenes por agrupación (productId, attributeValueId)
-      const existingCount = await repo.countImagesByGroup(productId, attributeValueId);
+      const existingCount = await repo.countImagesByGroup(
+        productId,
+        attributeValueId
+      );
       if (existingCount + files.length > 4) {
-        return res.status(400).json({ 
-          success: false, 
-          error: `No puedes subir más de 4 imágenes para esta agrupación. Actualmente ya tienes ${existingCount} imagen(es).` 
+        return res.status(400).json({
+          success: false,
+          error: `No puedes subir más de 4 imágenes para esta agrupación. Actualmente ya tienes ${existingCount} imagen(es).`,
         });
       }
 
       const isMainParam = req.body.isMain;
-      const mainIndex = isMainParam !== undefined ? parseInt(String(isMainParam), 10) : 0;
+      const mainIndex =
+        isMainParam !== undefined ? parseInt(String(isMainParam), 10) : 0;
 
       const storageService = new CloudinaryStorageService();
 
       for (let i = 0; i < files.length; i++) {
-        const imageUrl = await storageService.uploadImage(files[i].buffer, files[i].originalname, 'products');
+        const imageUrl = await storageService.uploadImage(
+          files[i].buffer,
+          files[i].originalname,
+          'products'
+        );
         const isMain = i === mainIndex;
         await repo.addImage(productId, imageUrl, isMain, attributeValueId);
       }
 
       const updated = await repo.findById(productId);
       return res.status(201).json({ success: true, data: updated });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 
   async deleteImage(req: Request, res: Response, next: NextFunction) {
@@ -175,18 +227,26 @@ export class ProductController {
       }
       const product = await repo.findById(productId);
       if (!product) {
-        return res.status(404).json({ success: false, error: 'Producto no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Producto no encontrado' });
       }
       await repo.deleteImage(productId, imageId);
-      return res.status(200).json({ success: true, message: 'Imagen eliminada' });
-    } catch (e) { next(e); }
+      return res
+        .status(200)
+        .json({ success: true, message: 'Imagen eliminada' });
+    } catch (e) {
+      next(e);
+    }
   }
 
   async getPriceHistory(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseInt(String(req.params.id), 10);
       if (isNaN(id)) {
-        return res.status(400).json({ success: false, error: 'ID de producto inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de producto inválido' });
       }
       const history = await getProductPriceHistoryUseCase.execute(id);
       return res.status(200).json({ success: true, data: history });

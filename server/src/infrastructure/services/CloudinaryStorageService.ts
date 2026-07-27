@@ -10,11 +10,17 @@ export class CloudinaryStorageService implements IStorageService {
     });
   }
 
-  async uploadImage(fileBuffer: Buffer, fileName: string, folder: string = 'profiles'): Promise<string> {
+  async uploadImage(
+    fileBuffer: Buffer,
+    fileName: string,
+    folder: string = 'profiles'
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       // Remove extensions and append timestamp for uniqueness
-      const cleanFileName = fileName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
-      
+      const cleanFileName = fileName
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[^a-zA-Z0-9]/g, '_');
+
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
@@ -24,10 +30,16 @@ export class CloudinaryStorageService implements IStorageService {
         (error, result) => {
           if (error) {
             console.error('Error uploading image to Cloudinary:', error);
-            return reject(new Error('Error al subir la imagen al servidor de almacenamiento'));
+            return reject(
+              new Error(
+                'Error al subir la imagen al servidor de almacenamiento'
+              )
+            );
           }
           if (!result) {
-            return reject(new Error('No se recibió resultado de la subida a Cloudinary'));
+            return reject(
+              new Error('No se recibió resultado de la subida a Cloudinary')
+            );
           }
           resolve(result.secure_url);
         }
@@ -48,7 +60,7 @@ export class CloudinaryStorageService implements IStorageService {
       if (!fileNameWithExt) return;
 
       const publicIdPart = fileNameWithExt.split('.')[0];
-      
+
       let publicId = publicIdPart;
       // If there's a folder (not a version string like 'v123'), prepend it
       if (folderOrVersion && !folderOrVersion.startsWith('v')) {

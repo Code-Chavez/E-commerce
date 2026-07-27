@@ -12,7 +12,10 @@ describe('Returns Logistical Integration (HU-065)', () => {
   beforeAll(async () => {
     returnRequestRepo = new PrismaReturnRequestRepository();
     deliveryRepo = new PrismaDeliveryRepository();
-    approveUseCase = new ApproveReturnRequestUseCase(returnRequestRepo, deliveryRepo);
+    approveUseCase = new ApproveReturnRequestUseCase(
+      returnRequestRepo,
+      deliveryRepo
+    );
 
     // Limpiar tablas del flujo del test
     await prisma.delivery.deleteMany();
@@ -31,15 +34,31 @@ describe('Returns Logistical Integration (HU-065)', () => {
 
     // 1. Crear dependencias con nombres únicos
     const user = await prisma.user.create({
-      data: { email: `client.test.${timestamp}@returns.com`, password: 'password', name: 'Juan', lastName: 'Perez' },
+      data: {
+        email: `client.test.${timestamp}@returns.com`,
+        password: 'password',
+        name: 'Juan',
+        lastName: 'Perez',
+      },
     });
 
     const product = await prisma.product.create({
-      data: { name: `Producto Retorno ${timestamp}`, description: 'Desc', slug: `producto-retorno-${timestamp}`, code: `PR-${timestamp}` },
+      data: {
+        name: `Producto Retorno ${timestamp}`,
+        description: 'Desc',
+        slug: `producto-retorno-${timestamp}`,
+        code: `PR-${timestamp}`,
+      },
     });
 
     const variant = await prisma.productVariant.create({
-      data: { productId: product.id, sku: `SKU-RET-${timestamp}`, price: 99.99, minStock: 2, isActive: true },
+      data: {
+        productId: product.id,
+        sku: `SKU-RET-${timestamp}`,
+        price: 99.99,
+        minStock: 2,
+        isActive: true,
+      },
     });
 
     // 2. Crear una orden entregada
@@ -49,7 +68,10 @@ describe('Returns Logistical Integration (HU-065)', () => {
         status: 'DELIVERED',
         total: 99.99,
         shippingCost: 0,
-        addressSnapshot: { address: 'Dirección de envío', district: 'Miraflores' },
+        addressSnapshot: {
+          address: 'Dirección de envío',
+          district: 'Miraflores',
+        },
         paymentIntentId: `pi_test_returns_happy_${timestamp}`,
         items: {
           create: {
@@ -104,7 +126,7 @@ describe('Returns Logistical Integration (HU-065)', () => {
     expect(dbDelivery?.type).toBe('PICKUP');
     expect(dbDelivery?.status).toBe('PENDING');
     expect(dbDelivery?.returnRequestId).toBe(returnRequest.id);
-    
+
     const pickingItems = (dbDelivery as any)?.pickingItems;
     expect(pickingItems).toHaveLength(1);
     expect(pickingItems[0].variantId).toBe(variant.id);
@@ -116,15 +138,31 @@ describe('Returns Logistical Integration (HU-065)', () => {
 
     // 1. Crear dependencias con nombres únicos
     const user = await prisma.user.create({
-      data: { email: `client.rollback.${timestamp}@returns.com`, password: 'password', name: 'Pedro', lastName: 'Gomez' },
+      data: {
+        email: `client.rollback.${timestamp}@returns.com`,
+        password: 'password',
+        name: 'Pedro',
+        lastName: 'Gomez',
+      },
     });
 
     const product = await prisma.product.create({
-      data: { name: `Producto Rollback ${timestamp}`, description: 'Desc', slug: `producto-rollback-${timestamp}`, code: `PR-ROL-${timestamp}` },
+      data: {
+        name: `Producto Rollback ${timestamp}`,
+        description: 'Desc',
+        slug: `producto-rollback-${timestamp}`,
+        code: `PR-ROL-${timestamp}`,
+      },
     });
 
     const variant = await prisma.productVariant.create({
-      data: { productId: product.id, sku: `SKU-ROL-${timestamp}`, price: 50.0, minStock: 2, isActive: true },
+      data: {
+        productId: product.id,
+        sku: `SKU-ROL-${timestamp}`,
+        price: 50.0,
+        minStock: 2,
+        isActive: true,
+      },
     });
 
     // 2. Crear una orden entregada
@@ -134,7 +172,10 @@ describe('Returns Logistical Integration (HU-065)', () => {
         status: 'DELIVERED',
         total: 50.0,
         shippingCost: 0,
-        addressSnapshot: { address: 'Dirección Rollback', district: 'San Isidro' },
+        addressSnapshot: {
+          address: 'Dirección Rollback',
+          district: 'San Isidro',
+        },
         paymentIntentId: `pi_test_returns_rollback_${timestamp}`,
         items: {
           create: {
@@ -171,11 +212,15 @@ describe('Returns Logistical Integration (HU-065)', () => {
     // 4. Provocamos que la creación del delivery falle mockeando temporalmente createPickupOrder en el repo
     const originalCreatePickupOrder = deliveryRepo.createPickupOrder;
     deliveryRepo.createPickupOrder = jest.fn().mockImplementation(() => {
-      throw new Error('Error simulado en la creación del Delivery para Rollback');
+      throw new Error(
+        'Error simulado en la creación del Delivery para Rollback'
+      );
     }) as any;
 
     // 5. Intentamos ejecutar y esperamos la excepción
-    await expect(approveUseCase.execute(returnRequest.id)).rejects.toThrow('Error simulado en la creación del Delivery para Rollback');
+    await expect(approveUseCase.execute(returnRequest.id)).rejects.toThrow(
+      'Error simulado en la creación del Delivery para Rollback'
+    );
 
     // 6. Restaurar el método original
     deliveryRepo.createPickupOrder = originalCreatePickupOrder;

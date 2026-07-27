@@ -4,13 +4,22 @@ import { GetInventoryValuationUseCase } from '@application/use-cases/admin/GetIn
 const useCase = new GetInventoryValuationUseCase();
 
 export class InventoryValuationController {
-  getValuation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getValuation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { branchId } = req.query;
-      const parsedBranchId = branchId ? parseInt(String(branchId), 10) : undefined;
+      const parsedBranchId = branchId
+        ? parseInt(String(branchId), 10)
+        : undefined;
 
       if (branchId && isNaN(parsedBranchId!)) {
-        res.status(400).json({ success: false, error: 'branchId debe ser un número entero válido' });
+        res.status(400).json({
+          success: false,
+          error: 'branchId debe ser un número entero válido',
+        });
         return;
       }
 

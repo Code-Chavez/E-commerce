@@ -27,7 +27,7 @@ export class GetPendingBalanceUseCase {
     }
 
     const credits = await this.creditRepository.findByClientId(clientId);
-    
+
     let totalPendingBalance = 0;
     const creditDetails = credits.map((credit) => {
       const pendingBalance = calculatePendingBalance(credit);

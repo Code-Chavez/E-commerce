@@ -53,7 +53,10 @@ export class GetOnSaleProductsUseCase {
 
       // Calcular stock total para determinar si está agotado
       const totalStock = activeSaleVariants.reduce((sum: number, v: any) => {
-        const stockQty = v.branchStock.reduce((s: number, bs: any) => s + bs.quantity, 0);
+        const stockQty = v.branchStock.reduce(
+          (s: number, bs: any) => s + bs.quantity,
+          0
+        );
         return sum + stockQty;
       }, 0);
 

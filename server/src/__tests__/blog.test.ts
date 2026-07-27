@@ -19,7 +19,9 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     blogPost: mockBlogPost,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -143,7 +145,7 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
       (prisma.blogPost.findUnique as any)
         .mockResolvedValueOnce({ id: 2 }) // collision on 'mi-primer-post'
         .mockResolvedValueOnce(null); // no collision on 'mi-primer-post-1'
-      
+
       (prisma.blogPost.create as any).mockResolvedValue({
         ...dummyBlogPost,
         slug: 'mi-primer-post-1',
@@ -201,7 +203,10 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
   describe('DELETE /api/v1/admin/blog/:id', () => {
     it('debe eliminar lógicamente un artículo de blog cambiando su estado a ARCHIVED', async () => {
       (prisma.blogPost.findUnique as any).mockResolvedValue(dummyBlogPost);
-      (prisma.blogPost.update as any).mockResolvedValue({ ...dummyBlogPost, status: 'ARCHIVED' });
+      (prisma.blogPost.update as any).mockResolvedValue({
+        ...dummyBlogPost,
+        status: 'ARCHIVED',
+      });
 
       const res = await request(app)
         .delete('/api/v1/admin/blog/1')
@@ -211,20 +216,35 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
       expect(res.body.success).toBe(true);
       expect(res.body.message).toContain('exitosamente');
       expect(prisma.blogPost.update).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { id: 1 }, data: { status: 'ARCHIVED' } })
+        expect.objectContaining({
+          where: { id: 1 },
+          data: { status: 'ARCHIVED' },
+        })
       );
     });
   });
 
   describe('GET /api/v1/blog', () => {
     it('debe retornar únicamente los artículos publicados cuya fecha no sea futura', async () => {
-      const dummyPublished = { ...dummyBlogPost, status: 'PUBLISHED', views: 5, publishedAt: new Date(Date.now() - 10000) };
-      const dummyFuture = { ...dummyBlogPost, id: 4, status: 'PUBLISHED', publishedAt: new Date(Date.now() + 100000) };
-      (prisma.blogPost.findMany as any).mockResolvedValue([dummyPublished, { ...dummyBlogPost, id: 3, status: 'DRAFT' }, dummyFuture]);
+      const dummyPublished = {
+        ...dummyBlogPost,
+        status: 'PUBLISHED',
+        views: 5,
+        publishedAt: new Date(Date.now() - 10000),
+      };
+      const dummyFuture = {
+        ...dummyBlogPost,
+        id: 4,
+        status: 'PUBLISHED',
+        publishedAt: new Date(Date.now() + 100000),
+      };
+      (prisma.blogPost.findMany as any).mockResolvedValue([
+        dummyPublished,
+        { ...dummyBlogPost, id: 3, status: 'DRAFT' },
+        dummyFuture,
+      ]);
 
-      const res = await request(app)
-        .get('/api/v1/blog')
-        .expect(200);
+      const res = await request(app).get('/api/v1/blog').expect(200);
 
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveLength(1);
@@ -235,7 +255,11 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
 
   describe('GET /api/v1/blog/:slug', () => {
     it('debe retornar el artículo, incrementar vistas de forma atómica y devolver el contador sumado', async () => {
-      const dummyPublished = { ...dummyBlogPost, status: 'PUBLISHED', views: 5 };
+      const dummyPublished = {
+        ...dummyBlogPost,
+        status: 'PUBLISHED',
+        views: 5,
+      };
       (prisma.blogPost.findUnique as any).mockResolvedValue(dummyPublished);
       (prisma.blogPost.update as any).mockResolvedValue(dummyPublished);
 
@@ -252,9 +276,9 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
           where: { id: 1 },
           data: {
             views: {
-              increment: 1
-            }
-          }
+              increment: 1,
+            },
+          },
         })
       );
     });
@@ -262,23 +286,22 @@ describe('Tests de Integración — HU-018: Creación y Publicación de Artícul
     it('debe retornar 404 si el artículo no existe, es un borrador o está programado en el futuro', async () => {
       (prisma.blogPost.findUnique as any).mockResolvedValue(null);
 
-      await request(app)
-        .get('/api/v1/blog/non-existent')
-        .expect(404);
+      await request(app).get('/api/v1/blog/non-existent').expect(404);
 
-      (prisma.blogPost.findUnique as any).mockResolvedValue({ ...dummyBlogPost, status: 'DRAFT' });
+      (prisma.blogPost.findUnique as any).mockResolvedValue({
+        ...dummyBlogPost,
+        status: 'DRAFT',
+      });
 
-      await request(app)
-        .get('/api/v1/blog/draft-post')
-        .expect(404);
+      await request(app).get('/api/v1/blog/draft-post').expect(404);
 
-      (prisma.blogPost.findUnique as any).mockResolvedValue({ ...dummyBlogPost, status: 'PUBLISHED', publishedAt: new Date(Date.now() + 100000) });
+      (prisma.blogPost.findUnique as any).mockResolvedValue({
+        ...dummyBlogPost,
+        status: 'PUBLISHED',
+        publishedAt: new Date(Date.now() + 100000),
+      });
 
-      await request(app)
-        .get('/api/v1/blog/future-post')
-        .expect(404);
+      await request(app).get('/api/v1/blog/future-post').expect(404);
     });
   });
 });
-
-

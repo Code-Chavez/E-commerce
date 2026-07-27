@@ -35,9 +35,15 @@ describe('Receipt Concurrency and Layout Integration (HU-036)', () => {
       seller: { name: 'Luis', lastName: 'Cajero', email: 'cajero@test.com' },
       client: null,
       items: [
-        { productName: 'Polo M', quantity: 1, unitPrice: 100, discountAmount: 0, lineTotal: 100 }
+        {
+          productName: 'Polo M',
+          quantity: 1,
+          unitPrice: 100,
+          discountAmount: 0,
+          lineTotal: 100,
+        },
       ],
-      payments: [{ method: 'CASH', amount: 100 }]
+      payments: [{ method: 'CASH', amount: 100 }],
     };
 
     // Generar el PDF y validar que no lance excepciones
@@ -48,19 +54,33 @@ describe('Receipt Concurrency and Layout Integration (HU-036)', () => {
   it('should assign sequential correlatives when creating POS orders sequentially', async () => {
     // 1. Crear sucursal, caja de prueba y un turno de caja abierto
     const branch = await prisma.branch.create({
-      data: { name: `Sede Comprobantes ${Date.now()}`, address: 'Av. Test 123', isActive: true }
+      data: {
+        name: `Sede Comprobantes ${Date.now()}`,
+        address: 'Av. Test 123',
+        isActive: true,
+      },
     });
 
     const user = await prisma.user.create({
-      data: { email: `cajero.${Date.now()}@test.com`, password: 'hash', name: 'Luis', lastName: 'Perez' }
+      data: {
+        email: `cajero.${Date.now()}@test.com`,
+        password: 'hash',
+        name: 'Luis',
+        lastName: 'Perez',
+      },
     });
 
     const register = await prisma.cashRegister.create({
-      data: { branchId: branch.id, name: `Caja Test ${Date.now()}` }
+      data: { branchId: branch.id, name: `Caja Test ${Date.now()}` },
     });
 
     const activeTurn = await prisma.cashTurn.create({
-      data: { registerId: register.id, userId: user.id, status: 'OPEN', openAmount: 100 }
+      data: {
+        registerId: register.id,
+        userId: user.id,
+        status: 'OPEN',
+        openAmount: 100,
+      },
     });
 
     // 2. Simular dos ventas secuenciales de tipo BOLETA
@@ -70,16 +90,19 @@ describe('Receipt Concurrency and Layout Integration (HU-036)', () => {
           where: {
             branchId_documentType: {
               branchId: branch.id,
-              documentType: docType
-            }
+              documentType: docType,
+            },
           },
           update: { nextNumber: { increment: 1 } },
           create: {
             branchId: branch.id,
             documentType: docType,
-            series: docType === 'BOLETA' ? `B${String(branch.id).padStart(3, '0')}` : `F${String(branch.id).padStart(3, '0')}`,
-            nextNumber: 2
-          }
+            series:
+              docType === 'BOLETA'
+                ? `B${String(branch.id).padStart(3, '0')}`
+                : `F${String(branch.id).padStart(3, '0')}`,
+            nextNumber: 2,
+          },
         });
 
         const currentSeries = sequence.series;
@@ -96,8 +119,8 @@ describe('Receipt Concurrency and Layout Integration (HU-036)', () => {
             subtotal: 10,
             discountTotal: 0,
             total: 10,
-            status: 'COMPLETED'
-          }
+            status: 'COMPLETED',
+          },
         });
         return order;
       });

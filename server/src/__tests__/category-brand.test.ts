@@ -28,7 +28,15 @@ jest.mock('@infrastructure/database/prisma', () => {
 
 // Mock Auth Middleware
 jest.mock('@infrastructure/http/middlewares/auth.middleware', () => ({
-  requirePermission: jest.fn(() => (req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), requireAuth: jest.fn((req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
+  requirePermission: jest.fn(() => (req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  requireAuth: jest.fn((req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
 }));
 
 import prisma from '@infrastructure/database/prisma';
@@ -40,8 +48,12 @@ describe('Categories and Brands API (HU011 / HU012)', () => {
 
   describe('Categories', () => {
     it('should list all categories successfully (Happy Path)', async () => {
-      const mockData = [{ id: 1, name: 'Polos', slug: 'polos', isActive: true }];
-      (prisma.category.findMany as jest.Mock).mockResolvedValue(mockData as never);
+      const mockData = [
+        { id: 1, name: 'Polos', slug: 'polos', isActive: true },
+      ];
+      (prisma.category.findMany as jest.Mock).mockResolvedValue(
+        mockData as never
+      );
 
       const response = await request(app).get('/api/v1/categories');
 
@@ -52,8 +64,15 @@ describe('Categories and Brands API (HU011 / HU012)', () => {
     });
 
     it('should create a category successfully (Happy Path)', async () => {
-      const newCategory = { id: 2, name: 'Pantalones', slug: 'pantalones', isActive: true };
-      (prisma.category.create as jest.Mock).mockResolvedValue(newCategory as never);
+      const newCategory = {
+        id: 2,
+        name: 'Pantalones',
+        slug: 'pantalones',
+        isActive: true,
+      };
+      (prisma.category.create as jest.Mock).mockResolvedValue(
+        newCategory as never
+      );
 
       const response = await request(app)
         .post('/api/v1/categories')
@@ -103,14 +122,10 @@ describe('Categories and Brands API (HU011 / HU012)', () => {
     });
 
     it('should return 400 when missing required fields on creation (Error Case)', async () => {
-      const response = await request(app)
-        .post('/api/v1/brands')
-        .send({});
+      const response = await request(app).post('/api/v1/brands').send({});
 
       expect(response.status).toBeGreaterThanOrEqual(400);
       expect(response.body.success).toBe(false);
     });
   });
 });
-
-

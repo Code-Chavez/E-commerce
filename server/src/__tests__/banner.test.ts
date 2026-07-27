@@ -19,7 +19,9 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     banner: mockBanner,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -39,7 +41,13 @@ jest.mock('@infrastructure/services/JwtService', () => ({
 // Mock StorageService
 jest.mock('@infrastructure/services/CloudinaryStorageService', () => ({
   CloudinaryStorageService: jest.fn().mockImplementation(() => ({
-    uploadImage: jest.fn().mockImplementation(() => Promise.resolve('https://res.cloudinary.com/demo/image/upload/v12345/banners/banner1.png')),
+    uploadImage: jest
+      .fn()
+      .mockImplementation(() =>
+        Promise.resolve(
+          'https://res.cloudinary.com/demo/image/upload/v12345/banners/banner1.png'
+        )
+      ),
   })),
 }));
 
@@ -59,7 +67,8 @@ const dummyAdmin = {
 
 const dummyBanner = {
   id: 1,
-  imageUrl: 'https://res.cloudinary.com/demo/image/upload/v12345/banners/banner1.png',
+  imageUrl:
+    'https://res.cloudinary.com/demo/image/upload/v12345/banners/banner1.png',
   linkUrl: 'https://e-commerce.com/collections/autumn',
   order: 0,
   isActive: true,
@@ -141,5 +150,3 @@ describe('Tests de Integración — HU-019: Gestión de Banners y Sliders', () =
     });
   });
 });
-
-

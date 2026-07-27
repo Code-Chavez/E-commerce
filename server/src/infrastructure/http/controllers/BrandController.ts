@@ -21,7 +21,10 @@ const BrandConfigSchema = z.object({
 const brandConfigRepository = new PrismaBrandConfigRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const getBrandConfigUseCase = new GetBrandConfigUseCase(brandConfigRepository);
-const updateBrandConfigUseCase = new UpdateBrandConfigUseCase(brandConfigRepository, auditLogRepository);
+const updateBrandConfigUseCase = new UpdateBrandConfigUseCase(
+  brandConfigRepository,
+  auditLogRepository
+);
 const storageService = new CloudinaryStorageService();
 
 export class BrandController {
@@ -30,7 +33,9 @@ export class BrandController {
       const config = await getBrandConfigUseCase.execute();
       return res.status(200).json({ success: true, data: config });
     } catch (error: any) {
-      return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+      return res
+        .status(500)
+        .json({ success: false, error: 'Error interno del servidor' });
     }
   }
 
@@ -38,13 +43,20 @@ export class BrandController {
     try {
       const validation = BrandConfigSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
       const adminUserId = req.auth?.userId ?? null;
-      const config = await updateBrandConfigUseCase.execute(validation.data, adminUserId);
+      const config = await updateBrandConfigUseCase.execute(
+        validation.data,
+        adminUserId
+      );
       return res.status(200).json({ success: true, data: config });
     } catch (error: any) {
-      return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+      return res
+        .status(500)
+        .json({ success: false, error: 'Error interno del servidor' });
     }
   }
 
@@ -94,15 +106,22 @@ export class BrandController {
   async uploadLogo(req: Request, res: Response) {
     try {
       if (!req.file) {
-        return res.status(400).json({ success: false, error: 'La imagen del logo es requerida' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'La imagen del logo es requerida' });
       }
 
       // Subir imagen a Cloudinary usando el storage configurado
-      const imageUrl = await storageService.uploadImage(req.file.buffer, req.file.originalname);
+      const imageUrl = await storageService.uploadImage(
+        req.file.buffer,
+        req.file.originalname
+      );
       return res.status(201).json({ success: true, data: { url: imageUrl } });
     } catch (error: any) {
       console.error('Error en uploadLogo:', error);
-      return res.status(500).json({ success: false, error: 'Error al subir el logo a Cloudinary' });
+      return res
+        .status(500)
+        .json({ success: false, error: 'Error al subir el logo a Cloudinary' });
     }
   }
 }

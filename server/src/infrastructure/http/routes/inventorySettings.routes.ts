@@ -5,7 +5,15 @@ import { requirePermission } from '@infrastructure/http/middlewares/auth.middlew
 const router = Router();
 const ctrl = new InventorySettingsController();
 
-router.get('/admin/inventory-settings', requirePermission('admin:read'), ctrl.getSettings.bind(ctrl));
-router.put('/admin/inventory-settings', requirePermission('admin:write'), ctrl.updateSettings.bind(ctrl));
+router.get(
+  '/admin/inventory-settings',
+  requirePermission('admin:read'),
+  ctrl.getSettings.bind(ctrl)
+);
+router.put(
+  '/admin/inventory-settings',
+  requirePermission('admin:write'),
+  ctrl.updateSettings.bind(ctrl)
+);
 
 export default router;

@@ -33,13 +33,17 @@ export class CreateReturnRequestUseCase {
     for (const item of data.items) {
       const matchedItem = orderItems.find((oi) => oi.id === item.orderItemId);
       if (!matchedItem) {
-        throw new Error(`Item ${item.orderItemId} does not belong to this order`);
+        throw new Error(
+          `Item ${item.orderItemId} does not belong to this order`
+        );
       }
       if (item.qty <= 0) {
         throw new Error(`Invalid return quantity for item ${item.orderItemId}`);
       }
       if (item.qty > matchedItem.qty) {
-        throw new Error(`Return quantity exceeds ordered quantity for item ${item.orderItemId}`);
+        throw new Error(
+          `Return quantity exceeds ordered quantity for item ${item.orderItemId}`
+        );
       }
     }
 

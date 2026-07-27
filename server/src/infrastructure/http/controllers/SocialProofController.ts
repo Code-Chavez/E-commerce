@@ -5,11 +5,15 @@ import { CloudinaryStorageService } from '@infrastructure/services/CloudinarySto
 
 const storageService = new CloudinaryStorageService();
 
-export const getSocialProofs = async (req: Request, res: Response, next: NextFunction) => {
+export const getSocialProofs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const proofs = await prisma.socialProofPhoto.findMany({
       where: { isApproved: true },
-      orderBy: { uploadedAt: 'desc' }
+      orderBy: { uploadedAt: 'desc' },
     });
     res.json(proofs);
   } catch (error) {
@@ -17,10 +21,14 @@ export const getSocialProofs = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const getAdminSocialProofs = async (req: Request, res: Response, next: NextFunction) => {
+export const getAdminSocialProofs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const proofs = await prisma.socialProofPhoto.findMany({
-      orderBy: { uploadedAt: 'desc' }
+      orderBy: { uploadedAt: 'desc' },
     });
     res.json(proofs);
   } catch (error) {
@@ -28,7 +36,11 @@ export const getAdminSocialProofs = async (req: Request, res: Response, next: Ne
   }
 };
 
-export const createSocialProof = async (req: Request, res: Response, next: NextFunction) => {
+export const createSocialProof = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const clientName = req.body.clientName;
     if (!clientName) {
@@ -42,14 +54,18 @@ export const createSocialProof = async (req: Request, res: Response, next: NextF
       return;
     }
 
-    const imageUrl = await storageService.uploadImage(file.buffer, file.originalname, 'social-proof');
+    const imageUrl = await storageService.uploadImage(
+      file.buffer,
+      file.originalname,
+      'social-proof'
+    );
 
     const proof = await prisma.socialProofPhoto.create({
       data: {
         clientName,
         imageUrl,
-        isApproved: false // Requires admin approval by default
-      }
+        isApproved: false, // Requires admin approval by default
+      },
     });
 
     res.status(201).json(proof);
@@ -58,7 +74,11 @@ export const createSocialProof = async (req: Request, res: Response, next: NextF
   }
 };
 
-export const approveSocialProof = async (req: Request, res: Response, next: NextFunction) => {
+export const approveSocialProof = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const { isApproved } = req.body;
@@ -70,7 +90,7 @@ export const approveSocialProof = async (req: Request, res: Response, next: Next
 
     const proof = await prisma.socialProofPhoto.update({
       where: { id: Number(id) },
-      data: { isApproved }
+      data: { isApproved },
     });
 
     res.json(proof);
@@ -79,10 +99,16 @@ export const approveSocialProof = async (req: Request, res: Response, next: Next
   }
 };
 
-export const deleteSocialProof = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteSocialProof = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
-    const proof = await prisma.socialProofPhoto.findUnique({ where: { id: Number(id) } });
+    const proof = await prisma.socialProofPhoto.findUnique({
+      where: { id: Number(id) },
+    });
     if (!proof) {
       res.status(404).json({ error: 'No encontrado' });
       return;

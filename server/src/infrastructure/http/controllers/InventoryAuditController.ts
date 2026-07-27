@@ -5,18 +5,30 @@ import { CreateInventoryAuditUseCase } from '@application/use-cases/inventory/Cr
 
 // DI Manual
 const inventoryAuditRepository = new PrismaInventoryAuditRepository();
-const createInventoryAuditUseCase = new CreateInventoryAuditUseCase(inventoryAuditRepository);
+const createInventoryAuditUseCase = new CreateInventoryAuditUseCase(
+  inventoryAuditRepository
+);
 
 // Schemas de Zod
 const AuditItemRequestSchema = z.object({
-  variantId: z.number().int().positive('El ID de variante debe ser un entero positivo'),
-  physicalQty: z.number().nonnegative('La cantidad física no puede ser negativa'),
+  variantId: z
+    .number()
+    .int()
+    .positive('El ID de variante debe ser un entero positivo'),
+  physicalQty: z
+    .number()
+    .nonnegative('La cantidad física no puede ser negativa'),
 });
 
 const CreateInventoryAuditSchema = z.object({
-  branchId: z.number().int().positive('El ID de sucursal debe ser un entero positivo'),
+  branchId: z
+    .number()
+    .int()
+    .positive('El ID de sucursal debe ser un entero positivo'),
   status: z.enum(['PENDING', 'CONFIRMED']),
-  items: z.array(AuditItemRequestSchema).min(1, 'La auditoría debe contener al menos un ítem'),
+  items: z
+    .array(AuditItemRequestSchema)
+    .min(1, 'La auditoría debe contener al menos un ítem'),
 });
 
 const mapZodErrors = (issues: z.ZodIssue[]) =>
@@ -34,7 +46,10 @@ export class InventoryAuditController {
     try {
       const validation = CreateInventoryAuditSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const result = await createInventoryAuditUseCase.execute(validation.data);

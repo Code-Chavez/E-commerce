@@ -125,7 +125,9 @@ describe('LinkClientUseCase (HU-008)', () => {
     emailService = makeMockEmailService();
     txManager = makeMockTransactionManager();
     mockJwtService = {
-      generateWelcomePasswordToken: jest.fn().mockReturnValue('mock-reset-token'),
+      generateWelcomePasswordToken: jest
+        .fn()
+        .mockReturnValue('mock-reset-token'),
     };
     useCase = new LinkClientUseCase(
       clientRepo,
@@ -137,14 +139,16 @@ describe('LinkClientUseCase (HU-008)', () => {
     );
     jest.clearAllMocks();
     // Restore transaction manager mock after clearAllMocks
-    txManager.run.mockImplementation(async (cb: (tx: any) => Promise<any>) => cb(null));
+    txManager.run.mockImplementation(async (cb: (tx: any) => Promise<any>) =>
+      cb(null)
+    );
   });
 
   // ── Happy paths ──────────────────────────────────────────────────────────
 
   it('T-057: creates a new user, assigns CLIENT role, links client, and sends email', async () => {
     clientRepo.findById.mockResolvedValue(fakeClient);
-    userRepo.findByEmail.mockResolvedValue(null);           // no prior account
+    userRepo.findByEmail.mockResolvedValue(null); // no prior account
     userRepo.create.mockResolvedValue(fakeNewUser);
     roleRepo.findByName.mockResolvedValue(fakeClientRole);
     roleRepo.assignRoleToUser.mockResolvedValue();
@@ -156,19 +160,27 @@ describe('LinkClientUseCase (HU-008)', () => {
     expect(result.success).toBe(true);
     expect(result.message).toContain('credenciales');
     expect(userRepo.create).toHaveBeenCalledTimes(1);
-    expect(roleRepo.assignRoleToUser).toHaveBeenCalledWith(fakeNewUser.id, fakeClientRole.id, null);
-    expect(clientRepo.linkUser).toHaveBeenCalledWith(fakeClient.id, fakeNewUser.id, null);
+    expect(roleRepo.assignRoleToUser).toHaveBeenCalledWith(
+      fakeNewUser.id,
+      fakeClientRole.id,
+      null
+    );
+    expect(clientRepo.linkUser).toHaveBeenCalledWith(
+      fakeClient.id,
+      fakeNewUser.id,
+      null
+    );
     expect(emailService.sendEmail).toHaveBeenCalledWith(
       fakeClient.email!,
       expect.stringContaining('Activación'),
-      expect.stringContaining('Omnicanal'),
+      expect.stringContaining('Omnicanal')
     );
   });
 
   it('T-057b: links to an existing user account without creating a new one', async () => {
     const existingUser: User = { ...fakeNewUser, id: 10 };
     clientRepo.findById.mockResolvedValue(fakeClient);
-    userRepo.findByEmail.mockResolvedValue(existingUser);   // existing account
+    userRepo.findByEmail.mockResolvedValue(existingUser); // existing account
     clientRepo.linkUser.mockResolvedValue();
 
     const result = await useCase.execute(42);
@@ -177,7 +189,11 @@ describe('LinkClientUseCase (HU-008)', () => {
     expect(result.message).toContain('existente');
     // Must NOT create a new user when one already exists
     expect(userRepo.create).not.toHaveBeenCalled();
-    expect(clientRepo.linkUser).toHaveBeenCalledWith(fakeClient.id, existingUser.id, null);
+    expect(clientRepo.linkUser).toHaveBeenCalledWith(
+      fakeClient.id,
+      existingUser.id,
+      null
+    );
     // No email for existing-account flow
     expect(emailService.sendEmail).not.toHaveBeenCalled();
   });
@@ -189,7 +205,9 @@ describe('LinkClientUseCase (HU-008)', () => {
     roleRepo.findByName.mockResolvedValue(fakeClientRole);
     roleRepo.assignRoleToUser.mockResolvedValue();
     clientRepo.linkUser.mockResolvedValue();
-    emailService.sendEmail.mockRejectedValue(new Error('SMTP connection timeout'));
+    emailService.sendEmail.mockRejectedValue(
+      new Error('SMTP connection timeout')
+    );
 
     const result = await useCase.execute(42);
 
@@ -213,7 +231,9 @@ describe('LinkClientUseCase (HU-008)', () => {
   it('throws when the client already has a linked account', async () => {
     clientRepo.findById.mockResolvedValue(fakeLinkedClient);
 
-    await expect(useCase.execute(42)).rejects.toThrow('El cliente ya tiene una cuenta vinculada');
+    await expect(useCase.execute(42)).rejects.toThrow(
+      'El cliente ya tiene una cuenta vinculada'
+    );
     expect(txManager.run).not.toHaveBeenCalled();
     expect(emailService.sendEmail).not.toHaveBeenCalled();
   });
@@ -237,7 +257,7 @@ describe('LinkClientUseCase (HU-008)', () => {
     clientRepo.findById.mockResolvedValue(fakeClient);
     userRepo.findByEmail.mockResolvedValue(null);
     userRepo.create.mockResolvedValue(fakeNewUser);
-    roleRepo.findByName.mockResolvedValue(null);            // role not found
+    roleRepo.findByName.mockResolvedValue(null); // role not found
     clientRepo.linkUser.mockResolvedValue();
     emailService.sendEmail.mockResolvedValue();
 
@@ -248,5 +268,3 @@ describe('LinkClientUseCase (HU-008)', () => {
     expect(clientRepo.linkUser).toHaveBeenCalled();
   });
 });
-
-

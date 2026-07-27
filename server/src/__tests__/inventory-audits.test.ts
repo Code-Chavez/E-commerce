@@ -40,10 +40,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   return { __esModule: true, default: mockPrisma };
 });
 
-
 // Mock Auth Middleware
 jest.mock('@infrastructure/http/middlewares/auth.middleware', () => ({
-  requirePermission: jest.fn(() => (req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), requireAuth: jest.fn((req: any, res: any, next: any) => { req.auth = { userId: 1, branchId: 1, role: 'ADMIN' }; next(); }), optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
+  requirePermission: jest.fn(() => (req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  requireAuth: jest.fn((req: any, res: any, next: any) => {
+    req.auth = { userId: 1, branchId: 1, role: 'ADMIN' };
+    next();
+  }),
+  optionalAuth: jest.fn((req: any, res: any, next: any) => next()),
 }));
 
 import prisma from '@infrastructure/database/prisma';
@@ -55,19 +62,26 @@ describe('Inventory Audits API (HU-029)', () => {
   });
 
   it('should register a physical inventory audit successfully (Happy Path)', async () => {
-    (prisma.inventoryAudit.create as jest.Mock).mockResolvedValue({ 
-      id: 1, 
-      branchId: 1, 
+    (prisma.inventoryAudit.create as jest.Mock).mockResolvedValue({
+      id: 1,
+      branchId: 1,
       status: 'PENDING',
-      items: [{ id: 1, auditId: 1, variantId: 10, physicalQty: 50, systemQty: 10, difference: 40 }]
+      items: [
+        {
+          id: 1,
+          auditId: 1,
+          variantId: 10,
+          physicalQty: 50,
+          systemQty: 10,
+          difference: 40,
+        },
+      ],
     } as never);
 
     const payload = {
       branchId: 1,
       status: 'PENDING',
-      items: [
-        { variantId: 10, physicalQty: 50 },
-      ],
+      items: [{ variantId: 10, physicalQty: 50 }],
     };
 
     const response = await request(app)
@@ -87,9 +101,7 @@ describe('Inventory Audits API (HU-029)', () => {
     const payload = {
       branchId: 1,
       status: 'PENDING',
-      items: [
-        { variantId: 10, physicalQty: -5 },
-      ],
+      items: [{ variantId: 10, physicalQty: -5 }],
     };
 
     const response = await request(app)
@@ -102,14 +114,14 @@ describe('Inventory Audits API (HU-029)', () => {
   });
 
   it('should return 404 if variant does not exist (Error Case)', async () => {
-    (prisma.$transaction as jest.Mock).mockRejectedValue(new Error('Variante con ID 99 no existe') as never);
+    (prisma.$transaction as jest.Mock).mockRejectedValue(
+      new Error('Variante con ID 99 no existe') as never
+    );
 
     const payload = {
       branchId: 1,
       status: 'CONFIRMED',
-      items: [
-        { variantId: 99, physicalQty: 10 },
-      ],
+      items: [{ variantId: 99, physicalQty: 10 }],
     };
 
     const response = await request(app)
@@ -121,5 +133,3 @@ describe('Inventory Audits API (HU-029)', () => {
     expect(response.body.error).toContain('no existe');
   });
 });
-
-

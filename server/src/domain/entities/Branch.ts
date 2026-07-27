@@ -12,4 +12,3 @@ export interface Branch {
   createdAt: Date;
   updatedAt: Date;
 }
-

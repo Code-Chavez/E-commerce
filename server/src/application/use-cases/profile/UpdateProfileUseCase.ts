@@ -1,6 +1,9 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IStorageService } from '@domain/services/IStorageService';
-import { UpdateProfileRequestDTO, ProfileResponseDTO } from '@application/dtos/ProfileDTO';
+import {
+  UpdateProfileRequestDTO,
+  ProfileResponseDTO,
+} from '@application/dtos/ProfileDTO';
 
 export class UpdateProfileUseCase {
   constructor(
@@ -8,7 +11,10 @@ export class UpdateProfileUseCase {
     private readonly storageService: IStorageService
   ) {}
 
-  async execute(userId: number, dto: UpdateProfileRequestDTO): Promise<ProfileResponseDTO> {
+  async execute(
+    userId: number,
+    dto: UpdateProfileRequestDTO
+  ): Promise<ProfileResponseDTO> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new Error('Usuario no encontrado');

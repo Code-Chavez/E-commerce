@@ -1,4 +1,7 @@
-import type { IKardexCostStrategy, SalidaCostResult } from '@domain/services/IKardexCostStrategy';
+import type {
+  IKardexCostStrategy,
+  SalidaCostResult,
+} from '@domain/services/IKardexCostStrategy';
 
 export class PromedioStrategy implements IKardexCostStrategy {
   async calcularCostoSalida(params: {

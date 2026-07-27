@@ -22,15 +22,22 @@ export class QuickRegisterClientUseCase {
     });
 
     if (existing) {
-      const err = new Error(`El cliente con documento ${documentId} ya se encuentra registrado en el sistema`);
+      const err = new Error(
+        `El cliente con documento ${documentId} ya se encuentra registrado en el sistema`
+      );
       (err as any).statusCode = 409;
       throw err;
     }
 
     // 2. Si no existe, validar con la API de Factiliza
-    const apiResult = await this.factilizaService.lookupDocument(documentType, documentId);
+    const apiResult = await this.factilizaService.lookupDocument(
+      documentType,
+      documentId
+    );
     if (!apiResult || !apiResult.success) {
-      const err = new Error(`Cliente no encontrado o documento inválido (${documentType}: ${documentId})`);
+      const err = new Error(
+        `Cliente no encontrado o documento inválido (${documentType}: ${documentId})`
+      );
       (err as any).statusCode = 400;
       throw err;
     }

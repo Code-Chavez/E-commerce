@@ -1,8 +1,10 @@
 import prisma from '@infrastructure/database/prisma';
-import { ICreditNoteRepository, CreditNoteWithClient } from '@domain/repositories/ICreditNoteRepository';
+import {
+  ICreditNoteRepository,
+  CreditNoteWithClient,
+} from '@domain/repositories/ICreditNoteRepository';
 import { CreditNote } from '@domain/entities/CreditNote';
 import { RefundType } from '@domain/entities/ReturnRequest';
-
 
 export class PrismaCreditNoteRepository implements ICreditNoteRepository {
   private toDomain(record: any): CreditNote {
@@ -47,7 +49,9 @@ export class PrismaCreditNoteRepository implements ICreditNoteRepository {
     return this.toDomain(record);
   }
 
-  async findByReturnRequestId(returnRequestId: number): Promise<CreditNote | null> {
+  async findByReturnRequestId(
+    returnRequestId: number
+  ): Promise<CreditNote | null> {
     const record = await prisma.creditNote.findUnique({
       where: { returnRequestId },
     });

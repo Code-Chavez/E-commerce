@@ -9,7 +9,9 @@ export interface SearchProductsResponse {
 }
 
 export class SearchProductsUseCase {
-  async execute(criteria: ProductSearchCriteria): Promise<SearchProductsResponse> {
+  async execute(
+    criteria: ProductSearchCriteria
+  ): Promise<SearchProductsResponse> {
     const limit = criteria.limit || 10;
     const orderBy = criteria.orderBy || 'relevance';
 
@@ -24,8 +26,11 @@ export class SearchProductsUseCase {
       const mappedVariants = (product.variants || []).map((variant: any) => {
         // Calculate stock for this variant based on retrieved branchStock
         const branchStocks = variant.branchStock || [];
-        const stockQuantity = branchStocks.reduce((sum: number, bs: any) => sum + bs.quantity, 0);
-        
+        const stockQuantity = branchStocks.reduce(
+          (sum: number, bs: any) => sum + bs.quantity,
+          0
+        );
+
         return {
           id: variant.id,
           productId: variant.productId,
@@ -44,8 +49,10 @@ export class SearchProductsUseCase {
 
       // Find min and max price among active variants
       const activePrices = mappedVariants.map((v: any) => v.price);
-      const minVariantPrice = activePrices.length > 0 ? Math.min(...activePrices) : 0;
-      const maxVariantPrice = activePrices.length > 0 ? Math.max(...activePrices) : 0;
+      const minVariantPrice =
+        activePrices.length > 0 ? Math.min(...activePrices) : 0;
+      const maxVariantPrice =
+        activePrices.length > 0 ? Math.max(...activePrices) : 0;
 
       return {
         id: product.id,
@@ -87,7 +94,7 @@ export class SearchProductsUseCase {
       // Paginate in memory using offset (cursor is the offset)
       const offset = criteria.cursor ? Number(criteria.cursor) : 0;
       productsToReturn = mappedProducts.slice(offset, offset + limit);
-      
+
       if (mappedProducts.length > offset + limit) {
         hasMore = true;
         nextCursor = String(offset + limit);

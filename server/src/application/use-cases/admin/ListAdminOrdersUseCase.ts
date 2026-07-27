@@ -13,16 +13,18 @@ interface ListAdminOrdersDTO {
 export class ListAdminOrdersUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
-  async execute(dto: ListAdminOrdersDTO): Promise<{ orders: Order[]; nextCursor: number | null }> {
+  async execute(
+    dto: ListAdminOrdersDTO
+  ): Promise<{ orders: Order[]; nextCursor: number | null }> {
     const limit = dto.limit ? Number(dto.limit) : 20;
-    
+
     let fromDate: Date | undefined;
     let toDate: Date | undefined;
-    
+
     if (dto.from) {
       fromDate = new Date(dto.from);
     }
-    
+
     if (dto.to) {
       toDate = new Date(dto.to);
       // Set to end of day if it's a date string without time

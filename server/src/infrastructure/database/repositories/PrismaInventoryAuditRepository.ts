@@ -1,5 +1,8 @@
 import prisma from '@infrastructure/database/prisma';
-import { IInventoryAuditRepository, CreateInventoryAuditDTO } from '@domain/repositories/IInventoryAuditRepository';
+import {
+  IInventoryAuditRepository,
+  CreateInventoryAuditDTO,
+} from '@domain/repositories/IInventoryAuditRepository';
 import { InventoryAudit } from '@domain/entities/InventoryAudit';
 
 export class PrismaInventoryAuditRepository implements IInventoryAuditRepository {
@@ -39,8 +42,19 @@ export class PrismaInventoryAuditRepository implements IInventoryAuditRepository
 
             // Sincronizar BranchStock
             await tx.branchStock.upsert({
-              where: { variantId_branchId_status: { variantId: item.variantId, branchId: data.branchId, status: 'AVAILABLE' } },
-              create: { variantId: item.variantId, branchId: data.branchId, quantity: item.physicalQty, status: 'AVAILABLE' },
+              where: {
+                variantId_branchId_status: {
+                  variantId: item.variantId,
+                  branchId: data.branchId,
+                  status: 'AVAILABLE',
+                },
+              },
+              create: {
+                variantId: item.variantId,
+                branchId: data.branchId,
+                quantity: item.physicalQty,
+                status: 'AVAILABLE',
+              },
               update: { quantity: item.physicalQty },
             });
 
@@ -59,8 +73,19 @@ export class PrismaInventoryAuditRepository implements IInventoryAuditRepository
           } else {
             // Si la diferencia es 0, simplemente asegurarse de que BranchStock esté registrado
             await tx.branchStock.upsert({
-              where: { variantId_branchId_status: { variantId: item.variantId, branchId: data.branchId, status: 'AVAILABLE' } },
-              create: { variantId: item.variantId, branchId: data.branchId, quantity: item.physicalQty, status: 'AVAILABLE' },
+              where: {
+                variantId_branchId_status: {
+                  variantId: item.variantId,
+                  branchId: data.branchId,
+                  status: 'AVAILABLE',
+                },
+              },
+              create: {
+                variantId: item.variantId,
+                branchId: data.branchId,
+                quantity: item.physicalQty,
+                status: 'AVAILABLE',
+              },
               update: { quantity: item.physicalQty },
             });
           }

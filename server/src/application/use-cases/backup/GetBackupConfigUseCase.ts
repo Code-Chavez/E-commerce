@@ -2,7 +2,9 @@ import { IBackupConfigRepository } from '@domain/repositories/IBackupConfigRepos
 import { BackupConfig } from '@domain/entities/BackupConfig';
 
 export class GetBackupConfigUseCase {
-  constructor(private readonly backupConfigRepository: IBackupConfigRepository) {}
+  constructor(
+    private readonly backupConfigRepository: IBackupConfigRepository
+  ) {}
 
   async execute(): Promise<BackupConfig> {
     return this.backupConfigRepository.get();

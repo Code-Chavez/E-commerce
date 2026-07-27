@@ -5,7 +5,8 @@ export class GeneratePickingListUseCase {
   constructor(private readonly deliveryRepository: IDeliveryRepository) {}
 
   async execute(orderIds?: number[]): Promise<Delivery[]> {
-    const orders = await this.deliveryRepository.findPaidOrdersWithoutDelivery(orderIds);
+    const orders =
+      await this.deliveryRepository.findPaidOrdersWithoutDelivery(orderIds);
     const deliveries: Delivery[] = [];
 
     for (const order of orders) {
@@ -15,7 +16,10 @@ export class GeneratePickingListUseCase {
         qty: item.qty,
       }));
 
-      const delivery = await this.deliveryRepository.createDeliveryWithItems(order.id, items);
+      const delivery = await this.deliveryRepository.createDeliveryWithItems(
+        order.id,
+        items
+      );
       deliveries.push(delivery);
     }
 

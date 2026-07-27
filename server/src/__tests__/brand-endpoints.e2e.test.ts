@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import request from 'supertest';
 
 // Mock JWT verification
-var mockVerifyAccessToken = jest.fn();
+let mockVerifyAccessToken = jest.fn();
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: (...args: any[]) => mockVerifyAccessToken(...args),
@@ -49,7 +49,7 @@ describe('Branding Endpoints (E2E)', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data.brandName).toBe("E-Commerce");
+      expect(res.body.data.brandName).toBe('E-Commerce');
       expect(res.body.data.colorBrandPrimary).toBe('#D9D9D2');
       expect(prisma.brandConfig.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -78,15 +78,13 @@ describe('Branding Endpoints (E2E)', () => {
 
   describe('PUT /api/v1/config/brand', () => {
     it('debería retornar 401 si no se provee token de autorización', async () => {
-      const res = await request(app)
-        .put('/api/v1/config/brand')
-        .send({
-          brandName: 'Nueva Marca',
-          colorBrandPrimary: '#999999',
-          colorBrandBg: '#F7F7F5',
-          colorBrandText: '#6B6B6B',
-          colorBrandAccent: '#3F3F3F',
-        });
+      const res = await request(app).put('/api/v1/config/brand').send({
+        brandName: 'Nueva Marca',
+        colorBrandPrimary: '#999999',
+        colorBrandBg: '#F7F7F5',
+        colorBrandText: '#6B6B6B',
+        colorBrandAccent: '#3F3F3F',
+      });
 
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);
@@ -160,7 +158,6 @@ describe('Branding Endpoints (E2E)', () => {
       (prisma.brandConfig.upsert as any).mockResolvedValue(updatedConfig);
       (prisma.auditLog.create as any).mockResolvedValue({ id: 100 });
 
-
       const res = await request(app)
         .put('/api/v1/config/brand')
         .set('Authorization', 'Bearer admin_token')
@@ -209,5 +206,3 @@ describe('Branding Endpoints (E2E)', () => {
     });
   });
 });
-
-

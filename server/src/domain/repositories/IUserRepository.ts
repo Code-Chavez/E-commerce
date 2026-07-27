@@ -10,18 +10,27 @@ export interface IUserRepository {
   findByGoogleId(googleId: string): Promise<User | null>;
   create(data: CreateUserDTO, tx?: any): Promise<User>;
   updateLastLogin(userId: number, date: Date): Promise<void>;
-  updateVerificationPin(userId: number, pin: string, expiresAt: Date): Promise<void>;
+  updateVerificationPin(
+    userId: number,
+    pin: string,
+    expiresAt: Date
+  ): Promise<void>;
   deleteById(userId: number): Promise<void>;
   activateUser(userId: number): Promise<void>;
   updatePassword(userId: number, passwordHash: string): Promise<void>;
-  updateGoogleId(userId: number, googleId: string, avatarUrl?: string): Promise<void>;
+  updateGoogleId(
+    userId: number,
+    googleId: string,
+    avatarUrl?: string
+  ): Promise<void>;
   /** HU-009 / T-049: Enable or disable a user account (admin operation). */
   updateStatus(userId: number, isActive: boolean): Promise<void>;
   /** HU-005: Update client's profile information. */
   updateProfile(
     userId: number,
-    data: Partial<Pick<User, 'name' | 'lastName' | 'phone' | 'avatarUrl' | 'birthdate'>>
+    data: Partial<
+      Pick<User, 'name' | 'lastName' | 'phone' | 'avatarUrl' | 'birthdate'>
+    >
   ): Promise<User>;
   findUsersByRoleName(roleName: string): Promise<User[]>;
 }
-

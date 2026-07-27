@@ -20,13 +20,15 @@ const extendedPrisma = prismaInstance.$extends({
 
         if (args.data.status !== undefined && oldStatus !== args.data.status) {
           const store = requestContext.getStore();
-          const changedBy = store?.email || (store?.userId ? `User #${store.userId}` : 'SYSTEM');
+          const changedBy =
+            store?.email ||
+            (store?.userId ? `User #${store.userId}` : 'SYSTEM');
 
           // Use nested write to create the OrderStatusLog inside the same transaction to avoid deadlocks
           args.data = {
             ...args.data,
             statusLogs: {
-              ...(args.data.statusLogs as any || {}),
+              ...((args.data.statusLogs as any) || {}),
               create: {
                 status: args.data.status as any,
                 changedBy: changedBy,

@@ -13,7 +13,9 @@ export interface ValidateDeliveryPinResult {
 }
 
 export class ValidateDeliveryPinUseCase {
-  async execute(input: ValidateDeliveryPinInput): Promise<ValidateDeliveryPinResult> {
+  async execute(
+    input: ValidateDeliveryPinInput
+  ): Promise<ValidateDeliveryPinResult> {
     const delivery = await prisma.delivery.findUnique({
       where: { id: input.deliveryId },
       include: {

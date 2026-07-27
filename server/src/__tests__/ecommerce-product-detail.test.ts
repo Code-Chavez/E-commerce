@@ -58,10 +58,10 @@ const dummyProductRecord = {
           branchId: 1,
           quantity: 15,
           status: 'AVAILABLE',
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 };
 
 const dummyMainBranch = {
@@ -79,7 +79,9 @@ describe('E-commerce Product Detail Endpoint — HU-040 (T-166)', () => {
   });
 
   describe('GetProductDetailUseCase', () => {
-    const { GetProductDetailUseCase } = require('../application/use-cases/ecommerce/GetProductDetailUseCase');
+    const {
+      GetProductDetailUseCase,
+    } = require('../application/use-cases/ecommerce/GetProductDetailUseCase');
     let useCase: any;
 
     beforeEach(() => {
@@ -114,8 +116,9 @@ describe('E-commerce Product Detail Endpoint — HU-040 (T-166)', () => {
       (prisma.branch.findFirst as any).mockResolvedValue(dummyMainBranch);
       (prisma.product.findFirst as any).mockResolvedValue(dummyProductRecord);
 
-      const res = await request(app)
-        .get('/api/v1/ecommerce/products/camisa-elegante-tshirt');
+      const res = await request(app).get(
+        '/api/v1/ecommerce/products/camisa-elegante-tshirt'
+      );
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -127,13 +130,12 @@ describe('E-commerce Product Detail Endpoint — HU-040 (T-166)', () => {
       (prisma.branch.findFirst as any).mockResolvedValue(dummyMainBranch);
       (prisma.product.findFirst as any).mockResolvedValue(null);
 
-      const res = await request(app)
-        .get('/api/v1/ecommerce/products/invalid-slug');
+      const res = await request(app).get(
+        '/api/v1/ecommerce/products/invalid-slug'
+      );
 
       expect(res.status).toBe(404);
       expect(res.body.success).toBe(false);
     });
   });
 });
-
-

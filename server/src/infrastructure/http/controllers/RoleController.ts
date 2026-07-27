@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { RoleService } from '@application/services/RoleService';
 import { PrismaRoleRepository } from '@infrastructure/database/repositories/PrismaRoleRepository';
 import { PrismaUserRepository } from '@infrastructure/database/repositories/PrismaUserRepository';
-import { CreateRoleDTOSchema, AssignRoleDTOSchema } from '@application/dtos/RoleDTO';
+import {
+  CreateRoleDTOSchema,
+  AssignRoleDTOSchema,
+} from '@application/dtos/RoleDTO';
 
 const roleRepository = new PrismaRoleRepository();
 const userRepository = new PrismaUserRepository();

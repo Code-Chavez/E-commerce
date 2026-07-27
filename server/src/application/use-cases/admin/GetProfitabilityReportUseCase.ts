@@ -1,5 +1,8 @@
 import { IOrderRepository } from '@domain/repositories/IOrderRepository';
-import { ProfitabilityCalculatorService, ProfitabilitySummary } from '@domain/services/ProfitabilityCalculatorService';
+import {
+  ProfitabilityCalculatorService,
+  ProfitabilitySummary,
+} from '@domain/services/ProfitabilityCalculatorService';
 
 export interface GetProfitabilityReportDTO {
   from?: string;
@@ -29,7 +32,10 @@ export class GetProfitabilityReportUseCase {
     }
 
     // Retrieve raw sales and matching kardex costs
-    const data = await this.orderRepository.getProfitabilityData(fromDate, toDate);
+    const data = await this.orderRepository.getProfitabilityData(
+      fromDate,
+      toDate
+    );
 
     // Map database models to domain inputs for calculations
     const inputs = data.map((item) => ({

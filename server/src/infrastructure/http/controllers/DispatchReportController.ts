@@ -4,12 +4,19 @@ import { GetDispatchEfficiencyUseCase } from '@application/use-cases/admin/GetDi
 const useCase = new GetDispatchEfficiencyUseCase();
 
 export class DispatchReportController {
-  getEfficiency = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getEfficiency = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { from, to } = req.query;
 
       if (!from || !to) {
-        res.status(400).json({ success: false, error: 'Los parámetros from y to son requeridos' });
+        res.status(400).json({
+          success: false,
+          error: 'Los parámetros from y to son requeridos',
+        });
         return;
       }
 
@@ -17,12 +24,17 @@ export class DispatchReportController {
       const toDate = new Date(String(to));
 
       if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-        res.status(400).json({ success: false, error: 'Formato de fecha inválido' });
+        res
+          .status(400)
+          .json({ success: false, error: 'Formato de fecha inválido' });
         return;
       }
 
       if (fromDate > toDate) {
-        res.status(400).json({ success: false, error: 'La fecha de inicio no puede ser mayor a la fecha de fin' });
+        res.status(400).json({
+          success: false,
+          error: 'La fecha de inicio no puede ser mayor a la fecha de fin',
+        });
         return;
       }
 

@@ -13,7 +13,9 @@ export class PrismaClientCreditRepository implements IClientCreditRepository {
       dueDate: record.dueDate,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
-      payments: record.payments ? record.payments.map((p: any) => this.toDomainPayment(p)) : [],
+      payments: record.payments
+        ? record.payments.map((p: any) => this.toDomainPayment(p))
+        : [],
     };
   }
 
