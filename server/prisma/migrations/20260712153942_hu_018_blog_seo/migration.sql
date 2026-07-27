@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `BlogPost` ADD COLUMN `publishedAt` DATETIME(3) NULL,
+    ADD COLUMN `tags` JSON NULL,
+    MODIFY `status` ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') NOT NULL DEFAULT 'DRAFT';

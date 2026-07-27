@@ -1,0 +1,1199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                       Int                 @id @default(autoincrement())
+  email                    String              @unique
+  name                     String?
+  password                 String
+  googleId                 String?             @unique
+  avatarUrl                String?
+  lastName                 String?
+  phone                    String?
+  authProvider             String              @default("local") // "local" | "google"
+  lastLogin                DateTime?
+  isActive                 Boolean             @default(false)
+  mustChangePassword       Boolean             @default(false)
+  verificationPin          String?
+  pinExpiresAt             DateTime?
+  preferencesJson          Json? // HU-080
+  birthdate                DateTime? // HU-085
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  auditLogs                AuditLog[]
+  roles                    Role[] // RBAC many-to-many relationship (HU-004)
+  employee                 Employee?
+  client                   Client?
+  cashTurns                CashTurn[] // HU-032
+  wishlists                Wishlist[] // HU-010
+  carts                    Cart[] // HU-041
+  addresses                Address[]
+  blogPosts                BlogPost[]
+  coupons                  Coupon[]
+  orders                   Order[]
+  deliveries               Delivery[]          @relation("DeliveryMan")
+  returnRequests           ReturnRequest[]
+  operatingExpenses        OperatingExpense[]
+  loyaltyAccount           LoyaltyAccount?
+  complaints               Complaint[]
+  npsSurveys               NPSSurvey[]
+  communicationLogs        CommunicationLog[]
+  priceHistories           PriceHistory[]
+  kardexEntries            KardexEntry[]       @relation("KardexUser")
+  inventorySettingsHistory InventorySettings[] @relation("InventorySettingsUpdater")
+}
+
+model Client {
+  id           Int            @id @default(autoincrement())
+  email        String?        @unique
+  name         String // Nombres o Razón Social
+  lastName     String? // Apellidos
+  phone        String?
+  documentType String? // DNI o RUC
+  documentId   String?        @unique // DNI/RUC número
+  address      String?
+  department   String?
+  province     String?
+  district     String?
+  ubigeo       String?
+  userId       Int?           @unique
+  user         User?          @relation(fields: [userId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  credits      ClientCredit[]
+  posOrders    PosOrder[]
+  npsSurveys   NPSSurvey[]
+}
+
+model Employee {
+  id        Int      @id @default(autoincrement())
+  name      String
+  dni       String   @unique
+  isActive  Boolean  @default(true)
+  userId    Int?     @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  branchId  Int
+  branch    Branch   @relation(fields: [branchId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Branch {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  address           String?
+  phone             String?
+  isActive          Boolean            @default(true)
+  isMain            Boolean            @default(false)
+  igvExempt         Boolean            @default(false)
+  employees         Employee[]
+  branchStock       BranchStock[]
+  kardexEntries     KardexEntry[]
+  stockEntries      StockEntry[] // HU-051
+  warehouse         Warehouse?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  stockAlerts       StockAlert[]
+  inventoryAudits   InventoryAudit[] // HU-029
+  posOrders         PosOrder[] // HU-034
+  cashRegisters     CashRegister[] // HU-032
+  transfersSent     StockTransfer[]    @relation("TransfersSent")
+  transfersReceived StockTransfer[]    @relation("TransfersReceived")
+  sourcePosOrders   PosOrder[]         @relation("SourceBranchOrders")
+  operatingExpenses OperatingExpense[]
+  salesAnomalies    SalesAnomaly[]
+  documentSequences DocumentSequence[]
+}
+
+model Warehouse {
+  id        Int      @id @default(autoincrement())
+  branchId  Int      @unique
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique // e.g., "ADMIN", "SELLER", "CLIENT"
+  description String?
+  users       User[]
+  permissions Permission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // e.g., "users:write", "products:read"
+  description String?
+  roles       Role[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  action    String // Ejemplo: "LOGIN", "CREATE_USER"
+  module    String // Ejemplo: "AUTH", "USERS"
+  details   Json? // Para guardar datos de la acción
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model SystemSetting {
+  key         String   @id // e.g. MIN_STOCK_ALERT, ABANDONED_CART_HOURS
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// HU-014: Gestión de Variantes SKU (T-076)
+// HU-015: Inactivación Lógica de Productos
+// ─────────────────────────────────────────────
+
+model BrandConfig {
+  id                Int      @id @default(1)
+  brandName         String   @default("D'Mendoza")
+  faviconUrl        String?
+  logoHorizontalUrl String?
+  logoVerticalUrl   String?
+  colorBrandBg      String   @default("#F7F7F5")
+  colorBrandPrimary String   @default("#D9D9D2")
+  colorBrandText    String   @default("#6B6B6B")
+  colorBrandAccent  String   @default("#3F3F3F")
+  socialLinksJson   Json?
+  updatedAt         DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// HU-019: Gestión de Banners y Sliders (T-083)
+// ─────────────────────────────────────────────
+model Banner {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String   @db.Text
+  linkUrl   String?  @db.Text
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── HU-011 ───────────────────────────────────────────────────────────────────
+
+model Category {
+  id           Int        @id @default(autoincrement())
+  name         String
+  parentId     Int?
+  parent       Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children     Category[] @relation("CategoryChildren")
+  isActive     Boolean    @default(true)
+  imageUrl     String?    @db.Text
+  sizeGuideUrl String?
+  products     Product[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  coupons      Coupon[]
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  logoUrl   String?
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ─── HU-012 ───────────────────────────────────────────────────────────────────
+
+model Attribute {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  isVisualDriver Boolean          @default(false)
+  isActive       Boolean          @default(true)
+  values         AttributeValue[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model AttributeValue {
+  id          Int            @id @default(autoincrement())
+  value       String
+  isActive    Boolean        @default(true)
+  attributeId Int
+  attribute   Attribute      @relation(fields: [attributeId], references: [id])
+  images      ProductImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([attributeId, value])
+}
+
+// ─── HU-013 ───────────────────────────────────────────────────────────────────
+
+model Product {
+  id             Int              @id @default(autoincrement())
+  code           String           @unique // Código base para auto-generación de SKU (ej. "CAM")
+  name           String
+  slug           String           @unique
+  description    String?          @db.Text
+  model          String?
+  categoryId     Int?
+  category       Category?        @relation(fields: [categoryId], references: [id])
+  brandId        Int?
+  brand          Brand?           @relation(fields: [brandId], references: [id])
+  genderId       Int?
+  gender         Gender?          @relation(fields: [genderId], references: [id])
+  isActive       Boolean          @default(true)
+  images         ProductImage[]
+  variants       ProductVariant[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  coupons        Coupon[]
+  salesAnomalies SalesAnomaly[]
+}
+
+model Gender {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ProductImage {
+  id               Int             @id @default(autoincrement())
+  productId        Int
+  product          Product         @relation(fields: [productId], references: [id])
+  url              String
+  isMain           Boolean         @default(false)
+  attributeValueId Int?
+  attributeValue   AttributeValue? @relation(fields: [attributeValueId], references: [id], onDelete: SetNull)
+  createdAt        DateTime        @default(now())
+}
+
+// ─── HU-026 (dependencies: ProductVariant + BranchStock) ─────────────────────
+
+model ProductVariant {
+  id              Int              @id @default(autoincrement())
+  productId       Int
+  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku             String           @unique // SKU único auto-generado: código_producto-talla-color
+  price           Decimal          @default(0) @db.Decimal(10, 2)
+  costPrice       Decimal          @default(0) @db.Decimal(10, 2) /// Precio de costo (última compra)
+  discountPercent Int              @default(0) // HU-017
+  attributesJson  Json? // JSON con los atributos de la variante
+  isActive        Boolean          @default(true)
+  minStock        Int              @default(5)
+  branchStock     BranchStock[]
+  kardexEntries   KardexEntry[]
+  stockEntryItems StockEntryItem[] // HU-051
+  stockAlerts     StockAlert[]
+  auditItems      AuditItem[] // HU-029
+  posOrderItems   PosOrderItem[] // HU-034
+  wishlists       Wishlist[] // HU-010
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  stockTransfers  StockTransfer[]
+  cartItems       CartItem[] // HU-041
+  orderItems      OrderItem[]
+  pickingItems    PickingItem[]
+  priceHistories  PriceHistory[]
+
+  @@index([productId])
+}
+
+model BranchStock {
+  id        Int            @id @default(autoincrement())
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  branchId  Int
+  branch    Branch         @relation(fields: [branchId], references: [id])
+  quantity  Float          @default(0)
+  status    StockStatus    @default(AVAILABLE)
+  updatedAt DateTime       @updatedAt
+
+  @@unique([variantId, branchId, status])
+}
+
+// ─── HU-026 ───────────────────────────────────────────────────────────────────
+
+enum KardexType {
+  AJUSTE
+  COMPRA
+  VENTA
+  TRANSFERENCIA
+  DEVOLUCION
+}
+
+enum ValuationMethod {
+  PROMEDIO_PONDERADO
+  PEPS
+}
+
+model KardexEntry {
+  id          Int            @id @default(autoincrement())
+  variantId   Int
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
+  branchId    Int
+  branch      Branch         @relation(fields: [branchId], references: [id])
+  type        KardexType
+  quantity    Float
+  unitCost    Float
+  balanceQty  Float
+  balanceCost Float
+  notes       String?        @db.VarChar(500)
+  userId      Int?
+  user        User?          @relation("KardexUser", fields: [userId], references: [id])
+  createdAt   DateTime       @default(now())
+}
+
+model InventorySettings {
+  id              Int             @id @default(autoincrement())
+  valuationMethod ValuationMethod @default(PROMEDIO_PONDERADO)
+  updatedAt       DateTime        @updatedAt
+  updatedByUserId Int?
+  updatedBy       User?           @relation("InventorySettingsUpdater", fields: [updatedByUserId], references: [id])
+}
+
+// ─── HU-051: Gestión de Proveedores y Registro de Ingreso de Mercadería ─────────
+
+model Supplier {
+  id           Int          @id @default(autoincrement())
+  ruc          String       @unique
+  razonSocial  String
+  contacto     String
+  rubro        String       @default("General") // HU-051: Campo requerido por auditoría
+  direccion    String?
+  isActive     Boolean      @default(true)
+  stockEntries StockEntry[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model StockEntry {
+  id            Int              @id @default(autoincrement())
+  supplierId    Int
+  supplier      Supplier         @relation(fields: [supplierId], references: [id])
+  invoiceNumber String
+  branchId      Int
+  branch        Branch           @relation(fields: [branchId], references: [id])
+  items         StockEntryItem[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([supplierId])
+  @@index([branchId])
+}
+
+model StockEntryItem {
+  id           Int            @id @default(autoincrement())
+  stockEntryId Int
+  stockEntry   StockEntry     @relation(fields: [stockEntryId], references: [id], onDelete: Cascade)
+  variantId    Int
+  variant      ProductVariant @relation(fields: [variantId], references: [id])
+  quantity     Float
+  unitCost     Float
+
+  @@index([stockEntryId])
+  @@index([variantId])
+}
+
+// ─── HU-027: Alertas de Stock Crítico ─────────────────────────────────────────
+
+model StockAlert {
+  id        Int            @id @default(autoincrement())
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  branchId  Int
+  branch    Branch         @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  isActive  Boolean        @default(true) // Turns false when stock is replenished or manually dismissed
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([variantId, branchId])
+}
+
+// ─── HU-029: Auditoría de Inventario Físico (Toma de Inventario) ──────────────
+
+enum AuditStatus {
+  PENDING
+  CONFIRMED
+}
+
+model InventoryAudit {
+  id        Int         @id @default(autoincrement())
+  branchId  Int
+  branch    Branch      @relation(fields: [branchId], references: [id])
+  status    AuditStatus @default(PENDING)
+  items     AuditItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([branchId])
+}
+
+model AuditItem {
+  id          Int            @id @default(autoincrement())
+  auditId     Int
+  audit       InventoryAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  variantId   Int
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
+  physicalQty Float
+  systemQty   Float
+  difference  Float
+
+  @@index([auditId])
+  @@index([variantId])
+}
+
+// ─── HU-034: Aplicación de Descuentos en el POS ───────────────────────────────
+// ─── HU-035: Pago con Múltiples Métodos Combinados ────────────────────────────
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+  YAPE
+  CREDIT_NOTE
+}
+
+enum PosOrderStatus {
+  OPEN
+  COMPLETED
+  CANCELLED
+}
+
+enum DocumentType {
+  BOLETA
+  FACTURA
+  TICKET
+}
+
+model DocumentSequence {
+  id           Int          @id @default(autoincrement())
+  branchId     Int
+  branch       Branch       @relation(fields: [branchId], references: [id])
+  documentType DocumentType
+  series       String
+  nextNumber   Int          @default(1)
+
+  @@unique([branchId, documentType])
+}
+
+model PosOrder {
+  id             Int            @id @default(autoincrement())
+  status         PosOrderStatus @default(OPEN)
+  documentType   DocumentType   @default(TICKET)
+  series         String?
+  correlative    Int?
+  subtotal       Decimal        @default(0) @db.Decimal(10, 2)
+  discountTotal  Decimal        @default(0) @db.Decimal(10, 2) // Suma de todos los descuentos aplicados
+  total          Decimal        @default(0) @db.Decimal(10, 2)
+  userId         Int? // Cajero que abrió la venta
+  cashTurnId     Int? // HU-032: Turno de caja asociado a esta venta
+  cashTurn       CashTurn?      @relation(fields: [cashTurnId], references: [id])
+  branchId       Int
+  branch         Branch         @relation(fields: [branchId], references: [id])
+  isCrossBranch  Boolean        @default(false)
+  sourceBranchId Int?
+  sourceBranch   Branch?        @relation("SourceBranchOrders", fields: [sourceBranchId], references: [id])
+  items          PosOrderItem[]
+  payments       Payment[]
+  clientId       Int?
+  client         Client?        @relation(fields: [clientId], references: [id])
+  npsSurvey      NPSSurvey?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([series, correlative])
+  @@index([branchId])
+  @@index([userId])
+  @@index([sourceBranchId])
+}
+
+/// Ítem de línea dentro de una venta POS.
+/// T-124: Se agrega el campo discountAmount (Decimal, default 0).
+model PosOrderItem {
+  id             Int            @id @default(autoincrement())
+  posOrderId     Int
+  posOrder       PosOrder       @relation(fields: [posOrderId], references: [id], onDelete: Cascade)
+  variantId      Int
+  variant        ProductVariant @relation(fields: [variantId], references: [id])
+  quantity       Int            @default(1)
+  unitPrice      Decimal        @db.Decimal(10, 2)
+  unitCost       Decimal        @default(0) @db.Decimal(10, 2) /// Costo unitario congelado al momento de la venta
+  discountAmount Decimal        @default(0) @db.Decimal(10, 2) // T-124: Descuento aplicado al ítem (monto fijo)
+  lineTotal      Decimal        @db.Decimal(10, 2) // (unitPrice * quantity) - discountAmount
+
+  @@index([posOrderId])
+  @@index([variantId])
+}
+
+/// Pagos asociados a una venta POS.
+model Payment {
+  id           Int           @id @default(autoincrement())
+  posOrderId   Int
+  posOrder     PosOrder      @relation(fields: [posOrderId], references: [id], onDelete: Cascade)
+  method       PaymentMethod
+  amount       Decimal       @db.Decimal(10, 2)
+  creditNoteId Int?
+  creditNote   CreditNote?   @relation(fields: [creditNoteId], references: [id])
+  createdAt    DateTime      @default(now())
+
+  @@index([posOrderId])
+  @@index([creditNoteId])
+}
+
+// ─── HU-032: Apertura de Caja y Vinculación al Turno del Vendedor ─────────────
+
+enum TurnStatus {
+  OPEN
+  CLOSED
+}
+
+model CashRegister {
+  id        Int        @id @default(autoincrement())
+  branchId  Int
+  branch    Branch     @relation(fields: [branchId], references: [id])
+  name      String
+  isActive  Boolean    @default(true)
+  cashTurns CashTurn[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([branchId])
+}
+
+model CashTurn {
+  id          Int            @id @default(autoincrement())
+  registerId  Int
+  register    CashRegister   @relation(fields: [registerId], references: [id])
+  userId      Int
+  user        User           @relation(fields: [userId], references: [id])
+  openAmount  Float
+  closeAmount Float? // HU-037: Monto físico declarado al cerrar
+  status      TurnStatus     @default(OPEN)
+  openedAt    DateTime       @default(now())
+  closedAt    DateTime?
+  movements   CashMovement[] // HU-037: Movimientos de caja
+  posOrders   PosOrder[] // HU-032: Ventas registradas durante el turno
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([registerId])
+  @@index([userId])
+}
+
+// ─── HU-010: Lista de Favoritos del Cliente (Wishlist) ─────────────────────────
+
+model Wishlist {
+  id        Int            @id @default(autoincrement())
+  userId    Int
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  addedAt   DateTime       @default(now())
+
+  @@unique([userId, variantId])
+  @@index([userId])
+  @@index([variantId])
+}
+
+// ─── HU-037: Movimientos de Caja y Cierre de Turno ────────────────────────────
+
+enum CashMovementType {
+  INGRESO
+  EGRESO
+}
+
+model CashMovement {
+  id        Int              @id @default(autoincrement())
+  turnId    Int
+  turn      CashTurn         @relation(fields: [turnId], references: [id])
+  type      CashMovementType
+  amount    Float
+  reason    String
+  createdAt DateTime         @default(now())
+
+  @@index([turnId])
+}
+
+enum TransferStatus {
+  PENDING
+  CONFIRMED
+}
+
+enum StockStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+model StockTransfer {
+  id           Int            @id @default(autoincrement())
+  guideNumber  String?        @unique
+  fromBranchId Int
+  fromBranch   Branch         @relation("TransfersSent", fields: [fromBranchId], references: [id])
+  toBranchId   Int
+  toBranch     Branch         @relation("TransfersReceived", fields: [toBranchId], references: [id])
+  variantId    Int
+  variant      ProductVariant @relation(fields: [variantId], references: [id])
+  quantity     Float
+  status       TransferStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([fromBranchId])
+  @@index([toBranchId])
+  @@index([variantId])
+}
+
+// ─── HU-041: Carrito de Compras Persistente ───────────────────────────────────
+
+model Cart {
+  id                 Int        @id @default(autoincrement())
+  userId             Int?
+  user               User?      @relation(fields: [userId], references: [id])
+  sessionId          String?    @unique // Para carritos anónimos
+  abandonedEmailSent Boolean    @default(false)
+  items              CartItem[]
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+model CartItem {
+  id        Int            @id @default(autoincrement())
+  cartId    Int
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  quantity  Int            @default(1)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([cartId, variantId])
+}
+
+model Address {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alias       String // Ej: "Casa", "Trabajo"
+  fullAddress String   @db.Text
+  district    String
+  reference   String?  @db.Text
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model BlogPost {
+  id              Int        @id @default(autoincrement())
+  title           String
+  slug            String     @unique
+  content         String     @db.Text
+  status          PostStatus @default(DRAFT)
+  metaTitle       String?
+  metaDescription String?
+  tags            Json?
+  publishedAt     DateTime?
+  views           Int        @default(0)
+  authorId        Int
+  author          User       @relation(fields: [authorId], references: [id])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([authorId])
+}
+
+// ─── HU-054: Configuración de Zonas de Delivery ───────────────────────────────
+
+model DeliveryZone {
+  id            Int      @id @default(autoincrement())
+  districts     Json // Almacenado como JSON en MySQL para guardar arreglo de strings
+  deliveryCost  Decimal  @db.Decimal(10, 2)
+  estimatedDays Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+model Coupon {
+  id                 Int        @id @default(autoincrement())
+  code               String     @unique
+  type               CouponType
+  value              Decimal    @db.Decimal(10, 2)
+  minPurchaseAmount  Decimal?   @db.Decimal(10, 2)
+  specificProductId  Int?
+  specificProduct    Product?   @relation(fields: [specificProductId], references: [id])
+  specificCategoryId Int?
+  specificCategory   Category?  @relation(fields: [specificCategoryId], references: [id])
+  expiresAt          DateTime?
+  maxUses            Int?
+  usedCount          Int        @default(0)
+  userId             Int?
+  user               User?      @relation(fields: [userId], references: [id])
+  isActive           Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  FAILED
+  RETURNED
+}
+
+enum RefundStatus {
+  NONE
+  PENDING
+  PROCESSED
+}
+
+model Order {
+  id                        Int                        @id @default(autoincrement())
+  userId                    Int
+  user                      User                       @relation(fields: [userId], references: [id])
+  status                    OrderStatus                @default(PENDING)
+  total                     Decimal                    @db.Decimal(10, 2)
+  shippingCost              Decimal                    @db.Decimal(10, 2)
+  addressSnapshot           Json
+  paymentIntentId           String                     @unique
+  deliveryPin               String?
+  refundStatus              RefundStatus               @default(NONE)
+  items                     OrderItem[]
+  statusLogs                OrderStatusLog[]
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  deliveries                Delivery[]
+  pendingOrderAlert         PendingOrderAlert?
+  failedDeliveryReturnAlert FailedDeliveryReturnAlert?
+  returnRequests            ReturnRequest[]
+  complaints                Complaint[]
+  npsSurvey                 NPSSurvey?
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id          Int                 @id @default(autoincrement())
+  orderId     Int
+  order       Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId   Int
+  variant     ProductVariant      @relation(fields: [variantId], references: [id])
+  qty         Int
+  unitPrice   Decimal             @db.Decimal(10, 2)
+  returnItems ReturnRequestItem[]
+
+  @@index([orderId])
+  @@index([variantId])
+}
+
+model OrderStatusLog {
+  id        Int         @id @default(autoincrement())
+  orderId   Int
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  changedAt DateTime    @default(now())
+  changedBy String
+
+  @@index([orderId])
+}
+
+enum DeliveryType {
+  DELIVERY
+  PICKUP
+}
+
+enum DeliveryStatus {
+  PENDING
+  ASSIGNED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  FAILED
+  AWAITING_CLIENT_DECISION
+  RETURNED
+}
+
+model Delivery {
+  id               Int                     @id @default(autoincrement())
+  orderId          Int
+  order            Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  deliveryManId    Int?
+  deliveryMan      User?                   @relation("DeliveryMan", fields: [deliveryManId], references: [id])
+  status           DeliveryStatus          @default(PENDING)
+  type             DeliveryType            @default(DELIVERY)
+  returnRequestId  Int?                    @unique
+  returnRequest    ReturnRequest?          @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  deliveryPhotoUrl String?
+  deliveredAt      DateTime?
+  parentDeliveryId Int?
+  parentDelivery   Delivery?               @relation("DeliveryChain", fields: [parentDeliveryId], references: [id])
+  childDeliveries  Delivery[]              @relation("DeliveryChain")
+  pickingItems     PickingItem[]
+  failedAttempts   FailedDeliveryAttempt[]
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  @@index([orderId])
+  @@index([deliveryManId])
+  @@index([parentDeliveryId])
+}
+
+model FailedDeliveryAttempt {
+  id             Int       @id @default(autoincrement())
+  deliveryId     Int
+  delivery       Delivery  @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  reason         String    @db.VarChar(500)
+  attemptedAt    DateTime  @default(now())
+  rescheduledFor DateTime?
+
+  @@index([deliveryId])
+}
+
+model PickingItem {
+  id         Int            @id @default(autoincrement())
+  deliveryId Int
+  delivery   Delivery       @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  variantId  Int
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  qty        Int
+  pickedAt   DateTime?
+
+  @@index([deliveryId])
+  @@index([variantId])
+}
+
+model PendingOrderAlert {
+  id        Int      @id @default(autoincrement())
+  orderId   Int      @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RefundType {
+  CREDIT_NOTE
+  STORE_CREDIT
+}
+
+model ReturnRequest {
+  id          Int                 @id @default(autoincrement())
+  orderId     Int
+  order       Order               @relation(fields: [orderId], references: [id])
+  userId      Int
+  user        User                @relation(fields: [userId], references: [id])
+  reason      String              @db.Text
+  status      ReturnStatus        @default(PENDING)
+  refundType  RefundType
+  items       ReturnRequestItem[]
+  creditNote  CreditNote?
+  pickupOrder Delivery?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([orderId])
+  @@index([userId])
+}
+
+model ReturnRequestItem {
+  id              Int           @id @default(autoincrement())
+  returnRequestId Int
+  returnRequest   ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  orderItemId     Int
+  orderItem       OrderItem     @relation(fields: [orderItemId], references: [id])
+  qty             Int
+
+  @@index([returnRequestId])
+  @@index([orderItemId])
+}
+
+model CreditNote {
+  id              Int           @id @default(autoincrement())
+  returnRequestId Int           @unique
+  returnRequest   ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  amount          Float
+  type            RefundType
+  code            String        @unique
+  usedAt          DateTime?
+  payments        Payment[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([returnRequestId])
+}
+
+enum ExpenseType {
+  FIXED
+  VARIABLE
+}
+
+model OperatingExpense {
+  id          Int         @id @default(autoincrement())
+  branchId    Int
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  type        ExpenseType
+  description String      @db.Text
+  amount      Decimal     @db.Decimal(10, 2)
+  date        DateTime
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([branchId])
+  @@index([userId])
+}
+
+model ClientCredit {
+  id           String          @id @default(uuid())
+  clientId     Int
+  totalAmount  Decimal         @db.Decimal(10, 2)
+  installments Int
+  dueDate      DateTime
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  payments     CreditPayment[]
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+}
+
+model CreditPayment {
+  id       String   @id @default(uuid())
+  creditId String
+  amount   Decimal  @db.Decimal(10, 2)
+  paidAt   DateTime @default(now())
+
+  credit ClientCredit @relation(fields: [creditId], references: [id], onDelete: Cascade)
+
+  @@index([creditId])
+}
+
+model LoyaltyConfig {
+  id            Int      @id @default(autoincrement())
+  solesPerPoint Decimal  @default(100.00) @db.Decimal(10, 2) // 1 point for every 100 soles
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LoyaltyAccount {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// HU-084: Libro de Reclamaciones Virtual
+enum ComplaintStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+}
+
+enum ComplaintCategory {
+  PRODUCTO
+  SERVICIO
+  ENTREGA
+  ATENCION
+  PAGO
+  OTRO
+}
+
+model Complaint {
+  id          Int               @id @default(autoincrement())
+  userId      Int
+  orderId     Int?
+  category    ComplaintCategory
+  description String            @db.Text
+  status      ComplaintStatus   @default(OPEN)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum SurveyChannel {
+  ECOMMERCE
+  POS
+}
+
+model NPSSurvey {
+  id         Int           @id @default(autoincrement())
+  orderId    Int?          @unique
+  posOrderId Int?          @unique
+  channel    SurveyChannel @default(ECOMMERCE)
+  userId     Int?
+  clientId   Int?
+  token      String        @unique
+  score      Int?
+  comment    String?       @db.Text
+  answeredAt DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  order    Order?    @relation(fields: [orderId], references: [id])
+  posOrder PosOrder? @relation(fields: [posOrderId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
+  client   Client?   @relation(fields: [clientId], references: [id])
+
+  @@index([userId])
+  @@index([clientId])
+}
+
+// HU-092: Detección y Alerta de Anomalías en Ventas
+enum AnomalyDirection {
+  HIGH
+  LOW
+}
+
+model SalesAnomaly {
+  id          Int              @id @default(autoincrement())
+  branchId    Int
+  productId   Int
+  date        DateTime // día de la anomalía detectada
+  avgSales    Decimal          @db.Decimal(10, 2)
+  stdDev      Decimal          @db.Decimal(10, 2)
+  actualSales Decimal          @db.Decimal(10, 2)
+  sigmas      Decimal          @db.Decimal(5, 2)
+  direction   AnomalyDirection
+  isActive    Boolean          @default(true)
+  resolvedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  branch  Branch  @relation(fields: [branchId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([branchId, productId, date])
+  @@index([isActive])
+  @@index([branchId])
+  @@index([productId])
+}
+
+model NewsletterSubscriber {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  isActive     Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+}
+
+enum CommunicationChannel {
+  EMAIL
+  WHATSAPP
+}
+
+model CommunicationLog {
+  id      Int                  @id @default(autoincrement())
+  userId  Int
+  channel CommunicationChannel
+  subject String
+  type    String
+  sentAt  DateTime             @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model SocialProofPhoto {
+  id         Int      @id @default(autoincrement())
+  imageUrl   String
+  clientName String
+  isApproved Boolean  @default(false)
+  uploadedAt DateTime @default(now())
+}
+
+/// Tipo de precio registrado en el historial: venta o costo
+enum PriceType {
+  SALE
+  COST
+}
+
+model PriceHistory {
+  id        Int            @id @default(autoincrement())
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  userId    Int?
+  user      User?          @relation(fields: [userId], references: [id])
+  priceType PriceType      @default(SALE)
+  oldPrice  Decimal        @db.Decimal(10, 2)
+  newPrice  Decimal        @db.Decimal(10, 2)
+  createdAt DateTime       @default(now())
+
+  @@index([variantId])
+  @@index([userId])
+}
+
+model BackupConfig {
+  id             Int      @id @default(autoincrement())
+  retentionDays  Int      @default(7)
+  adminEmail     String   @default("admin@dmendoza.com")
+  cronExpression String   @default("0 0 * * *")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── HU-Delivery: Alerta de devolución automática por expiración de ventana ──
+model FailedDeliveryReturnAlert {
+  id             Int      @id @default(autoincrement())
+  orderId        Int      @unique
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productCount   Int
+  windowHours    Int
+  isActive       Boolean  @default(true)
+  autoReturnedAt DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
