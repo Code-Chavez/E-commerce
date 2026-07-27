@@ -47,6 +47,19 @@ jobs:
   server-checks:
     name: Server Checks (Lint & Test)
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ecommerce_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     defaults:
       run:
         working-directory: ./server
@@ -81,5 +94,14 @@ jobs:
       - name: Build server
         run: pnpm run build
 
+      - name: Setup Database
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/ecommerce_test
+        run: pnpm run prisma:migrate
+
       - name: Run tests
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/ecommerce_test
+          JWT_SECRET: test-secret
+          JWT_REFRESH_SECRET: test-refresh-secret
         run: pnpm run test
