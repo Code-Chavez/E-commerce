@@ -37,7 +37,7 @@ function getMedalColor(rank: number) {
 }
 
 const SellerRankingPage: React.FC = () => {
-  useDocumentTitle("Ranking de Vendedores — D'Mendoza");
+  useDocumentTitle("Ranking de Vendedores — E-Commerce");
 
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');

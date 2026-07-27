@@ -84,7 +84,7 @@ export default function LoginPage() {
           />
         ) : (
           <div className="h-32 w-auto mb-4 flex items-center justify-center">
-            <span className="text-4xl font-extrabold text-brand-accent">{brandConfig?.brandName || "D'Mendoza"}</span>
+            <span className="text-4xl font-extrabold text-brand-accent">{brandConfig?.brandName || "E-Commerce"}</span>
           </div>
         )}
         <h2 className="mt-2 text-center text-3xl font-extrabold text-brand-accent">

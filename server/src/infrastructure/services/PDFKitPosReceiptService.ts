@@ -17,9 +17,9 @@ export class PDFKitPosReceiptService {
     const divider = '#D9D9D2';
 
     // ── Cabecera: marca ────────────────────────────────────────────────────────
-    doc.fillColor(dark).fontSize(24).text("D'MENDOZA", 50, 50, { align: 'left' });
+    doc.fillColor(dark).fontSize(24).text("E-Commerce", 50, 50, { align: 'left' });
     doc.fontSize(10).fillColor(gray)
-       .text("D'Mendoza S.A.C.", 50, 80)
+       .text("E-Commerce S.A.C.", 50, 80)
        .text('RUC: 20609876543', 50, 95)
        .text(`Sucursal: ${receipt.branch.name}`, 50, 110)
        .text(receipt.branch.address || 'Lima, Perú', 50, 125);
@@ -165,7 +165,7 @@ export class PDFKitPosReceiptService {
     if (receipt.isPickup) {
       doc.text("PARA RECOJO EN TIENDA: Conserve este comprobante. Preséntelo junto con su documento de identidad en la sucursal seleccionada para retirar su pedido. Plazo máximo de recojo: 7 días calendario desde la fecha de emisión.", 50, 748, { align: 'center', width: 495 });
     }
-    doc.text("¡Gracias por su compra en D'Mendoza!", 50, 760, { align: 'center', width: 495 })
+    doc.text("¡Gracias por su compra en E-Commerce!", 50, 760, { align: 'center', width: 495 })
        .text('Este documento es un comprobante digital y no tiene valor tributario.', 50, 772, { align: 'center', width: 495 });
 
     doc.end();

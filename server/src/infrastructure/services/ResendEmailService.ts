@@ -6,7 +6,7 @@ import { CommunicationChannel } from '@domain/entities/CommunicationLog';
 
 class BaseResendEmailService implements IEmailService {
   private resend: Resend | null;
-  private readonly defaultFrom = process.env.RESEND_FROM_EMAIL || 'DMendoza <noreply@dmendoza.shop>';
+  private readonly defaultFrom = process.env.RESEND_FROM_EMAIL || 'E-Commerce <noreply@e-commerce.shop>';
 
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;

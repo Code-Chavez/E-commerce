@@ -32,7 +32,7 @@ type FormData = yup.InferType<typeof schema>;
 const ProductFormPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const isEdit = Boolean(id);
-  useDocumentTitle(isEdit ? 'Editar Producto - D\'Mendoza' : 'Nuevo Producto - D\'Mendoza');
+  useDocumentTitle(isEdit ? 'Editar Producto - E-Commerce' : 'Nuevo Producto - E-Commerce');
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<SelectOption[]>([]);

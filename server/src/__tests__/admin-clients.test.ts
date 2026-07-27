@@ -36,7 +36,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -47,7 +47,7 @@ import prisma from '@infrastructure/database/prisma';
 describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Clientes (T-205)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {

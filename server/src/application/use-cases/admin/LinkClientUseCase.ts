@@ -84,14 +84,14 @@ export class LinkClientUseCase {
       const clientUrl = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
       const resetLink = `${clientUrl}/reset-password?token=${resetToken}`;
 
-      const subject = 'Bienvenido a D\'Mendoza — Activación de cuenta';
+      const subject = 'Bienvenido a E-Commerce — Activación de cuenta';
       const html = `
         <!DOCTYPE html>
         <html lang="es">
           <head><meta charset="UTF-8" /></head>
           <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 24px;">
             <div style="max-width: 480px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 32px;">
-              <h2 style="color: #1a1a2e; margin-bottom: 8px;">¡Bienvenido Omnicanal a D'Mendoza!</h2>
+              <h2 style="color: #1a1a2e; margin-bottom: 8px;">¡Bienvenido Omnicanal a E-Commerce!</h2>
               <p style="color: #555; font-size: 15px; line-height: 1.6;">
                 Tu cuenta física ha sido vinculada exitosamente con nuestra plataforma de E-commerce.
               </p>

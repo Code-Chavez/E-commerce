@@ -76,7 +76,7 @@ function exportToCSV(items: ValuationItem[]) {
 }
 
 const InventoryValuationPage: React.FC = () => {
-  useDocumentTitle("Valorización de Inventario — D'Mendoza");
+  useDocumentTitle("Valorización de Inventario — E-Commerce");
 
   const [branchId, setBranchId] = useState('');
   const [loading, setLoading] = useState(false);

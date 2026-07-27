@@ -166,7 +166,7 @@ model SystemSetting {
 
 model BrandConfig {
   id                Int      @id @default(1)
-  brandName         String   @default("D'Mendoza")
+  brandName         String   @default("E-Commerce")
   faviconUrl        String?
   logoHorizontalUrl String?
   logoVerticalUrl   String?
@@ -1180,7 +1180,7 @@ model PriceHistory {
 model BackupConfig {
   id             Int      @id @default(autoincrement())
   retentionDays  Int      @default(7)
-  adminEmail     String   @default("admin@dmendoza.com")
+  adminEmail     String   @default("admin@e-commerce.com")
   cronExpression String   @default("0 0 * * *")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

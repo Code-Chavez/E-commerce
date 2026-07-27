@@ -38,11 +38,11 @@ export class PDFKitTicketReceiptService {
 
     // ── Cabecera ────────────────────────────────────────────────────────────────
     doc.fillColor(dark).fontSize(13).font('Helvetica-Bold')
-       .text("D'MENDOZA", M, y, { width: CW, align: 'center' });
+       .text("E-Commerce", M, y, { width: CW, align: 'center' });
     y += 17;
 
     doc.fontSize(7).font('Helvetica')
-       .text("D'Mendoza S.A.C.", M, y, { width: CW, align: 'center' });
+       .text("E-Commerce S.A.C.", M, y, { width: CW, align: 'center' });
     y += 11;
     doc.text('RUC: 20609876543', M, y, { width: CW, align: 'center' });
     y += 11;
@@ -206,7 +206,7 @@ export class PDFKitTicketReceiptService {
       doc.text("PARA RECOJO EN TIENDA: Conserve este comprobante. Preséntelo junto con su documento de identidad en la sucursal seleccionada para retirar su pedido. Plazo máximo de recojo: 7 días calendario desde la fecha de emisión.", M, y, { width: CW, align: 'center' });
       y += 11;
     }
-    doc.text("¡Gracias por su compra en D'Mendoza!", M, y, { width: CW, align: 'center' });
+    doc.text("¡Gracias por su compra en E-Commerce!", M, y, { width: CW, align: 'center' });
 
     doc.end();
     return doc;

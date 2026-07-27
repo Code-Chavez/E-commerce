@@ -88,7 +88,7 @@ export class AbandonedCartJob {
       try {
         await emailService.sendEmail(
           cart.user.email,
-          "🛒 ¡No olvides tus productos en D'Mendoza!",
+          "🛒 ¡No olvides tus productos en E-Commerce!",
           htmlContent
         );
 

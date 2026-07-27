@@ -212,7 +212,7 @@ export const DeliveryDetailPanel: React.FC<DeliveryDetailPanelProps> = ({
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gray-500 font-semibold">Cliente:</span>
-              <span className="font-bold text-gray-900">{delivery.orderUser?.name || "Cliente D'Mendoza"}</span>
+              <span className="font-bold text-gray-900">{delivery.orderUser?.name || "Cliente E-Commerce"}</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gray-500 font-semibold">Email:</span>

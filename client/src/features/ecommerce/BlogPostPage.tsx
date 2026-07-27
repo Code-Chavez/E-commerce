@@ -68,7 +68,7 @@ export const BlogPostPage: React.FC = () => {
     <div className="min-h-screen bg-[#F7F7F5] py-12 px-4 sm:px-6 lg:px-8">
       {/* Helmet dynamic SEO injection */}
       <Helmet>
-        <title>{post.metaTitle || `${post.title} | Blog D'Mendoza`}</title>
+        <title>{post.metaTitle || `${post.title} | Blog E-Commerce`}</title>
         <meta name="description" content={post.metaDescription || `${post.title}. Conoce todos los detalles en nuestro blog.`} />
         {/* OpenGraph / Social SEO fallback */}
         <meta property="og:title" content={post.metaTitle || post.title} />
@@ -102,7 +102,7 @@ export const BlogPostPage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1.5 font-medium text-gray-700">
                 <User className="w-4 h-4 text-gray-400" />
-                <span>Por {post.author?.name || 'Redacción D\'Mendoza'}</span>
+                <span>Por {post.author?.name || 'Redacción E-Commerce'}</span>
               </div>
               <div className="w-1 h-1 bg-gray-300 rounded-full" />
               <div className="flex items-center gap-1.5">

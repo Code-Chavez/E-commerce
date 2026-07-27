@@ -37,7 +37,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -49,7 +49,7 @@ import { FinancialConsolidationService } from '@domain/services/FinancialConsoli
 describe('Tests de Dashboard Financiero Consolidado Multi-canal (HU-070)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {

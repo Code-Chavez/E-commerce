@@ -204,7 +204,7 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
       // Verification for email
       expect(mockSendEmail).toHaveBeenCalledWith(
         'customer@example.com',
-        "Actualización de tu Pedido #10 — D'Mendoza",
+        "Actualización de tu Pedido #10 — E-Commerce",
         expect.stringContaining('Pagado')
       );
       // Verification for WhatsApp

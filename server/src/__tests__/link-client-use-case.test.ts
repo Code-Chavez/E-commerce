@@ -74,7 +74,7 @@ const makeMockTransactionManager = () => {
 
 const fakeClient: Client = {
   id: 42,
-  email: 'cliente@dmendoza.com',
+  email: 'cliente@e-commerce.com',
   name: 'Juan Cliente',
   phone: '987654321',
   documentId: '12345678',

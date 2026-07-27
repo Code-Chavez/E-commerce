@@ -22,7 +22,7 @@ export interface BrandConfig {
  */
 export const DEFAULT_BRAND_CONFIG: BrandConfig = {
   id: 1,
-  brandName: "D'Mendoza",
+  brandName: "E-Commerce",
   faviconUrl: null,
   logoHorizontalUrl: null,
   logoVerticalUrl: null,

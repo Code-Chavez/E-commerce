@@ -15,7 +15,7 @@ const mockReceiptData: ReceiptData = {
 vi.mock('@/shared/context/BrandContext', () => ({
   useBrand: () => ({
     theme: { colors: { accent: '#000' } },
-    brand: { name: 'D Mendoza' }
+    brand: { name: 'E-Commerce' }
   }),
 }));
 

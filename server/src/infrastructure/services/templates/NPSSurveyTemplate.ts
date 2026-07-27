@@ -88,7 +88,7 @@ export const getNPSSurveyTemplate = (
         <div class="content">
           <div class="greeting">¡Hola ${userName}!</div>
           <div class="message">
-            Hace poco recibiste tu pedido de <strong>D'Mendoza</strong>. 
+            Hace poco recibiste tu pedido de <strong>E-Commerce</strong>. 
             Nos encantaría saber qué tan probable es que nos recomiendes a un amigo o familiar.
             <br><br>
             Tu opinión es muy importante para ayudarnos a mejorar nuestros servicios.
@@ -99,7 +99,7 @@ export const getNPSSurveyTemplate = (
           </div>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} D'Mendoza. Todos los derechos reservados.</p>
+          <p>&copy; ${new Date().getFullYear()} E-Commerce. Todos los derechos reservados.</p>
           <p style="margin-top: 15px; font-size: 12px;"><a href="${unsubscribeUrl}" style="color: #6b7280; text-decoration: underline;">Cancelar suscripción al newsletter</a></p>
         </div>
       </div>

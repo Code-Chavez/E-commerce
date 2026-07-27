@@ -107,7 +107,7 @@ export const NPSSurveyPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
       <div className="max-w-2xl w-full bg-white shadow-xl rounded-2xl overflow-hidden">
         <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 p-8 text-white text-center">
-          <h1 className="text-3xl font-bold mb-2">D'Mendoza</h1>
+          <h1 className="text-3xl font-bold mb-2">E-Commerce</h1>
           <p className="text-indigo-100">Encuesta de Satisfacción</p>
         </div>
         
@@ -115,7 +115,7 @@ export const NPSSurveyPage: React.FC = () => {
           <div className="mb-8 text-center">
             <h2 className="text-xl font-semibold text-gray-900">¡Hola, {surveyData?.userName}!</h2>
             <p className="text-gray-600 mt-2">
-              Hace poco recibiste tu pedido <strong>#{surveyData?.orderId}</strong>. Nos encantaría saber qué tan probable es que recomiendes D'Mendoza a un amigo o familiar.
+              Hace poco recibiste tu pedido <strong>#{surveyData?.orderId}</strong>. Nos encantaría saber qué tan probable es que recomiendes E-Commerce a un amigo o familiar.
             </p>
           </div>
 

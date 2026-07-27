@@ -43,7 +43,7 @@ export default function HeroBanner() {
         <img 
           src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=2070" 
           className="absolute inset-0 w-full h-full object-cover opacity-80" 
-          alt="Colección D'Mendoza" 
+          alt="Colección E-Commerce" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         <div className="relative z-10 text-center px-4">

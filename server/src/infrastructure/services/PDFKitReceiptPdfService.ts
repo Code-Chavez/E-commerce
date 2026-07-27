@@ -10,11 +10,11 @@ export class PDFKitReceiptPdfService implements IReceiptPdfService {
     // Cabecera - Nombre de la marca y datos fiscales de la tienda
     doc.fillColor('#3F3F3F')
        .fontSize(24)
-       .text("D'MENDOZA", 50, 50, { align: 'left' });
+       .text("E-Commerce", 50, 50, { align: 'left' });
 
     doc.fontSize(10)
        .fillColor('#6B6B6B')
-       .text("Tienda Online de Moda D'Mendoza S.A.C.", 50, 80)
+       .text("Tienda Online de Moda E-Commerce S.A.C.", 50, 80)
        .text("RUC: 20609876543", 50, 95)
        .text("Lima, Perú", 50, 110);
 
@@ -138,7 +138,7 @@ export class PDFKitReceiptPdfService implements IReceiptPdfService {
     // Mensaje de pie de página fijo
     doc.fontSize(9)
        .fillColor('#6B6B6B')
-       .text("¡Gracias por comprar en D'Mendoza!", 50, 750, { align: 'center' })
+       .text("¡Gracias por comprar en E-Commerce!", 50, 750, { align: 'center' })
        .text("Este documento es un comprobante digital de compra y no tiene valor tributario.", 50, 765, { align: 'center' });
 
     doc.end();

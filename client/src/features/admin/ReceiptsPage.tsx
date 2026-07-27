@@ -55,7 +55,7 @@ interface ReceiptResult {
 }
 
 export const ReceiptsPage: React.FC = () => {
-  useDocumentTitle('Consulta de Comprobantes - D\'Mendoza');
+  useDocumentTitle('Consulta de Comprobantes - E-Commerce');
 
   // Filter States
   const [branchId, setBranchId] = useState<string>('');

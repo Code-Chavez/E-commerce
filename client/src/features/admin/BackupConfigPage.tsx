@@ -152,7 +152,7 @@ const BackupConfigPage = () => {
                 id="adminEmail"
                 name="adminEmail"
                 className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-brand-accent focus:border-brand-accent text-gray-900 text-sm font-medium shadow-sm transition-colors"
-                placeholder="admin@dmendoza.com"
+                placeholder="admin@e-commerce.com"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 required

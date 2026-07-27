@@ -13,7 +13,7 @@ export class PdfKitShippingLabelService implements IShippingLabelService {
     // Header
     doc.fillColor('#3F3F3F')
        .fontSize(16)
-       .text("D'MENDOZA", 20, 20, { align: 'center' });
+       .text("E-Commerce", 20, 20, { align: 'center' });
        
     doc.fontSize(8)
        .fillColor('#6B6B6B')
@@ -34,7 +34,7 @@ export class PdfKitShippingLabelService implements IShippingLabelService {
     // Draw QR code
     try {
       // Create a tracking URL or just use the tracking code if no URL is provided
-      const trackingUrl = `https://dmendoza.com/track/${data.trackingCode}`;
+      const trackingUrl = `https://e-commerce.com/track/${data.trackingCode}`;
       const qrBuffer = await QRCode.toBuffer(trackingUrl, {
         errorCorrectionLevel: 'M',
         margin: 1,

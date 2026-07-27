@@ -19,7 +19,7 @@ interface RotationRow {
 type SortKey = keyof RotationRow;
 
 const RotationReportPage: React.FC = () => {
-  useDocumentTitle('Rotación de Inventario - D\'Mendoza');
+  useDocumentTitle('Rotación de Inventario - E-Commerce');
 
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');

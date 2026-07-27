@@ -101,7 +101,7 @@ export class BirthdayCouponJob {
 
         await emailService.sendEmail(
           user.email,
-          "🎉 ¡Feliz Cumpleaños! Aquí tienes tu regalo de D'Mendoza 🎁",
+          "🎉 ¡Feliz Cumpleaños! Aquí tienes tu regalo de E-Commerce 🎁",
           htmlContent
         );
 

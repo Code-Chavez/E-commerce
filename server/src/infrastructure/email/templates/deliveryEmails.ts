@@ -13,7 +13,7 @@ const wrapper = (content: string) => `
     <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e0e0e0;">
       ${content}
       <p style="color: #888; font-size: 12px; border-top: 1px solid #eeeeee; padding-top: 20px; margin-top: 32px; text-align: center;">
-        Este es un correo automático enviado por D'Mendoza S.A.C. Por favor no respondas a este mensaje.
+        Este es un correo automático enviado por E-Commerce S.A.C. Por favor no respondas a este mensaje.
       </p>
     </div>
   </body>

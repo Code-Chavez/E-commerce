@@ -11,7 +11,7 @@ describe('UpdateProfileUseCase (HU-005)', () => {
 
   const mockUser: User = {
     id: 1,
-    email: 'client@mendoza.com',
+    email: 'client@e-commerce.com',
     name: 'Juan',
     lastName: 'Pérez',
     phone: '+51999888777',

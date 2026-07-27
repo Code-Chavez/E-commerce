@@ -47,7 +47,7 @@ describe('LoginUseCase (HU-094)', () => {
 
   const fakeUser: User = {
     id: 1,
-    email: 'test@dmendoza.com',
+    email: 'test@e-commerce.com',
     name: 'Test User',
     password: hashedPassword,
     authProvider: 'local',
@@ -70,12 +70,12 @@ describe('LoginUseCase (HU-094)', () => {
     mockAuditService.record.mockResolvedValue();
 
     const result = await loginUseCase.execute({
-      email: 'test@dmendoza.com',
+      email: 'test@e-commerce.com',
       password: 'Password123!',
     });
 
     expect(result.user.id).toBe(1);
-    expect(result.user.email).toBe('test@dmendoza.com');
+    expect(result.user.email).toBe('test@e-commerce.com');
     expect(result.user.name).toBe('Test User');
     expect(result.user.lastLogin).toBeInstanceOf(Date);
     // Must NOT expose the password in the response
@@ -90,7 +90,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.updateLastLogin.mockResolvedValue();
     mockAuditService.record.mockResolvedValue();
 
-    await loginUseCase.execute({ email: 'test@dmendoza.com', password: 'Password123!' });
+    await loginUseCase.execute({ email: 'test@e-commerce.com', password: 'Password123!' });
 
     expect(mockUserRepository.updateLastLogin).toHaveBeenCalledTimes(1);
     expect(mockUserRepository.updateLastLogin).toHaveBeenCalledWith(
@@ -104,7 +104,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.updateLastLogin.mockResolvedValue();
     mockAuditService.record.mockResolvedValue();
 
-    await loginUseCase.execute({ email: 'test@dmendoza.com', password: 'Password123!' });
+    await loginUseCase.execute({ email: 'test@e-commerce.com', password: 'Password123!' });
 
     expect(mockAuditService.record).toHaveBeenCalledTimes(1);
     expect(mockAuditService.record).toHaveBeenCalledWith(
@@ -123,7 +123,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
     await expect(
-      loginUseCase.execute({ email: 'noexiste@dmendoza.com', password: 'Password123!' }),
+      loginUseCase.execute({ email: 'noexiste@e-commerce.com', password: 'Password123!' }),
     ).rejects.toThrow('Credenciales inválidas');
 
     expect(mockUserRepository.updateLastLogin).not.toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.findByEmail.mockResolvedValue(fakeUser);
 
     await expect(
-      loginUseCase.execute({ email: 'test@dmendoza.com', password: 'WrongPassword!' }),
+      loginUseCase.execute({ email: 'test@e-commerce.com', password: 'WrongPassword!' }),
     ).rejects.toThrow('Credenciales inválidas');
 
     expect(mockUserRepository.updateLastLogin).not.toHaveBeenCalled();
@@ -148,7 +148,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.findByEmail.mockResolvedValue(inactiveUser);
 
     await expect(
-      loginUseCase.execute({ email: 'test@dmendoza.com', password: 'Password123!' }),
+      loginUseCase.execute({ email: 'test@e-commerce.com', password: 'Password123!' }),
     ).rejects.toThrow('Cuenta inactiva o no verificada');
 
     expect(mockUserRepository.updateLastLogin).not.toHaveBeenCalled();
@@ -161,7 +161,7 @@ describe('LoginUseCase (HU-094)', () => {
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
     await expect(
-      loginUseCase.execute({ email: 'noexiste@dmendoza.com', password: 'x' }),
+      loginUseCase.execute({ email: 'noexiste@e-commerce.com', password: 'x' }),
     ).rejects.toThrow();
 
     expect(mockUserRepository.updateLastLogin).not.toHaveBeenCalled();

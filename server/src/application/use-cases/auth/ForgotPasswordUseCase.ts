@@ -39,7 +39,7 @@ export class ForgotPasswordUseCase {
     const resetLink = `${clientUrl}/reset-password?token=${resetToken}`;
 
     // Compose and send the email
-    const subject = 'Recuperación de contraseña — D\'Mendoza';
+    const subject = 'Recuperación de contraseña — E-Commerce';
     const html = this.buildEmailHtml(resetLink);
 
     await this.emailService.sendEmail(user.email, subject, html);
@@ -59,7 +59,7 @@ export class ForgotPasswordUseCase {
             <h2 style="color: #1a1a2e; margin-bottom: 8px;">Recuperación de contraseña</h2>
             <p style="color: #555; font-size: 15px; line-height: 1.6;">
               Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en
-              <strong>D'Mendoza</strong>. Haz clic en el botón a continuación para continuar.
+              <strong>E-Commerce</strong>. Haz clic en el botón a continuación para continuar.
             </p>
             <p style="color: #888; font-size: 13px;">
               Este enlace es válido únicamente por <strong>1 hora</strong>.

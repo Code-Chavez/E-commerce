@@ -1,6 +1,6 @@
-# D'Mendoza — Sistema Integrado de Gestión Comercial
+# E-Commerce — Sistema Integrado de Gestión Comercial
 
-Plataforma omnicanal para la gestión comercial de D'Mendoza, una empresa del sector retail de moda. Integra en un solo sistema la tienda online, el punto de venta físico y un panel administrativo centralizado con soporte para múltiples sucursales.
+Plataforma omnicanal para la gestión comercial de E-Commerce, una empresa del sector retail de moda. Integra en un solo sistema la tienda online, el punto de venta físico y un panel administrativo centralizado con soporte para múltiples sucursales.
 
 ---
 
@@ -33,8 +33,8 @@ Plataforma omnicanal para la gestión comercial de D'Mendoza, una empresa del se
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/tu-org/d-mendoza-sistema.git
-cd d-mendoza-sistema
+git clone https://github.com/tu-org/E-Commerce-sistema.git
+cd E-Commerce-sistema
 
 # Instalar dependencias
 cd server && npm install
@@ -59,8 +59,8 @@ npm run dev
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-org/d-mendoza-sistema.git
-cd d-mendoza-sistema
+git clone https://github.com/tu-org/E-Commerce-sistema.git
+cd E-Commerce-sistema
 
 # 2. Copiar el archivo de variables de entorno y ajustar los valores
 cp .env.example .env
@@ -171,9 +171,9 @@ El proyecto usa **GitFlow**. Antes de abrir un PR, selecciona el template que co
 
 | Tipo de PR | Rama origen → destino | Template | Enlace directo |
 | --- | --- | --- | --- |
-| Feature / HU / TT / RSK | `feature/xxx` → `develop` | `feature_develop.md` | [Abrir PR →](https://github.com/CFCamusDev/d-mendoza-project/compare/develop...<rama-origen>?template=feature_develop.md) |
-| Release a producción | `release/x.x.x` → `main` | `release_main.md` | [Abrir PR →](https://github.com/CFCamusDev/d-mendoza-project/compare/main...<rama-origen>?template=release_main.md) |
-| Hotfix crítico | `hotfix/xxx` → `main` | `hotfix_main.md` | [Abrir PR →](https://github.com/CFCamusDev/d-mendoza-project/compare/main...<rama-origen>?template=hotfix_main.md) |
+| Feature / HU / TT / RSK | `feature/xxx` → `develop` | `feature_develop.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/develop...<rama-origen>?template=feature_develop.md) |
+| Release a producción | `release/x.x.x` → `main` | `release_main.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/main...<rama-origen>?template=release_main.md) |
+| Hotfix crítico | `hotfix/xxx` → `main` | `hotfix_main.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/main...<rama-origen>?template=hotfix_main.md) |
 
 ### Estructura de templates
 

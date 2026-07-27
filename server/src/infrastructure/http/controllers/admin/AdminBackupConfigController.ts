@@ -58,7 +58,7 @@ export class AdminBackupConfigController {
     try {
       const { database, host, date } = req.body;
       const config = await this.getUseCase.execute();
-      const subject = '[ALERTA] Fallo de Backup D\'Mendoza';
+      const subject = '[ALERTA] Fallo de Backup E-Commerce';
       const html = `
         <h2>Fallo en el respaldo de base de datos</h2>
         <p><strong>Base de datos:</strong> ${database}</p>

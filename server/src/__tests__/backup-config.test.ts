@@ -34,7 +34,7 @@ import { AdminBackupConfigController } from '@infrastructure/http/controllers/ad
 const DEFAULT_CONFIG = {
   id: 1,
   retentionDays: 7,
-  adminEmail: 'admin@dmendoza.com',
+  adminEmail: 'admin@e-commerce.com',
   cronExpression: '0 0 * * *',
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
@@ -42,7 +42,7 @@ const DEFAULT_CONFIG = {
 
 function mockReq(overrides: Partial<Request> = {}): Partial<Request> {
   return {
-    auth: { userId: 1, email: 'admin@dmendoza.com', role: 'ADMIN' } as any,
+    auth: { userId: 1, email: 'admin@e-commerce.com', role: 'ADMIN' } as any,
     body: {},
     headers: {},
     ...overrides,

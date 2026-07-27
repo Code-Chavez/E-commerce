@@ -6,7 +6,7 @@ export class PDFKitReportService implements IPdfReportService {
     // Header brand name
     doc.fillColor('#1A1A2E')
        .fontSize(24)
-       .text("D'MENDOZA", 50, 45, { align: 'left' });
+       .text("E-Commerce", 50, 45, { align: 'left' });
 
     doc.fontSize(9)
        .fillColor('#6B6B6B')

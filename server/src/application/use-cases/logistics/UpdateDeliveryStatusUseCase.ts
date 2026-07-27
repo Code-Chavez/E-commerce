@@ -58,7 +58,7 @@ export class UpdateDeliveryStatusUseCase {
 
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px;">
-        <h2 style="color: #0056b3;">D'Mendoza Web - Actualización de Envío</h2>
+        <h2 style="color: #0056b3;">E-Commerce Web - Actualización de Envío</h2>
         ${message}
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
         <p style="font-size: 12px; color: #777;">Este es un mensaje automático, por favor no responda a este correo.</p>

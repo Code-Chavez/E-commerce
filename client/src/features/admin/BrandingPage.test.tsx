@@ -40,7 +40,7 @@ describe('BrandingPage Component', () => {
       data: {
         success: true,
         data: {
-          brandName: 'D Mendoza Test',
+          brandName: 'E-Commerce Test',
           logoHorizontalUrl: 'https://test.com/logo.png',
           colorBrandBg: '#F7F7F5',
           colorBrandPrimary: '#ff0000',
@@ -63,7 +63,7 @@ describe('BrandingPage Component', () => {
     });
 
     // Check that visual fields contain loaded values
-    expect(screen.getByPlaceholderText("Ej. D'Mendoza")).toHaveValue('D Mendoza Test');
+    expect(screen.getByPlaceholderText("Ej. E-Commerce")).toHaveValue('E-Commerce Test');
     
     // Check that the Logo Horizontal image is rendered
     expect(screen.getByAltText('Logo Horizontal')).toHaveAttribute('src', 'https://test.com/logo.png');
@@ -79,7 +79,7 @@ describe('BrandingPage Component', () => {
       data: {
         success: true,
         data: {
-          brandName: 'D Mendoza Test',
+          brandName: 'E-Commerce Test',
           logoHorizontalUrl: 'https://test.com/logo.png',
           colorBrandBg: '#F7F7F5',
           colorBrandPrimary: '#ff0000',
@@ -105,8 +105,8 @@ describe('BrandingPage Component', () => {
     });
 
     // Update Brand Name input field
-    const brandInput = screen.getByPlaceholderText("Ej. D'Mendoza");
-    fireEvent.change(brandInput, { target: { value: 'D\'Mendoza Global' } });
+    const brandInput = screen.getByPlaceholderText("Ej. E-Commerce");
+    fireEvent.change(brandInput, { target: { value: 'E-Commerce Global' } });
 
     // Click "Guardar Cambios" button
     const saveBtn = screen.getByText('Guardar Cambios');
@@ -117,7 +117,7 @@ describe('BrandingPage Component', () => {
       expect(axiosInstance.put).toHaveBeenCalledWith(
         '/v1/config/brand',
         expect.objectContaining({
-          brandName: 'D\'Mendoza Global',
+          brandName: 'E-Commerce Global',
           logoHorizontalUrl: 'https://test.com/logo.png',
           colorBrandPrimary: '#ff0000',
           colorBrandBg: '#F7F7F5',

@@ -45,7 +45,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -56,7 +56,7 @@ import prisma from '@infrastructure/database/prisma';
 describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {
@@ -230,7 +230,7 @@ describe('Tests de Integración — HU-053: Exportación de Reportes (T-207)', (
     it('debería denegar acceso con HTTP 403 si el usuario carece del permiso sales:read', async () => {
       const dummySellerUser = {
         id: 2,
-        email: 'seller@dmendoza.com',
+        email: 'seller@e-commerce.com',
         isActive: true,
         roles: [
           {

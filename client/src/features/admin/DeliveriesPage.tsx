@@ -77,7 +77,7 @@ const DeliveriesPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Control de Despachos | Admin D'Mendoza</title>
+        <title>Control de Despachos | Admin E-Commerce</title>
       </Helmet>
       
       <div className="space-y-6">

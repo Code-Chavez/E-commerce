@@ -35,7 +35,7 @@ const dummyOnSaleProducts = [
     createdAt: new Date(),
     updatedAt: new Date(),
     category: { id: 2, name: 'Camisas' },
-    brand: { id: 3, name: "D'Mendoza" },
+    brand: { id: 3, name: "E-Commerce" },
     images: [{ id: 1, productId: 1, url: '/img.png', isMain: true }],
     variants: [
       {

@@ -227,13 +227,13 @@ export class ReturnRequestController {
           </ul>
           <p>Adjunto a este correo encontrará el documento PDF correspondiente.</p>
           <br/>
-          <p>Atentamente,<br/>El equipo de DMendoza</p>
+          <p>Atentamente,<br/>El equipo de E-Commerce</p>
         </div>
       `;
 
       await this.emailSender.sendEmailWithAttachment({
         to: returnRequest.user.email,
-        subject: `Dmendoza - Reenvío Nota de Crédito ${creditNote.code}`,
+        subject: `E-Commerce - Reenvío Nota de Crédito ${creditNote.code}`,
         html: emailHtml,
         attachmentName: `Nota_de_Credito_${creditNote.code}.pdf`,
         attachmentBuffer: pdfBuffer,

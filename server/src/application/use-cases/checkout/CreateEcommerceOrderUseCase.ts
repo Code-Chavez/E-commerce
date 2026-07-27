@@ -282,10 +282,10 @@ export class CreateEcommerceOrderUseCase {
         <strong style="color: #3f3f3f; font-size: 36px; font-weight: 900; letter-spacing: 8px;">${orderId.deliveryPin}</strong>
       </div>
       <p style="color: #888; font-size: 13px; line-height: 1.5;">
-        Guarda este PIN de forma segura. No lo compartas con nadie que no sea el repartidor oficial de D'Mendoza al momento de la entrega.
+        Guarda este PIN de forma segura. No lo compartas con nadie que no sea el repartidor oficial de E-Commerce al momento de la entrega.
       </p>
       <p style="color: #888; font-size: 12px; border-top: 1px solid #eeeeee; padding-top: 20px; margin-top: 32px; text-align: center;">
-        Este es un correo automático enviado por D'Mendoza S.A.C. Por favor no respondas a este mensaje.
+        Este es un correo automático enviado por E-Commerce S.A.C. Por favor no respondas a este mensaje.
       </p>
     </div>
   </body>

@@ -10,7 +10,7 @@ import type { KardexFilters as IKardexFilters } from './types/kardex.types';
 import { Sparkles, Settings2 } from 'lucide-react';
 
 export const KardexPage: React.FC = () => {
-  useDocumentTitle("Kardex — Historial de Valorización - D'Mendoza");
+  useDocumentTitle("Kardex — Historial de Valorización - E-Commerce");
   const { user } = useAuth();
   
   const { entries, loading, fetchKardex } = useKardex();

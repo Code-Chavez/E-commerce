@@ -49,7 +49,7 @@ describe('Branding Endpoints (E2E)', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data.brandName).toBe("D'Mendoza");
+      expect(res.body.data.brandName).toBe("E-Commerce");
       expect(res.body.data.colorBrandPrimary).toBe('#D9D9D2');
       expect(prisma.brandConfig.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },

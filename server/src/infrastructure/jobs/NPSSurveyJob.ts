@@ -72,7 +72,7 @@ export class NPSSurveyJob {
 
         const surveyUrl = `${frontendUrl}/ecommerce/nps/${token}`;
         const htmlContent = getNPSSurveyTemplate(order.user.name || 'Cliente', surveyUrl, order.user.email);
-        await emailService.sendEmail(order.user.email, "Tu opinión nos importa 🌟 - D'Mendoza", htmlContent);
+        await emailService.sendEmail(order.user.email, "Tu opinión nos importa 🌟 - E-Commerce", htmlContent);
         console.log(`[Job] Encuesta NPS ECOMMERCE enviada a ${order.user.email} (Orden: ${order.id})`);
       } catch (error) {
         console.error(`[Job Error] Fallo al procesar encuesta NPS ECOMMERCE para ${order.user.email}:`, error);
@@ -111,7 +111,7 @@ export class NPSSurveyJob {
 
         const surveyUrl = `${frontendUrl}/ecommerce/nps/${token}`;
         const htmlContent = getNPSSurveyTemplate(posOrder.client.name || 'Cliente', surveyUrl, posOrder.client.email);
-        await emailService.sendEmail(posOrder.client.email, "Tu opinión nos importa 🌟 - D'Mendoza (Tienda Física)", htmlContent);
+        await emailService.sendEmail(posOrder.client.email, "Tu opinión nos importa 🌟 - E-Commerce (Tienda Física)", htmlContent);
         console.log(`[Job] Encuesta NPS POS enviada a ${posOrder.client.email} (PosOrder: ${posOrder.id})`);
       } catch (error) {
         console.error(`[Job Error] Fallo al procesar encuesta NPS POS para ${posOrder.client.email}:`, error);

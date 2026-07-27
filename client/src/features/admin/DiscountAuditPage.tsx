@@ -47,7 +47,7 @@ function fmtDate(iso: string) {
 }
 
 const DiscountAuditPage: React.FC = () => {
-  useDocumentTitle("Auditoría de Descuentos — D'Mendoza");
+  useDocumentTitle("Auditoría de Descuentos — E-Commerce");
 
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');

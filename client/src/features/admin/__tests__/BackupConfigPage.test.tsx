@@ -21,7 +21,7 @@ vi.mock('react-hot-toast', () => ({
 const mockConfig = {
   id: 1,
   retentionDays: 7,
-  adminEmail: 'admin@dmendoza.com',
+  adminEmail: 'admin@e-commerce.com',
   cronExpression: '0 0 * * *',
   updatedAt: '2026-07-13T00:00:00.000Z',
 };
@@ -43,7 +43,7 @@ describe('BackupConfigPage', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Retención de respaldos/i)).toHaveValue(7);
-      expect(screen.getByLabelText(/Email de alerta/i)).toHaveValue('admin@dmendoza.com');
+      expect(screen.getByLabelText(/Email de alerta/i)).toHaveValue('admin@e-commerce.com');
     });
   });
 
@@ -76,7 +76,7 @@ describe('BackupConfigPage', () => {
     await waitFor(() => {
       expect(backupConfigService.updateConfig).toHaveBeenCalledWith({
         retentionDays: 14,
-        adminEmail: 'admin@dmendoza.com',
+        adminEmail: 'admin@e-commerce.com',
         cronExpression: '0 0 * * *',
       });
       expect(toast.success).toHaveBeenCalledWith('Configuración de backup guardada');

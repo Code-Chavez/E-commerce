@@ -22,7 +22,7 @@ interface CashRegister {
 }
 
 const OpenCashPage: React.FC = () => {
-  useDocumentTitle('Apertura de Caja - D\'Mendoza');
+  useDocumentTitle('Apertura de Caja - E-Commerce');
   const navigate = useNavigate();
   const { openShift, loading: posLoading, checkActiveShift } = usePos();
 

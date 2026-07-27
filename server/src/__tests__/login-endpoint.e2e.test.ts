@@ -56,7 +56,7 @@ const hashedPassword = bcrypt.hashSync('Password123!', 10);
 
 const activeUser = {
   id: 1,
-  email: 'active@dmendoza.com',
+  email: 'active@e-commerce.com',
   name: 'Active User',
   password: hashedPassword,
   lastLogin: null,
@@ -70,7 +70,7 @@ const activeUser = {
 const inactiveUser = {
   ...activeUser,
   id: 2,
-  email: 'inactive@dmendoza.com',
+  email: 'inactive@e-commerce.com',
   isActive: false,
 };
 
@@ -108,7 +108,7 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
   it('should return 400 when password is missing', async () => {
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'active@dmendoza.com' });
+      .send({ email: 'active@e-commerce.com' });
 
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);
@@ -121,7 +121,7 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
 
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'noexiste@dmendoza.com', password: 'Password123!' });
+      .send({ email: 'noexiste@e-commerce.com', password: 'Password123!' });
 
     expect(res.status).toBe(401);
     expect(res.body.success).toBe(false);
@@ -133,7 +133,7 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
 
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'active@dmendoza.com', password: 'WrongPassword!' });
+      .send({ email: 'active@e-commerce.com', password: 'WrongPassword!' });
 
     expect(res.status).toBe(401);
     expect(res.body.success).toBe(false);
@@ -147,7 +147,7 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
 
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'inactive@dmendoza.com', password: 'Password123!' });
+      .send({ email: 'inactive@e-commerce.com', password: 'Password123!' });
 
     expect(res.status).toBe(403);
     expect(res.body.success).toBe(false);
@@ -161,7 +161,7 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
 
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'active@dmendoza.com', password: 'Password123!' });
+      .send({ email: 'active@e-commerce.com', password: 'Password123!' });
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -174,11 +174,11 @@ describe('POST /api/v1/auth/login (HU-094 / T-024)', () => {
 
     const res = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'active@dmendoza.com', password: 'Password123!' });
+      .send({ email: 'active@e-commerce.com', password: 'Password123!' });
 
     expect(res.status).toBe(200);
     expect(res.body.data.user.id).toBe(1);
-    expect(res.body.data.user.email).toBe('active@dmendoza.com');
+    expect(res.body.data.user.email).toBe('active@e-commerce.com');
     expect(res.body.data.user.password).toBeUndefined();
   });
 });

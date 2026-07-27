@@ -30,7 +30,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -40,7 +40,7 @@ import prisma from '@infrastructure/database/prisma';
 
 const dummyAdmin = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {

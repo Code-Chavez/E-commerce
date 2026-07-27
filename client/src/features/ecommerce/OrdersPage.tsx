@@ -5,7 +5,7 @@ import { Loader2, ClipboardList, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
 
 export const OrdersPage: React.FC = () => {
-  useDocumentTitle('Mis Pedidos - D\'Mendoza');
+  useDocumentTitle('Mis Pedidos - E-Commerce');
   const {
     orders,
     isLoading,

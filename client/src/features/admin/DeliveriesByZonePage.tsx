@@ -43,7 +43,7 @@ export default function DeliveriesByZonePage() {
   return (
     <>
       <Helmet>
-        <title>Entregas por Zona | Admin D'Mendoza</title>
+        <title>Entregas por Zona | Admin E-Commerce</title>
       </Helmet>
 
       <div className="space-y-6 animate-fade-in">

@@ -30,7 +30,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'SUPERADMIN',
     }),
   })),
@@ -47,7 +47,7 @@ import prisma from '@infrastructure/database/prisma';
 
 const dummyAdmin = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {
@@ -60,7 +60,7 @@ const dummyAdmin = {
 const dummyBanner = {
   id: 1,
   imageUrl: 'https://res.cloudinary.com/demo/image/upload/v12345/banners/banner1.png',
-  linkUrl: 'https://dmendoza.com/collections/autumn',
+  linkUrl: 'https://e-commerce.com/collections/autumn',
   order: 0,
   isActive: true,
   createdAt: new Date(),
@@ -102,7 +102,7 @@ describe('Tests de Integración — HU-019: Gestión de Banners y Sliders', () =
         .post('/api/v1/banners')
         .set('Authorization', 'Bearer mock-token')
         .attach('image', Buffer.from('fake-image-data'), 'banner.png')
-        .field('linkUrl', 'https://dmendoza.com/collections/autumn')
+        .field('linkUrl', 'https://e-commerce.com/collections/autumn')
         .expect(201);
 
       expect(res.body.success).toBe(true);
@@ -113,7 +113,7 @@ describe('Tests de Integración — HU-019: Gestión de Banners y Sliders', () =
       const res = await request(app)
         .post('/api/v1/banners')
         .set('Authorization', 'Bearer mock-token')
-        .send({ linkUrl: 'https://dmendoza.com' })
+        .send({ linkUrl: 'https://e-commerce.com' })
         .expect(400);
 
       expect(res.body.success).toBe(false);

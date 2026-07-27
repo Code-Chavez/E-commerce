@@ -152,9 +152,9 @@ export const AppShell: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             {brandConfig?.logoHorizontalUrl ? (
-              <img src={brandConfig.logoHorizontalUrl} alt={brandConfig?.brandName || "D'Mendoza Logo"} className="h-9 md:h-11 object-contain transition-transform hover:scale-[1.02]" />
+              <img src={brandConfig.logoHorizontalUrl} alt={brandConfig?.brandName || "E-Commerce Logo"} className="h-9 md:h-11 object-contain transition-transform hover:scale-[1.02]" />
             ) : (
-              <span className="text-xl font-bold tracking-tight text-brand-accent">{brandConfig?.brandName || "D'Mendoza"}</span>
+              <span className="text-xl font-bold tracking-tight text-brand-accent">{brandConfig?.brandName || "E-Commerce"}</span>
             )}
           </Link>
 
@@ -532,12 +532,12 @@ export const AppShell: React.FC = () => {
             {/* Columna 1: Branding y Descripción */}
             <div className="space-y-4">
               {brandConfig?.logoHorizontalUrl ? (
-                <img src={brandConfig.logoHorizontalUrl} alt={brandConfig?.brandName || "D'Mendoza"} className="h-10 brightness-[10] object-contain" />
+                <img src={brandConfig.logoHorizontalUrl} alt={brandConfig?.brandName || "E-Commerce"} className="h-10 brightness-[10] object-contain" />
               ) : (
-                <span className="text-2xl font-bold tracking-tight text-white">{brandConfig?.brandName || "D'Mendoza"}</span>
+                <span className="text-2xl font-bold tracking-tight text-white">{brandConfig?.brandName || "E-Commerce"}</span>
               )}
               <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
-                Plataforma e-commerce premium {brandConfig?.brandName || "D'Mendoza"}. Redefiniendo la elegancia y experiencia de compra digital con diseño de vanguardia.
+                Plataforma e-commerce premium {brandConfig?.brandName || "E-Commerce"}. Redefiniendo la elegancia y experiencia de compra digital con diseño de vanguardia.
               </p>
             </div>
 
@@ -556,7 +556,7 @@ export const AppShell: React.FC = () => {
               <h4 className="text-sm font-bold uppercase tracking-wider text-brand-primary">Soporte Comercial</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 ¿Tienes consultas o problemas con tu pedido?<br />
-                Escríbenos a: <span className="text-brand-primary font-semibold">soporte@dmendoza.com</span>
+                Escríbenos a: <span className="text-brand-primary font-semibold">soporte@e-commerce.com</span>
               </p>
               <div className="flex gap-4 pt-2">
                 {brandConfig?.socialLinksJson && Object.entries(brandConfig.socialLinksJson).map(([platform, url]) => (
@@ -575,7 +575,7 @@ export const AppShell: React.FC = () => {
 
           {/* Divisor & Copyright */}
           <div className="border-t border-brand-primary/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
-            <p>© {new Date().getFullYear()} {brandConfig?.brandName || "D'Mendoza"} E-Commerce. Todos los derechos reservados.</p>
+            <p>© {new Date().getFullYear()} {brandConfig?.brandName || "E-Commerce"} E-Commerce. Todos los derechos reservados.</p>
             <div className="flex gap-6">
               <a href="#terminos" className="hover:text-white transition-colors">Términos de Servicio</a>
               <a href="#privacidad" className="hover:text-white transition-colors">Política de Privacidad</a>

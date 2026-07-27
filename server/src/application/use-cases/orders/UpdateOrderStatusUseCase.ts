@@ -49,7 +49,7 @@ export class UpdateOrderStatusUseCase {
       const statusNameEs = STATUS_TRANSLATIONS[status] || status;
       const userName = user.name || 'Cliente';
 
-      const emailSubject = `Actualización de tu Pedido #${order.id} — D'Mendoza`;
+      const emailSubject = `Actualización de tu Pedido #${order.id} — E-Commerce`;
       const emailHtml = `
 <!DOCTYPE html>
 <html lang="es">
@@ -80,7 +80,7 @@ export class UpdateOrderStatusUseCase {
       </div>
       
       <p style="color: #888; font-size: 12px; border-top: 1px solid #eeeeee; padding-top: 20px; margin-top: 32px; text-align: center;">
-        Este es un correo automático enviado por D'Mendoza S.A.C. Por favor no respondas a este mensaje.
+        Este es un correo automático enviado por E-Commerce S.A.C. Por favor no respondas a este mensaje.
       </p>
     </div>
   </body>

@@ -269,7 +269,7 @@ export const AdminShell: React.FC = () => {
               {brandConfig?.logoHorizontalUrl ? (
                 <img src={brandConfig.logoHorizontalUrl} alt="Logo" className="h-8 brightness-[10] object-contain" />
               ) : (
-                <span className="text-[#FAFAFA] font-bold text-sm truncate max-w-[120px]">{brandConfig?.brandName || "D'Mendoza"}</span>
+                <span className="text-[#FAFAFA] font-bold text-sm truncate max-w-[120px]">{brandConfig?.brandName || "E-Commerce"}</span>
               )}
               <span className="text-[10px] bg-[#3F3F3F] text-[#FAFAFA] font-extrabold px-1.5 py-0.5 rounded tracking-widest uppercase shrink-0">Admin</span>
             </Link>

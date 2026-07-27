@@ -110,7 +110,7 @@ export const getBirthdayCouponTemplate = (
         <div class="content">
           <div class="greeting">¡Hola ${userName}!</div>
           <div class="message">
-            En <strong>D'Mendoza</strong> queremos celebrar contigo este día tan especial. 
+            En <strong>E-Commerce</strong> queremos celebrar contigo este día tan especial. 
             Como regalo de cumpleaños, te obsequiamos un cupón con un <strong>15% de descuento</strong> en toda tu próxima compra.
             ¡Aprovéchalo antes de que expire en 7 días!
           </div>
@@ -126,7 +126,7 @@ export const getBirthdayCouponTemplate = (
         </div>
         <div class="footer">
           <p>Condiciones: El cupón es válido para un único uso y expira en 7 días a partir de hoy.</p>
-          <p>&copy; ${new Date().getFullYear()} D'Mendoza. Todos los derechos reservados.</p>
+          <p>&copy; ${new Date().getFullYear()} E-Commerce. Todos los derechos reservados.</p>
           <p style="margin-top: 15px; font-size: 12px;"><a href="${unsubscribeUrl}" style="color: #6b7280; text-decoration: underline;">Cancelar suscripción al newsletter</a></p>
         </div>
       </div>

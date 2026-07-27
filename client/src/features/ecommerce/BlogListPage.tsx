@@ -31,14 +31,14 @@ export const BlogListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F7F7F5] py-12 px-4 sm:px-6 lg:px-8">
       <Helmet>
-        <title>Blog y Tendencias de Moda | D'Mendoza</title>
-        <meta name="description" content="Encuentra guías de estilo, cuidado de prendas y las últimas tendencias de moda en el blog oficial de D'Mendoza." />
+        <title>Blog y Tendencias de Moda | E-Commerce</title>
+        <meta name="description" content="Encuentra guías de estilo, cuidado de prendas y las últimas tendencias de moda en el blog oficial de E-Commerce." />
       </Helmet>
 
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">El Blog de D'Mendoza</h1>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">El Blog de E-Commerce</h1>
           <p className="text-gray-500 text-sm sm:text-base leading-relaxed">
             Consejos de cuidado, guías de estilo y las últimas tendencias de moda urbana y formal diseñadas para ti.
           </p>

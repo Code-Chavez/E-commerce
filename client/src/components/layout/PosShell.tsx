@@ -28,7 +28,7 @@ export const PosShell: React.FC = () => {
         {/* Left Section: Logo & Quick Active Session Badge */}
         <div className="flex items-center gap-4">
           <Link to={isOpen ? '/pos' : '/pos/open-cash'} className="flex items-center gap-2">
-            <img src={logoHorizontal} alt="D'Mendoza" className="h-7 w-auto object-contain" />
+            <img src={logoHorizontal} alt="E-Commerce" className="h-7 w-auto object-contain" />
             <span className="text-[10px] font-extrabold text-[#3F3F3F]/80 uppercase tracking-widest bg-[#FAFAFA] px-2 py-1 rounded-md border border-[#D9D9D2]/30 shadow-sm hidden sm:inline-block">
               POS
             </span>

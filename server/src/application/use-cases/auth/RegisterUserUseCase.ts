@@ -33,7 +33,7 @@ export class RegisterUserUseCase {
 
       await this.emailService.sendEmail(
         newUser.email,
-        'Tu código de verificación - DMendoza',
+        'Tu código de verificación - E-Commerce',
         `<p>Hola,</p><p>Tu código de verificación es: <strong>${pin}</strong></p><p>Este código expira en ${expirationHours} horas.</p>`
       );
     } catch (error) {

@@ -39,7 +39,7 @@ async function buildUser(overrides: Partial<User> & { saltRounds?: number } = {}
   const hash = await bcrypt.hash(PLAIN_PASSWORD, saltRounds);
   return {
     id: 1,
-    email: 'test@dmendoza.com',
+    email: 'test@e-commerce.com',
     name: 'Test User',
     password: hash,
     authProvider: 'local',

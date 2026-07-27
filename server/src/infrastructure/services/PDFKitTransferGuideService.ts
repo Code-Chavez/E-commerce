@@ -10,9 +10,9 @@ export class PDFKitTransferGuideService implements IStockTransferGuideService {
     const divider = '#D9D9D2';
 
     // ── Cabecera: marca ────────────────────────────────────────────────────────
-    doc.fillColor(dark).fontSize(24).text("D'MENDOZA", 50, 50, { align: 'left' });
+    doc.fillColor(dark).fontSize(24).text("E-Commerce", 50, 50, { align: 'left' });
     doc.fontSize(10).fillColor(gray)
-       .text("D'Mendoza S.A.C.", 50, 80)
+       .text("E-Commerce S.A.C.", 50, 80)
        .text('RUC: 20609876543', 50, 95)
        .text('Almacén Central', 50, 110);
 

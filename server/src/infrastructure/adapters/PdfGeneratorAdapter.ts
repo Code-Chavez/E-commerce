@@ -23,11 +23,11 @@ export class PdfGeneratorAdapter implements IPdfGenerator {
         // Logo / Title
         doc.fillColor('#3F3F3F')
            .fontSize(24)
-           .text("D'MENDOZA", 50, 50, { align: 'left' });
+           .text("E-Commerce", 50, 50, { align: 'left' });
 
         doc.fontSize(10)
            .fillColor('#6B6B6B')
-           .text("Tienda Online de Moda D'Mendoza S.A.C.", 50, 80)
+           .text("Tienda Online de Moda E-Commerce S.A.C.", 50, 80)
            .text("RUC: 20609876543", 50, 95)
            .text("Lima, Perú", 50, 110);
 
@@ -136,7 +136,7 @@ export class PdfGeneratorAdapter implements IPdfGenerator {
         doc.fontSize(9)
            .fillColor('#6B6B6B')
            .text("¡Gracias por su preferencia!", 50, 750, { align: 'center' })
-           .text("Este es un comprobante digital emitido por D'Mendoza.", 50, 765, { align: 'center' });
+           .text("Este es un comprobante digital emitido por E-Commerce.", 50, 765, { align: 'center' });
 
         doc.end();
       } catch (err) {

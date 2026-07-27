@@ -8,7 +8,7 @@ import { useExportCsv } from './hooks/useExportCsv';
 import { BarChart3, Download, Loader2 } from 'lucide-react';
 
 export const ProfitabilityReportPage: React.FC = () => {
-  useDocumentTitle('Reporte de Rentabilidad - D\'Mendoza');
+  useDocumentTitle('Reporte de Rentabilidad - E-Commerce');
 
   // Filtros
   const [fromDate, setFromDate] = useState<string>('');

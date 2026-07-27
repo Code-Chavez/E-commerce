@@ -32,7 +32,7 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({ post }) => {
         <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-3">
           <div className="flex items-center gap-1">
             <User className="w-3.5 h-3.5 text-gray-400" />
-            <span>{post.author?.name || 'Redacción D\'Mendoza'}</span>
+            <span>{post.author?.name || 'Redacción E-Commerce'}</span>
           </div>
           <div className="w-1 h-1 bg-gray-300 rounded-full" />
           <div className="flex items-center gap-1">

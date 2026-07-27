@@ -250,7 +250,7 @@ export const BrandingPage: React.FC = () => {
                 value={config.brandName}
                 onChange={(e) => setConfig({ ...config, brandName: e.target.value })}
                 className="w-full px-4 py-2 border border-[#D9D9D2] rounded-xl focus:border-[#3F3F3F] outline-none transition-colors"
-                placeholder="Ej. D'Mendoza"
+                placeholder="Ej. E-Commerce"
               />
             </div>
 
