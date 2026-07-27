@@ -15,6 +15,14 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockStockAlert = {
     findMany: jest.fn(),
   };
+  const mockProductVariant = {
+    findMany: jest.fn(),
+  };
+  const mockSystemSetting = {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+  };
   const mockBranch = {
     findMany: jest.fn(),
   };
@@ -26,6 +34,8 @@ jest.mock('@infrastructure/database/prisma', () => {
     order: mockOrder,
     posOrder: mockPosOrder,
     stockAlert: mockStockAlert,
+    productVariant: mockProductVariant,
+    systemSetting: mockSystemSetting,
     branch: mockBranch,
     user: mockUser,
     $transaction: jest
@@ -90,20 +100,15 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
       // Mock de ecommerce order count (pedidos pendientes)
       (prisma.order.count as any).mockResolvedValue(3);
 
-      // Mock de stockAlert.findMany
-      (prisma.stockAlert.findMany as any).mockResolvedValue([
+      // Mock del cálculo de stock crítico (ahora global por variante)
+      (prisma.systemSetting.findUnique as any).mockResolvedValue(null);
+      (prisma.productVariant.findMany as any).mockResolvedValue([
         {
-          id: 1,
-          variantId: 10,
-          branchId: 1,
+          sku: 'CAM-M-ROJO',
+          minStock: 5,
           isActive: true,
-          variant: {
-            sku: 'CAM-M-ROJO',
-            minStock: 5,
-            product: { name: 'Camisa Casual' },
-            branchStock: [{ branchId: 1, quantity: 2, status: 'AVAILABLE' }],
-          },
-          branch: { name: 'Sede Miraflores' },
+          product: { name: 'Camisa Casual' },
+          branchStock: [{ branchId: 1, quantity: 2, status: 'AVAILABLE' }],
         },
       ]);
 
@@ -147,7 +152,7 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
       expect(response.body.data.criticalStock.products[0]).toEqual({
         sku: 'CAM-M-ROJO',
         productName: 'Camisa Casual',
-        branchName: 'Sede Miraflores',
+        branchName: 'Global',
         currentStock: 2,
         minStock: 5,
       });

@@ -33,6 +33,23 @@ jest.mock('@infrastructure/database/prisma', () => {
           loyaltyConfig: {
             findFirst: jest.fn().mockResolvedValue(null as never),
           },
+          loyaltyAccount: {
+            upsert: jest.fn(),
+          },
+          productVariant: {
+            findMany: jest
+              .fn()
+              .mockResolvedValue([{ id: 1, costPrice: 0 }] as never),
+          },
+          documentSequence: {
+            upsert: jest
+              .fn()
+              .mockResolvedValue({ series: 'T001', nextNumber: 2 } as never),
+          },
+          creditNote: {
+            findUnique: jest.fn(),
+            updateMany: jest.fn(),
+          },
         })
       ),
       cashTurn: {
@@ -71,7 +88,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const payload = {
       branchId: 1,
-      items: [{ variantId: 1, quantity: 1, unitPrice: 100 }],
+      items: [{ variantId: 1, quantity: 1, price: 100, subtotal: 100 }],
       payments: [{ method: 'CASH', amount: 100 }],
       subtotal: 100,
       discountTotal: 0,
@@ -97,7 +114,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const payload = {
       branchId: 1,
-      items: [{ variantId: 1, quantity: 1, unitPrice: 100 }],
+      items: [{ variantId: 1, quantity: 1, price: 100, subtotal: 100 }],
       payments: [{ method: 'CASH', amount: 100 }],
       subtotal: 100,
       discountTotal: 0,

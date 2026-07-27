@@ -24,12 +24,21 @@ jest.mock('@infrastructure/database/prisma', () => {
     create: jest.fn(),
     findFirst: jest.fn(),
   };
+  const mockProductVariant = {
+    findUnique: jest.fn(),
+    update: jest.fn(),
+  };
+  const mockPriceHistory = {
+    create: jest.fn(),
+  };
 
   const mockPrisma: any = {
     supplier: mockSupplier,
     stockEntry: mockStockEntry,
     branchStock: mockBranchStock,
     kardexEntry: mockKardexEntry,
+    productVariant: mockProductVariant,
+    priceHistory: mockPriceHistory,
     $transaction: jest
       .fn()
       .mockImplementation(async (callback: any) => callback(mockPrisma)),

@@ -15,7 +15,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get('/settings', controller.getAll);
-router.put('/settings/:key', controller.update);
+router.get('/', controller.getAll);
+router.put('/:key', controller.update);
 
 export { router as adminSettingsRoutes };
