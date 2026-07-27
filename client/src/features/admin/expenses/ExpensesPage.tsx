@@ -49,12 +49,9 @@ export const ExpensesPage = () => {
   }, []);
 
   const handleCreateOrUpdate = async (data: any) => {
-    let result = false;
-    if (editingExpense) {
-      result = await updateExpense(editingExpense.id, data);
-    } else {
-      result = await createExpense(data);
-    }
+    const result = editingExpense
+      ? await updateExpense(editingExpense.id, data)
+      : await createExpense(data);
 
     if (result) {
       setIsFormOpen(false);

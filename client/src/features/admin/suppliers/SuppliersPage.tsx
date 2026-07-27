@@ -57,12 +57,9 @@ export const SuppliersPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: SupplierFormData) => {
-    let result: boolean | null = null;
-    if (editingSupplier) {
-      result = await updateSupplier(editingSupplier.id, data);
-    } else {
-      result = await createSupplier(data);
-    }
+    const result = editingSupplier
+      ? await updateSupplier(editingSupplier.id, data)
+      : await createSupplier(data);
 
     if (result) {
       setIsModalOpen(false);

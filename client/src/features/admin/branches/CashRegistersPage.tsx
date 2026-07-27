@@ -85,12 +85,9 @@ export const CashRegistersPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: CashRegisterFormData) => {
-    let result: boolean | null = null;
-    if (editingRegister) {
-      result = await updateRegister(editingRegister.id, { name: data.name });
-    } else {
-      result = await createRegister(data);
-    }
+    const result = editingRegister
+      ? await updateRegister(editingRegister.id, { name: data.name })
+      : await createRegister(data);
 
     if (result) {
       setIsModalOpen(false);
