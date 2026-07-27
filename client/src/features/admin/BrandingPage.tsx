@@ -124,10 +124,6 @@ export const BrandingPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const { refreshBrandConfig } = useBrand();
 
-  useEffect(() => {
-    fetchConfig();
-  }, []);
-
   const fetchConfig = async () => {
     try {
       const { data } = await axiosInstance.get('/v1/config/brand');
@@ -147,6 +143,11 @@ export const BrandingPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchConfig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);

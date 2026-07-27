@@ -18,10 +18,6 @@ export const ProductsAdminPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -42,6 +38,11 @@ export const ProductsAdminPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="p-6 max-w-7xl mx-auto min-h-screen bg-[#F7F7F5]/50">

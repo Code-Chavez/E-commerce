@@ -12,10 +12,6 @@ export const BlogAdminPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
   const fetchPosts = async () => {
     setLoading(true);
     try {
@@ -28,6 +24,11 @@ export const BlogAdminPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleToggleStatus = async (id: number, currentStatus: PostStatus) => {
     const newStatus = currentStatus === 'DRAFT' ? 'PUBLISHED' : 'DRAFT';

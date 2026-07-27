@@ -9,6 +9,13 @@ interface LowRotationTableProps {
 type SortKey = 'sku' | 'productName' | 'daysWithoutMovement' | 'lastMovementDate' | 'currentStock';
 type SortDirection = 'asc' | 'desc';
 
+const SortIcon = ({ columnKey, sortKey, sortDirection }: { columnKey: SortKey; sortKey: SortKey; sortDirection: SortDirection }) => {
+  if (sortKey !== columnKey) return null;
+  return sortDirection === 'asc' 
+    ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
+    : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
+};
+
 export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => {
   const [sortKey, setSortKey] = useState<SortKey>('daysWithoutMovement');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -53,12 +60,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
     return sorted;
   }, [items, sortKey, sortDirection]);
 
-  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
-    if (sortKey !== columnKey) return null;
-    return sortDirection === 'asc' 
-      ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
-      : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
-  };
+  // SortIcon is defined outside this component
 
   if (items.length === 0) {
     return (
@@ -86,7 +88,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   SKU
-                  <SortIcon columnKey="sku" />
+                  <SortIcon columnKey="sku" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -95,7 +97,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Producto
-                  <SortIcon columnKey="productName" />
+                  <SortIcon columnKey="productName" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th className="px-6 py-4 select-none">
@@ -107,7 +109,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Días sin Venta
-                  <SortIcon columnKey="daysWithoutMovement" />
+                  <SortIcon columnKey="daysWithoutMovement" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -116,7 +118,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Última Salida
-                  <SortIcon columnKey="lastMovementDate" />
+                  <SortIcon columnKey="lastMovementDate" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -125,7 +127,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Stock Actual
-                  <SortIcon columnKey="currentStock" />
+                  <SortIcon columnKey="currentStock" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
             </tr>

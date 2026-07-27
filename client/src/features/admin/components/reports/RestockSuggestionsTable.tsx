@@ -9,6 +9,13 @@ interface RestockSuggestionsTableProps {
 type SortKey = 'variantId' | 'currentStock' | 'suggestedQty';
 type SortDirection = 'asc' | 'desc';
 
+const SortIcon = ({ columnKey, sortKey, sortDirection }: { columnKey: SortKey; sortKey: SortKey; sortDirection: SortDirection }) => {
+  if (sortKey !== columnKey) return null;
+  return sortDirection === 'asc' 
+    ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
+    : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
+};
+
 export const RestockSuggestionsTable: React.FC<RestockSuggestionsTableProps> = ({ items }) => {
   const [sortKey, setSortKey] = useState<SortKey>('suggestedQty');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -32,12 +39,7 @@ export const RestockSuggestionsTable: React.FC<RestockSuggestionsTableProps> = (
     return sorted;
   }, [items, sortKey, sortDirection]);
 
-  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
-    if (sortKey !== columnKey) return null;
-    return sortDirection === 'asc' 
-      ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
-      : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
-  };
+  // SortIcon is defined outside this component
 
   if (items.length === 0) {
     return (
@@ -65,7 +67,7 @@ export const RestockSuggestionsTable: React.FC<RestockSuggestionsTableProps> = (
               >
                 <div className="flex items-center">
                   ID Variante
-                  <SortIcon columnKey="variantId" />
+                  <SortIcon columnKey="variantId" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -74,7 +76,7 @@ export const RestockSuggestionsTable: React.FC<RestockSuggestionsTableProps> = (
               >
                 <div className="flex items-center">
                   Stock Actual
-                  <SortIcon columnKey="currentStock" />
+                  <SortIcon columnKey="currentStock" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -83,7 +85,7 @@ export const RestockSuggestionsTable: React.FC<RestockSuggestionsTableProps> = (
               >
                 <div className="flex items-center">
                   Cantidad Sugerida
-                  <SortIcon columnKey="suggestedQty" />
+                  <SortIcon columnKey="suggestedQty" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
             </tr>

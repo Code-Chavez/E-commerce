@@ -85,7 +85,7 @@ export const logisticsService = {
       if (err.response && err.response.data instanceof Blob && err.response.data.type === 'application/json') {
         const text = await err.response.data.text();
         const errorData = JSON.parse(text);
-        throw new Error(errorData.error || 'Error al descargar la etiqueta');
+        throw new Error(errorData.error || 'Error al descargar la etiqueta', { cause: err });
       }
       throw err;
     }

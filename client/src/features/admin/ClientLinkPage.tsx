@@ -39,10 +39,6 @@ export const ClientLinkPage: React.FC = () => {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [pendingEmails, setPendingEmails] = useState<Record<number, string>>({});
 
-  useEffect(() => {
-    fetchUnlinkedClients();
-  }, []);
-
   const fetchUnlinkedClients = async () => {
     setLoading(true);
     try {
@@ -54,6 +50,11 @@ export const ClientLinkPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUnlinkedClients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const executeLink = async (clientId: number, email?: string) => {
     setConfirmModal(prev => ({ ...prev, isOpen: false }));

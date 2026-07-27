@@ -9,6 +9,13 @@ interface DemandForecastTableProps {
 type SortKey = 'categoryName' | 'size' | 'projectedDemand';
 type SortDirection = 'asc' | 'desc';
 
+const SortIcon = ({ columnKey, sortKey, sortDirection }: { columnKey: SortKey; sortKey: SortKey; sortDirection: SortDirection }) => {
+  if (sortKey !== columnKey) return null;
+  return sortDirection === 'asc' 
+    ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
+    : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
+};
+
 export const DemandForecastTable: React.FC<DemandForecastTableProps> = ({ items }) => {
   const [sortKey, setSortKey] = useState<SortKey>('projectedDemand');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -44,12 +51,7 @@ export const DemandForecastTable: React.FC<DemandForecastTableProps> = ({ items 
     return sorted;
   }, [items, sortKey, sortDirection]);
 
-  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
-    if (sortKey !== columnKey) return null;
-    return sortDirection === 'asc' 
-      ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
-      : <ChevronDown className="w-4 h-4 ml-1 text-[#3F3F3F]" />;
-  };
+  // SortIcon is defined outside this component
 
   if (items.length === 0) {
     return (
@@ -77,7 +79,7 @@ export const DemandForecastTable: React.FC<DemandForecastTableProps> = ({ items 
               >
                 <div className="flex items-center">
                   Categoría
-                  <SortIcon columnKey="categoryName" />
+                  <SortIcon columnKey="categoryName" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -86,7 +88,7 @@ export const DemandForecastTable: React.FC<DemandForecastTableProps> = ({ items 
               >
                 <div className="flex items-center">
                   Talla
-                  <SortIcon columnKey="size" />
+                  <SortIcon columnKey="size" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
               <th 
@@ -95,7 +97,7 @@ export const DemandForecastTable: React.FC<DemandForecastTableProps> = ({ items 
               >
                 <div className="flex items-center">
                   Demanda Proyectada
-                  <SortIcon columnKey="projectedDemand" />
+                  <SortIcon columnKey="projectedDemand" sortKey={sortKey} sortDirection={sortDirection} />
                 </div>
               </th>
             </tr>

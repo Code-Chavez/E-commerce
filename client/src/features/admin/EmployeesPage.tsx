@@ -70,12 +70,6 @@ export const EmployeesPage: React.FC = () => {
     setFormData(prev => ({ ...prev, password: pass }));
   };
 
-  useEffect(() => {
-    fetchEmployees();
-    fetchBranches();
-    fetchRoles();
-  }, [page, searchTerm]);
-
   const fetchEmployees = async () => {
     setLoading(true);
     try {
@@ -95,15 +89,26 @@ export const EmployeesPage: React.FC = () => {
     try {
       const { data } = await axiosInstance.get('/v1/branches');
       setBranches(data.data);
-    } catch (error) {}
+    } catch {
+      // silently ignore branch fetch errors
+    }
   };
 
   const fetchRoles = async () => {
     try {
       const { data } = await axiosInstance.get('/v1/roles');
       setRoles(data.data);
-    } catch (error) {}
+    } catch {
+      // silently ignore role fetch errors
+    }
   };
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchBranches();
+    fetchRoles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchTerm]);
 
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
     try {

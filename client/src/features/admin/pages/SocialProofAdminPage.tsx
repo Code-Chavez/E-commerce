@@ -21,10 +21,6 @@ export const SocialProofAdminPage: React.FC = () => {
   const [newImage, setNewImage] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    fetchProofs();
-  }, []);
-
   const fetchProofs = async () => {
     try {
       setLoading(true);
@@ -36,6 +32,11 @@ export const SocialProofAdminPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProofs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleApproval = async (id: number, currentStatus: boolean) => {
     try {

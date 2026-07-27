@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
@@ -28,7 +28,7 @@ import { BlogPreviewModal } from './components/BlogPreviewModal';
 import type { BlogPost } from '@/shared/types/blog';
 
 // Mini editor menu bar
-const EditorMenuBar = ({ editor }: { editor: any }) => {
+const EditorMenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
 
   return (

@@ -17,8 +17,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   defaultFrom = '',
   defaultTo = '',
 }) => {
-  if (!isOpen) return null;
-
   const [format, setFormat] = useState<'pdf' | 'excel' | 'csv'>('excel');
   const [from, setFrom] = useState(defaultFrom);
   const [to, setTo] = useState(defaultTo);
@@ -29,6 +27,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     setFrom(defaultFrom);
     setTo(defaultTo);
   }, [defaultFrom, defaultTo, isOpen]);
+
+  if (!isOpen) return null;
 
   const reportNames: Record<typeof type, string> = {
     sales: 'Reporte de Ventas (E-commerce + POS)',

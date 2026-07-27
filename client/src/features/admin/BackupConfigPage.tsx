@@ -84,8 +84,9 @@ const BackupConfigPage = () => {
       setCronPreset(preset);
       if (preset === '__custom__') setCustomCron(updated.cronExpression);
       toast.success('Configuración de backup guardada');
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || 'Error al guardar la configuración');
+    } catch (error) {
+      const err = error as { response?: { data?: { error?: string } } };
+      toast.error(err?.response?.data?.error || 'Error al guardar la configuración');
     } finally {
       setIsSaving(false);
     }

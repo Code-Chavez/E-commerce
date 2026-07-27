@@ -49,19 +49,19 @@ export const ExpensesPage = () => {
   }, []);
 
   const handleCreateOrUpdate = async (data: any) => {
-    let success = false;
+    let result = false;
     if (editingExpense) {
-      success = await updateExpense(editingExpense.id, data);
+      result = await updateExpense(editingExpense.id, data);
     } else {
-      success = await createExpense(data);
+      result = await createExpense(data);
     }
 
-    if (success) {
+    if (result) {
       setIsFormOpen(false);
       setEditingExpense(null);
       fetchExpenses(selectedBranchId ? { branchId: parseInt(selectedBranchId, 10) } : undefined);
     }
-    return success;
+    return result;
   };
 
   const handleEdit = (expense: OperatingExpense) => {
