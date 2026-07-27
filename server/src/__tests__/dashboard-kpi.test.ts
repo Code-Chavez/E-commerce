@@ -19,8 +19,21 @@ jest.mock('@infrastructure/database/prisma', () => {
     findMany: jest.fn(),
   };
   const mockUser = {
-    findUnique: jest.fn(),
-  };
+    findUnique: jest.fn().mockImplementation(async (args: any) => ({
+      id: 1,
+      email: 'admin@example.com',
+      isActive: true,
+      roles: [
+        {
+          name: 'ADMIN',
+          permissions: [
+            { permission: { name: 'dashboard:read' } },
+            { permission: { name: 'sales:read' } },
+          ],
+        },
+      ],
+    })),
+  } as any;
 
   const mockPrisma: any = {
     order: mockOrder,

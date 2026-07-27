@@ -177,7 +177,7 @@ export class PrismaUserRepository implements IUserRepository {
       },
     });
 
-    return records.map((record) => this.toDomain(record));
+    return records.map((record: any) => this.toDomain(record));
   }
 
   /**

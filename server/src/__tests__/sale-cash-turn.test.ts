@@ -23,6 +23,12 @@ jest.mock('@infrastructure/database/prisma', () => {
               cashTurnId: 1,
             } as never),
           },
+          productVariant: {
+            findMany: jest.fn().mockImplementation(async () => ([] as any)),
+          },
+          documentSequence: {
+            upsert: jest.fn().mockImplementation(async () => ({ nextValue: 1 } as any)),
+          },
           payment: {
             createMany: jest.fn(),
           },
@@ -71,7 +77,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const payload = {
       branchId: 1,
-      items: [{ variantId: 1, quantity: 1, unitPrice: 100 }],
+      items: [{ variantId: 1, quantity: 1, price: 100, subtotal: 100 }],
       payments: [{ method: 'CASH', amount: 100 }],
       subtotal: 100,
       discountTotal: 0,
@@ -97,7 +103,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const payload = {
       branchId: 1,
-      items: [{ variantId: 1, quantity: 1, unitPrice: 100 }],
+      items: [{ variantId: 1, quantity: 1, price: 100, subtotal: 100 }],
       payments: [{ method: 'CASH', amount: 100 }],
       subtotal: 100,
       discountTotal: 0,
@@ -106,7 +112,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const response = await request(app).post('/api/v1/pos/sales').send(payload);
 
-    expect(response.status).toBe(201);
+    console.log(response.body); expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
     expect(response.body.data.cashTurnId).toBe(1);
     expect(prisma.cashTurn.findFirst).toHaveBeenCalledWith({

@@ -17,23 +17,41 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   onClose,
   onSave,
 }) => {
-  if (!isOpen || !client) return null;
-
-  const [name, setName] = useState(client.name || '');
-  const [lastName, setLastName] = useState(client.lastName || '');
-  const [email, setEmail] = useState(client.email || '');
-  const [phone, setPhone] = useState(client.phone || '');
-  const [documentType, setDocumentType] = useState(client.documentType || 'DNI');
-  const [documentId, setDocumentId] = useState(client.documentId || '');
-  const [address, setAddress] = useState(client.address || '');
-  const [department, setDepartment] = useState(client.department || '');
-  const [province, setProvince] = useState(client.province || '');
-  const [district, setDistrict] = useState(client.district || '');
-  const [ubigeo, setUbigeo] = useState(client.ubigeo || '');
+  const [name, setName] = useState(client?.name || '');
+  const [lastName, setLastName] = useState(client?.lastName || '');
+  const [email, setEmail] = useState(client?.email || '');
+  const [phone, setPhone] = useState(client?.phone || '');
+  const [documentType, setDocumentType] = useState(client?.documentType || 'DNI');
+  const [documentId, setDocumentId] = useState(client?.documentId || '');
+  const [address, setAddress] = useState(client?.address || '');
+  const [department, setDepartment] = useState(client?.department || '');
+  const [province, setProvince] = useState(client?.province || '');
+  const [district, setDistrict] = useState(client?.district || '');
+  const [ubigeo, setUbigeo] = useState(client?.ubigeo || '');
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'communications'>('info');
+
+  React.useEffect(() => {
+    if (client) {
+      setName(client.name || '');
+      setLastName(client.lastName || '');
+      setEmail(client.email || '');
+      setPhone(client.phone || '');
+      setDocumentType(client.documentType || 'DNI');
+      setDocumentId(client.documentId || '');
+      setAddress(client.address || '');
+      setDepartment(client.department || '');
+      setProvince(client.province || '');
+      setDistrict(client.district || '');
+      setUbigeo(client.ubigeo || '');
+      setActiveTab('info');
+      setError(null);
+    }
+  }, [client]);
+
+  if (!isOpen || !client) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
