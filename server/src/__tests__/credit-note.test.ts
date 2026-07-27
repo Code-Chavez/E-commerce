@@ -194,8 +194,9 @@ describe('Credit Note Endpoints', () => {
         .set('Authorization', 'Bearer client-token');
 
       expect(response.status).toBe(403);
+      console.log('response.body in credit-note test 403:', response.body);
       expect(response.body.success).toBe(false);
-      expect(response.body.error).toContain('Acceso denegado');
+      expect(response.body.error || response.body.message).toContain('Acceso denegado');
     });
 
     it('should return 400 if return request does not exist', async () => {

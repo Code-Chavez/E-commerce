@@ -11,8 +11,31 @@ jest.mock('@infrastructure/database/prisma', () => {
     findMany: jest.fn(),
   };
 
+  const mockUser = {
+    findUnique: jest.fn().mockImplementation(async (args: any) => {
+      if (args.where.id === 1) {
+        return {
+          id: 1,
+          email: 'admin@example.com',
+          isActive: true,
+          roles: [{ name: 'ADMIN' }],
+        };
+      }
+      if (args.where.id === 2) {
+        return {
+          id: 2,
+          email: 'user@example.com',
+          isActive: true,
+          roles: [{ name: 'USER' }],
+        };
+      }
+      return null;
+    }),
+  };
+
   const mockPrisma: any = {
     newsletterSubscriber: mockNewsletterSubscriber,
+    user: mockUser,
   };
 
   return { __esModule: true, default: mockPrisma, prisma: mockPrisma };
@@ -20,27 +43,15 @@ jest.mock('@infrastructure/database/prisma', () => {
 
 import prisma from '@infrastructure/database/prisma';
 
-jest.mock('@infrastructure/http/middlewares/auth.middleware', () => {
-  return {
-    requireAuth: (req: any, res: any, next: any) => {
-      const authHeader = req.headers.authorization;
-      if (authHeader === 'Bearer admin-token') {
-        req.auth = { id: 1, role: { name: 'ADMIN' } };
-        return next();
-      }
-      if (authHeader === 'Bearer user-token') {
-        req.auth = { id: 2, role: { name: 'USER' } };
-        return next();
-      }
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    },
-    requirePermission:
-      (permission: string) => (req: any, res: any, next: any) =>
-        next(),
-    requireRole: (role: string) => (req: any, res: any, next: any) => next(),
-    optionalAuth: (req: any, res: any, next: any) => next(),
-  };
-});
+jest.mock('@infrastructure/services/JwtService', () => ({
+  JwtService: jest.fn().mockImplementation(() => ({
+    verifyAccessToken: jest.fn((token: string) => {
+      if (token === 'admin-token') return { userId: 1, role: 'ADMIN' };
+      if (token === 'user-token') return { userId: 2, role: 'USER' };
+      throw new Error('Invalid token');
+    }),
+  })),
+}));
 
 import { getAbandonedCartEmailTemplate } from '@infrastructure/services/templates/AbandonedCartTemplate';
 import { getBirthdayCouponTemplate } from '@infrastructure/services/templates/BirthdayCouponTemplate';
