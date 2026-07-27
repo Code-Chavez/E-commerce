@@ -37,10 +37,10 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Run lint
-        run: pnpm run lint
+        run: pnpm --dir . run lint
 
       - name: Build client
-        run: pnpm run build
+        run: pnpm --dir . run build
 
   server-checks:
     name: Server Checks (Lint & Test)
@@ -69,13 +69,13 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Prisma Generate
-        run: pnpm run prisma:generate
+        run: pnpm exec prisma generate
 
       - name: Run lint
-        run: pnpm run lint
+        run: pnpm --dir . run lint
 
       - name: Build server
-        run: pnpm run build
+        run: pnpm --dir . run build
 
       - name: Run tests
-        run: pnpm run test
+        run: pnpm --dir . run test
