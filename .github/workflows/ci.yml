@@ -49,6 +49,30 @@ jobs:
       run:
         working-directory: ./server
 
+    services:
+      # MariaDB (not MySQL): the migrations use MariaDB-only syntax such as
+      # `DROP FOREIGN KEY IF EXISTS`, which MySQL 8.0 rejects with error 1064.
+      # Match the version used in dev/prod.
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ecommerce_test
+          MARIADB_USER: testuser
+          MARIADB_PASSWORD: testpass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=15
+
+    env:
+      DATABASE_URL: mysql://testuser:testpass@127.0.0.1:3306/ecommerce_test
+      SEED_ADMIN_EMAIL: admin@test.com
+      SEED_ADMIN_PASSWORD: Admin123!
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,8 +92,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-workspace
 
+      # --ignore-workspace drops the workspace allowBuilds, so pnpm skips
+      # native build scripts. Rebuild them explicitly (bcrypt, esbuild,
+      # prisma engines) so seed/tests can run.
+      - name: Build native dependencies
+        run: pnpm rebuild
+
       - name: Prisma Generate
         run: npx prisma generate
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
+      - name: Seed database
+        run: npx prisma db seed
 
       - name: Run lint
         run: pnpm --dir . run lint
