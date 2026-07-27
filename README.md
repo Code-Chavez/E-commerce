@@ -171,9 +171,9 @@ El proyecto usa **GitFlow**. Antes de abrir un PR, selecciona el template que co
 
 | Tipo de PR | Rama origen → destino | Template | Enlace directo |
 | --- | --- | --- | --- |
-| Feature / HU / TT / RSK | `feature/xxx` → `develop` | `feature_develop.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/develop...<rama-origen>?template=feature_develop.md) |
-| Release a producción | `release/x.x.x` → `main` | `release_main.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/main...<rama-origen>?template=release_main.md) |
-| Hotfix crítico | `hotfix/xxx` → `main` | `hotfix_main.md` | [Abrir PR →](https://github.com/CFCamusDev/E-Commerce-project/compare/main...<rama-origen>?template=hotfix_main.md) |
+| Feature / HU / TT / RSK | `feature/xxx` → `develop` | `feature_develop.md` | [Abrir PR →](https://github.com/Code-Chavez/E-commerce/compare/develop...<rama-origen>?template=feature_develop.md) |
+| Release a producción | `release/x.x.x` → `main` | `release_main.md` | [Abrir PR →](https://github.com/Code-Chavez/E-commerce/compare/main...<rama-origen>?template=release_main.md) |
+| Hotfix crítico | `hotfix/xxx` → `main` | `hotfix_main.md` | [Abrir PR →](https://github.com/Code-Chavez/E-commerce/compare/main...<rama-origen>?template=hotfix_main.md) |
 
 ### Estructura de templates
 
