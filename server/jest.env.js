@@ -20,7 +20,7 @@ const testDefaults = {
   RESEND_API_KEY: 're_test_dummy',
   JWT_SECRET: 'test_access_secret',
   JWT_REFRESH_SECRET: 'test_refresh_secret',
-  DATABASE_URL: 'postgresql://user:pass@localhost:5432/test',
+  DATABASE_URL: 'mysql://user:pass@localhost:3306/test',
 };
 
 for (const [key, value] of Object.entries(testDefaults)) {

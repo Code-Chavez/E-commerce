@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import request from 'supertest';
 
 // Mock JWT verification
-let mockVerifyAccessToken = jest.fn();
+var mockVerifyAccessToken = jest.fn();
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: (...args: any[]) => mockVerifyAccessToken(...args),

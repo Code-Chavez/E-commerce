@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import prisma from '@infrastructure/database/prisma';
 import { AbandonedCartJob } from '../infrastructure/jobs/AbandonedCartJob';
 
-let mockSendEmail = jest.fn<any>().mockResolvedValue(undefined);
+var mockSendEmail = jest.fn<any>().mockResolvedValue(undefined);
 jest.mock('@infrastructure/services/ResendEmailService', () => {
   return {
     ResendEmailService: jest.fn().mockImplementation(() => {

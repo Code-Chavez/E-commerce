@@ -4,7 +4,7 @@ import app from '../app';
 import { Readable } from 'stream';
 
 // 1. Mock ResendEmailService
-let mockSendEmail = jest.fn<any>().mockResolvedValue(undefined);
+var mockSendEmail = jest.fn<any>().mockResolvedValue(undefined);
 jest.mock('@infrastructure/services/ResendEmailService', () => {
   return {
     ResendEmailService: jest.fn().mockImplementation(() => {
@@ -17,7 +17,7 @@ jest.mock('@infrastructure/services/ResendEmailService', () => {
 });
 
 // 1.5 Mock FactilizaWhatsAppService
-let mockSendMessage = jest.fn<any>().mockResolvedValue(true);
+var mockSendMessage = jest.fn<any>().mockResolvedValue(true);
 jest.mock('@infrastructure/services/FactilizaWhatsAppService', () => {
   return {
     FactilizaWhatsAppService: jest.fn().mockImplementation(() => {

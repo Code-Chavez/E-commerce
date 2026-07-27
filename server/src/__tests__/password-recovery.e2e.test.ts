@@ -2,8 +2,8 @@ import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
 
 // IMPORTANT: 'var' variables prefixed with 'mock' ARE hoisted and accessible inside jest.mock()
-let mockJwtGenerate = jest.fn();
-let mockJwtVerify = jest.fn();
+var mockJwtGenerate = jest.fn();
+var mockJwtVerify = jest.fn();
 
 jest.mock('@infrastructure/database/prisma', () => ({
   __esModule: true,

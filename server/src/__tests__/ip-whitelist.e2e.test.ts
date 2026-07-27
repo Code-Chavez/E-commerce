@@ -16,8 +16,8 @@ import { Request, Response, NextFunction } from 'express';
  * with crafted Request stubs, then assert on HTTP 403 and audit persistence.
  */
 
-let mockAuditLogCreate = jest.fn();
-let mockVerifyAccessToken = jest.fn();
+var mockAuditLogCreate = jest.fn();
+var mockVerifyAccessToken = jest.fn();
 
 jest.mock('@infrastructure/database/prisma', () => ({
   __esModule: true,

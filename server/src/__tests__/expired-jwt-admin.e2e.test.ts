@@ -13,7 +13,7 @@ import app from '../app';
  * simulating a token whose TTL has elapsed without hitting a real DB or clock.
  */
 
-let mockVerifyAccessToken = jest.fn();
+var mockVerifyAccessToken = jest.fn();
 
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({

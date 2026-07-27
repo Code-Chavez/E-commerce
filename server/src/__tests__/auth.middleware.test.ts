@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { Request, Response, NextFunction } from 'express';
 
 // 1. Setup variable mocks using 'var' and 'mock' prefix to facilitate flawless Jest module hoisting.
-let mockVerifyAccessToken = jest.fn();
+var mockVerifyAccessToken = jest.fn();
 
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
