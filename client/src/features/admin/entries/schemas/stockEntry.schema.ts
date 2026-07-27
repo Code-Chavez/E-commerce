@@ -8,7 +8,7 @@ export const stockEntrySchema = Yup.object().shape({
   invoiceNumber: Yup.string()
     .required('El número de factura/boleta es obligatorio')
     .max(50, 'El número de comprobante no puede exceder los 50 caracteres')
-    .matches(/^[A-Z0-9\-]+$/i, 'Solo se permiten letras, números y guiones en el número de comprobante'),
+    .matches(/^[A-Z0-9-]+$/i, 'Solo se permiten letras, números y guiones en el número de comprobante'),
   branchId: Yup.number()
     .required('Debe seleccionar una sucursal de destino')
     .positive('Sucursal inválida')

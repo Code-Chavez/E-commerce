@@ -85,7 +85,7 @@ export const CashRegistersPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: CashRegisterFormData) => {
-    let success = null;
+    let success;
     if (editingRegister) {
       success = await updateRegister(editingRegister.id, { name: data.name });
     } else {

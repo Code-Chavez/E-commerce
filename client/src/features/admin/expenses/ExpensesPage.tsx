@@ -49,7 +49,7 @@ export const ExpensesPage = () => {
   }, []);
 
   const handleCreateOrUpdate = async (data: any) => {
-    let success = false;
+    let success;
     if (editingExpense) {
       success = await updateExpense(editingExpense.id, data);
     } else {

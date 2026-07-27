@@ -65,7 +65,7 @@ export const BranchesPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: BranchFormData) => {
-    let success = null;
+    let success;
     if (editingBranch) {
       success = await updateBranch(editingBranch.id, data);
     } else {

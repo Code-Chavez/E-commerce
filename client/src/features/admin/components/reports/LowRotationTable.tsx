@@ -53,7 +53,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
     return sorted;
   }, [items, sortKey, sortDirection]);
 
-  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
+  const renderSortIcon = (columnKey: SortKey) => {
     if (sortKey !== columnKey) return null;
     return sortDirection === 'asc' 
       ? <ChevronUp className="w-4 h-4 ml-1 text-[#3F3F3F]" /> 
@@ -86,7 +86,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   SKU
-                  <SortIcon columnKey="sku" />
+                  {renderSortIcon('sku')}
                 </div>
               </th>
               <th 
@@ -95,7 +95,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Producto
-                  <SortIcon columnKey="productName" />
+                  {renderSortIcon('productName')}
                 </div>
               </th>
               <th className="px-6 py-4 select-none">
@@ -107,7 +107,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Días sin Venta
-                  <SortIcon columnKey="daysWithoutMovement" />
+                  {renderSortIcon('daysWithoutMovement')}
                 </div>
               </th>
               <th 
@@ -116,7 +116,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Última Salida
-                  <SortIcon columnKey="lastMovementDate" />
+                  {renderSortIcon('lastMovementDate')}
                 </div>
               </th>
               <th 
@@ -125,7 +125,7 @@ export const LowRotationTable: React.FC<LowRotationTableProps> = ({ items }) => 
               >
                 <div className="flex items-center">
                   Stock Actual
-                  <SortIcon columnKey="currentStock" />
+                  {renderSortIcon('currentStock')}
                 </div>
               </th>
             </tr>

@@ -34,7 +34,7 @@ export const useProfile = () => {
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Error al cargar el perfil';
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +85,7 @@ export const useProfile = () => {
         msg = err.message || msg;
       }
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     } finally {
       setIsUpdating(false);
     }

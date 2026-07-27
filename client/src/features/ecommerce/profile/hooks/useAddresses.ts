@@ -18,7 +18,7 @@ export const useAddresses = () => {
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Error al obtener las direcciones';
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,7 @@ export const useAddresses = () => {
         msg = err.message || msg;
       }
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     } finally {
       setIsSaving(false);
     }
@@ -75,7 +75,7 @@ export const useAddresses = () => {
         msg = err.message || msg;
       }
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     } finally {
       setIsSaving(false);
     }
@@ -89,7 +89,7 @@ export const useAddresses = () => {
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Error al eliminar la dirección';
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     }
   };
 
@@ -101,7 +101,7 @@ export const useAddresses = () => {
     } catch (err: any) {
       const msg = err.response?.data?.error || err.message || 'Error al establecer la dirección como predeterminada';
       setError(msg);
-      throw new Error(msg);
+      throw new Error(msg, { cause: err });
     }
   };
 

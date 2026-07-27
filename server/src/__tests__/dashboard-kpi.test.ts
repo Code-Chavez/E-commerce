@@ -41,6 +41,7 @@ jest.mock('@infrastructure/database/prisma', () => {
     stockAlert: mockStockAlert,
     branch: mockBranch,
     user: mockUser,
+    productVariant: { findMany: jest.fn().mockResolvedValue([] as any) },
     $transaction: jest
       .fn()
       .mockImplementation(async (args: any): Promise<any> => {
