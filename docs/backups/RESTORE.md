@@ -1,11 +1,11 @@
-# Restauración de Base de Datos (D'Mendoza)
+# Restauración de Base de Datos (E-Commerce)
 
 Este documento describe el procedimiento probado para restaurar la base de datos a partir de un respaldo generado por el script `backup.sh`.
 
 ## Requisitos Previos
 
 - Tener acceso al servidor o entorno donde está corriendo el contenedor de base de datos MySQL (ej: `docker-compose`).
-- Disponer del archivo `.sql` de respaldo (por ejemplo: `dmendoza_backup_20260712_100000.sql`).
+- Disponer del archivo `.sql` de respaldo (por ejemplo: `e-commerce_backup_20260712_100000.sql`).
 
 ## Paso 1: Localizar el archivo de respaldo
 
@@ -15,10 +15,10 @@ Si estás utilizando contenedores Docker, los respaldos se encuentran montados t
 
 ### Opción A: Desde el host hacia el contenedor Docker
 
-Asumiendo que el contenedor de la base de datos se llama `dmendoza-db` y la base de datos es `dmendoza`:
+Asumiendo que el contenedor de la base de datos se llama `e-commerce-db` y la base de datos es `e-commerce`:
 
 ```bash
-docker exec -i dmendoza-db mysql -u root -p"tu_contraseña_root" dmendoza < ./backups/dmendoza_backup_20260712_100000.sql
+docker exec -i e-commerce-db mysql -u root -p"tu_contraseña_root" e-commerce < ./backups/e-commerce_backup_20260712_100000.sql
 ```
 
 > [!WARNING]
@@ -29,7 +29,7 @@ docker exec -i dmendoza-db mysql -u root -p"tu_contraseña_root" dmendoza < ./ba
 Si no usas Docker, puedes restaurar usando el comando `mysql` estándar:
 
 ```bash
-mysql -h localhost -u root -p dmendoza < /ruta/al/respaldo/dmendoza_backup_20260712_100000.sql
+mysql -h localhost -u root -p e-commerce < /ruta/al/respaldo/e-commerce_backup_20260712_100000.sql
 ```
 
 ## Paso 3: Verificación de Integridad

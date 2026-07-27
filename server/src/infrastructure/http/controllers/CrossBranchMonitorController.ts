@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { GetPendingCrossBranchSalesUseCase } from '@application/use-cases/admin/GetPendingCrossBranchSalesUseCase';
 
-const getPendingCrossBranchSalesUseCase = new GetPendingCrossBranchSalesUseCase();
+const getPendingCrossBranchSalesUseCase =
+  new GetPendingCrossBranchSalesUseCase();
 
 export class CrossBranchMonitorController {
   /**

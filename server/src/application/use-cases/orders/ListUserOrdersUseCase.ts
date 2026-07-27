@@ -1,5 +1,8 @@
 import { IOrderRepository } from '@domain/repositories/IOrderRepository';
-import { ListOrdersInputDTO, ListOrdersResponseDTO } from '@application/dtos/OrderDTOs';
+import {
+  ListOrdersInputDTO,
+  ListOrdersResponseDTO,
+} from '@application/dtos/OrderDTOs';
 
 export class ListUserOrdersUseCase {
   constructor(private readonly orderRepository: IOrderRepository) {}
@@ -10,11 +13,14 @@ export class ListUserOrdersUseCase {
     const skip = (page - 1) * limit;
     const take = limit;
 
-    const { orders, totalCount } = await this.orderRepository.findByUserId(userId, {
-      status,
-      skip,
-      take,
-    });
+    const { orders, totalCount } = await this.orderRepository.findByUserId(
+      userId,
+      {
+        status,
+        skip,
+        take,
+      }
+    );
 
     const totalPages = Math.ceil(totalCount / limit);
 
@@ -27,7 +33,9 @@ export class ListUserOrdersUseCase {
         addressSnapshot: order.addressSnapshot,
         paymentIntentId: order.paymentIntentId,
         // El PIN solo se expone mientras el pedido está en tránsito hacia el cliente
-        deliveryPin: ['PAID', 'SHIPPED'].includes(order.status) ? order.deliveryPin ?? null : null,
+        deliveryPin: ['PAID', 'SHIPPED'].includes(order.status)
+          ? (order.deliveryPin ?? null)
+          : null,
         refundStatus: order.refundStatus,
         isRedelivery: order.isRedelivery,
         currentDeliveryStatus: order.currentDeliveryStatus,

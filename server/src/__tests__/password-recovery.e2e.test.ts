@@ -34,7 +34,7 @@ import bcrypt from 'bcrypt';
 
 const mockUser = {
   id: 42,
-  email: 'exists@dmendoza.com',
+  email: 'exists@e-commerce.com',
   isActive: true,
   password: 'hashedpassword',
 };
@@ -59,12 +59,14 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     });
 
     it('should return 200 and generate token if user exists and is active', async () => {
-      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(mockUser);
+      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+        mockUser
+      );
       mockJwtGenerate.mockReturnValue('dummy.jwt.token');
 
       const res = await request(app)
         .post('/api/v1/auth/forgot-password')
-        .send({ email: 'exists@dmendoza.com' });
+        .send({ email: 'exists@e-commerce.com' });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -73,12 +75,14 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     });
 
     it('should return 200 (silent) even if user does NOT exist (security feature)', async () => {
-      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(null);
+      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+        null
+      );
       mockJwtGenerate.mockClear();
 
       const res = await request(app)
         .post('/api/v1/auth/forgot-password')
-        .send({ email: 'notexists@dmendoza.com' });
+        .send({ email: 'notexists@e-commerce.com' });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -99,7 +103,7 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     it('RF-T029: should return 401 with { success: false } if the token is EXPIRED', async () => {
       const expirationError = new Error('jwt expired');
       expirationError.name = 'TokenExpiredError';
-      
+
       mockJwtVerify.mockImplementation(() => {
         throw expirationError;
       });
@@ -116,7 +120,7 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     it('should return 401 with { success: false } if the token is INVALID (tampered)', async () => {
       const invalidError = new Error('invalid signature');
       invalidError.name = 'JsonWebTokenError';
-      
+
       mockJwtVerify.mockImplementation(() => {
         throw invalidError;
       });
@@ -133,11 +137,13 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     it('should return 200 and update the database if token is valid and password meets requirements', async () => {
       mockJwtVerify.mockImplementation(() => ({
         userId: 42,
-        email: 'exists@dmendoza.com',
+        email: 'exists@e-commerce.com',
         purpose: 'password-reset',
         hashFragment: mockUser.password.slice(-10),
       }));
-      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(mockUser);
+      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+        mockUser
+      );
       (prisma.user.update as jest.MockedFunction<any>).mockClear();
 
       const res = await request(app)
@@ -153,11 +159,13 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     it('should return 400 if the token has already been used (hashFragment mismatch)', async () => {
       mockJwtVerify.mockImplementation(() => ({
         userId: 42,
-        email: 'exists@dmendoza.com',
+        email: 'exists@e-commerce.com',
         purpose: 'password-reset',
         hashFragment: 'old_hash', // Mismatch with mockUser.password.slice(-10)
       }));
-      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(mockUser);
+      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+        mockUser
+      );
 
       const res = await request(app)
         .post('/api/v1/auth/reset-password')
@@ -174,10 +182,12 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
 
       mockJwtVerify.mockImplementation(() => ({
         userId: 42,
-        email: 'exists@dmendoza.com',
+        email: 'exists@e-commerce.com',
         purpose: 'password-reset',
       }));
-      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(existingUserWithPass);
+      (prisma.user.findUnique as jest.MockedFunction<any>).mockResolvedValue(
+        existingUserWithPass
+      );
 
       const res = await request(app)
         .post('/api/v1/auth/reset-password')
@@ -189,5 +199,3 @@ describe('Password Recovery Integration Flow (HU-003)', () => {
     });
   });
 });
-
-

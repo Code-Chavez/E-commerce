@@ -3,32 +3,48 @@ import app from '../app';
 
 jest.mock('@application/use-cases/admin/GetReceiptsUseCase', () => ({
   GetReceiptsUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ total: 1, receipts: [{ id: 1, number: 'B001-00000001' }] } as never),
+    execute: jest.fn().mockResolvedValue({
+      total: 1,
+      receipts: [{ id: 1, number: 'B001-00000001' }],
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/admin/GetPosReceiptPdfUseCase', () => ({
   GetPosReceiptPdfUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, number: 'B001-00000001', type: 'BOLETA' } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      number: 'B001-00000001',
+      type: 'BOLETA',
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/orders/UpdateOrderStatusUseCase', () => ({
   UpdateOrderStatusUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, status: 'DELIVERED', emailSent: true, whatsappSent: true } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      status: 'DELIVERED',
+      emailSent: true,
+      whatsappSent: true,
+    } as never),
   })),
 }));
 
 // Mock PDF generation so we don't need real streams
 jest.mock('@infrastructure/services/PDFKitPosReceiptService', () => ({
   PDFKitPosReceiptService: jest.fn().mockImplementation(() => ({
-    generate: jest.fn().mockReturnValue({ pipe: (res: any) => res.end('PDF Content') }),
+    generate: jest
+      .fn()
+      .mockReturnValue({ pipe: (res: any) => res.end('PDF Content') }),
   })),
 }));
 
 jest.mock('@infrastructure/services/PDFKitTicketReceiptService', () => ({
   PDFKitTicketReceiptService: jest.fn().mockImplementation(() => ({
-    generate: jest.fn().mockReturnValue({ pipe: (res: any) => res.end('Ticket Content') }),
+    generate: jest
+      .fn()
+      .mockReturnValue({ pipe: (res: any) => res.end('Ticket Content') }),
   })),
 }));
 
@@ -78,7 +94,9 @@ describe('Invoicing and Notifications API (HU-034 to HU-037, HU-048, HU-049)', (
     });
 
     it('should return a Ticket receipt if format=ticket (Happy Path)', async () => {
-      const response = await request(app).get('/api/v1/receipts/1/pdf?format=ticket');
+      const response = await request(app).get(
+        '/api/v1/receipts/1/pdf?format=ticket'
+      );
 
       expect([200, 201]).toContain(response.status);
       expect(response.header['content-type']).toBe('application/pdf');

@@ -57,7 +57,7 @@ export const SuppliersPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: SupplierFormData) => {
-    let success = null;
+    let success;
     if (editingSupplier) {
       success = await updateSupplier(editingSupplier.id, data);
     } else {

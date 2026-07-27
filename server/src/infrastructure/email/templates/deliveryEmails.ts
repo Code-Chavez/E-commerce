@@ -13,7 +13,7 @@ const wrapper = (content: string) => `
     <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e0e0e0;">
       ${content}
       <p style="color: #888; font-size: 12px; border-top: 1px solid #eeeeee; padding-top: 20px; margin-top: 32px; text-align: center;">
-        Este es un correo automático enviado por D'Mendoza S.A.C. Por favor no respondas a este mensaje.
+        Este es un correo automático enviado por E-Commerce S.A.C. Por favor no respondas a este mensaje.
       </p>
     </div>
   </body>
@@ -28,7 +28,9 @@ export interface FailedDeliveryEmailParams {
 }
 
 /** Email 3.1 — Intento fallido: el cliente debe decidir entre reenvío o devolución. */
-export function buildFailedDeliveryDecisionEmail(params: FailedDeliveryEmailParams): { subject: string; html: string } {
+export function buildFailedDeliveryDecisionEmail(
+  params: FailedDeliveryEmailParams
+): { subject: string; html: string } {
   const { userName, orderId, reason, attemptNumber } = params;
   const base = clientUrl();
   const redeliveryUrl = `${base}/profile/orders?orderId=${orderId}&action=redelivery`;
@@ -73,7 +75,10 @@ export function buildFailedDeliveryDecisionEmail(params: FailedDeliveryEmailPara
 }
 
 /** Email 3.2 — Confirmación de solicitud de reenvío. */
-export function buildRedeliveryConfirmationEmail(params: { userName: string; orderId: number }): { subject: string; html: string } {
+export function buildRedeliveryConfirmationEmail(params: {
+  userName: string;
+  orderId: number;
+}): { subject: string; html: string } {
   const { userName, orderId } = params;
   const html = wrapper(`
       <h2 style="color: #3f3f3f; margin-top: 0;">¡Solicitud recibida, ${userName}!</h2>
@@ -93,7 +98,10 @@ export function buildRedeliveryConfirmationEmail(params: { userName: string; ord
 }
 
 /** Email 3.3 — Confirmación de devolución solicitada por el cliente. */
-export function buildReturnConfirmationEmail(params: { userName: string; orderId: number }): { subject: string; html: string } {
+export function buildReturnConfirmationEmail(params: {
+  userName: string;
+  orderId: number;
+}): { subject: string; html: string } {
   const { userName, orderId } = params;
   const html = wrapper(`
       <h2 style="color: #3f3f3f; margin-top: 0;">Solicitud de devolución registrada</h2>
@@ -112,7 +120,11 @@ export function buildReturnConfirmationEmail(params: { userName: string; orderId
 }
 
 /** Email 3.4 — Devolución forzada tras agotar los intentos de entrega. */
-export function buildForcedReturnEmail(params: { userName: string; orderId: number; attemptNumber: number }): { subject: string; html: string } {
+export function buildForcedReturnEmail(params: {
+  userName: string;
+  orderId: number;
+  attemptNumber: number;
+}): { subject: string; html: string } {
   const { userName, orderId, attemptNumber } = params;
   const html = wrapper(`
       <h2 style="color: #3f3f3f; margin-top: 0;">No fue posible entregar tu pedido</h2>

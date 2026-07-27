@@ -19,7 +19,7 @@ interface RotationRow {
 type SortKey = keyof RotationRow;
 
 const RotationReportPage: React.FC = () => {
-  useDocumentTitle('Rotación de Inventario - D\'Mendoza');
+  useDocumentTitle('Rotación de Inventario - E-Commerce');
 
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -76,19 +76,19 @@ const RotationReportPage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const SortIcon = ({ k }: { k: SortKey }) => {
+  const renderSortIcon = (k: SortKey) => {
     if (sortKey !== k) return null;
     return sortAsc ? <ArrowUp size={12} className="text-[#3F3F3F]" /> : <ArrowDown size={12} className="text-[#3F3F3F]" />;
   };
 
-  const Th = ({ label, k, center = false }: { label: string; k: SortKey; center?: boolean }) => (
+  const renderTh = (label: string, k: SortKey, center: boolean = false) => (
     <th 
       className={`px-5 py-4 text-xs font-bold text-[#3F3F3F]/80 uppercase tracking-wider cursor-pointer hover:bg-[#D9D9D2]/20 select-none transition-colors ${center ? 'text-center' : 'text-left'}`} 
       onClick={() => handleSort(k)}
     >
       <span className={`flex items-center gap-1.5 ${center ? 'justify-center' : ''}`}>
         {label}
-        <SortIcon k={k} />
+        {renderSortIcon(k)}
       </span>
     </th>
   );
@@ -255,13 +255,13 @@ const RotationReportPage: React.FC = () => {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-[#FAFAFA] border-b border-[#D9D9D2]/40">
-                  <Th label="SKU" k="sku" />
-                  <Th label="Producto" k="productName" />
-                  <Th label="Sucursal" k="branchName" />
-                  <Th label="Vendidas" k="unitsSold" center />
-                  <Th label="Stock Prom." k="avgStock" center />
-                  <Th label="Ratio Rotación" k="rotationRatio" center />
-                  <Th label="Días de Stock" k="stockDays" center />
+                  {renderTh("SKU", "sku")}
+                  {renderTh("Producto", "productName")}
+                  {renderTh("Sucursal", "branchName")}
+                  {renderTh("Vendidas", "unitsSold", true)}
+                  {renderTh("Stock Prom.", "avgStock", true)}
+                  {renderTh("Ratio Rotación", "rotationRatio", true)}
+                  {renderTh("Días de Stock", "stockDays", true)}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#D9D9D2]/30">

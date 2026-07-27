@@ -65,7 +65,11 @@ export class PrismaUserRepository implements IUserRepository {
     });
   }
 
-  async updateVerificationPin(userId: number, pin: string, expiresAt: Date): Promise<void> {
+  async updateVerificationPin(
+    userId: number,
+    pin: string,
+    expiresAt: Date
+  ): Promise<void> {
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -121,7 +125,11 @@ export class PrismaUserRepository implements IUserRepository {
   /**
    * HU-001: Vincula un Google ID a un usuario existente (email match).
    */
-  async updateGoogleId(userId: number, googleId: string, avatarUrl?: string): Promise<void> {
+  async updateGoogleId(
+    userId: number,
+    googleId: string,
+    avatarUrl?: string
+  ): Promise<void> {
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -137,7 +145,9 @@ export class PrismaUserRepository implements IUserRepository {
    */
   async updateProfile(
     userId: number,
-    data: Partial<Pick<User, 'name' | 'lastName' | 'phone' | 'avatarUrl' | 'birthdate'>>
+    data: Partial<
+      Pick<User, 'name' | 'lastName' | 'phone' | 'avatarUrl' | 'birthdate'>
+    >
   ): Promise<User> {
     const record = await prisma.user.update({
       where: { id: userId },
@@ -167,7 +177,7 @@ export class PrismaUserRepository implements IUserRepository {
       },
     });
 
-    return records.map((record) => this.toDomain(record));
+    return records.map((record: any) => this.toDomain(record));
   }
 
   /**

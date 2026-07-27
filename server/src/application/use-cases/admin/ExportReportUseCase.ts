@@ -21,13 +21,23 @@ export class ExportReportUseCase {
     from?: string;
     to?: string;
   }): Promise<NodeJS.ReadableStream> {
-    const fromDate = params.from ? new Date(`${params.from}T00:00:00-05:00`) : undefined;
-    const toDate = params.to ? new Date(`${params.to}T23:59:59.999-05:00`) : undefined;
+    const fromDate = params.from
+      ? new Date(`${params.from}T00:00:00-05:00`)
+      : undefined;
+    const toDate = params.to
+      ? new Date(`${params.to}T23:59:59.999-05:00`)
+      : undefined;
 
     if (params.type === 'sales') {
       const [ecommerceOrders, posOrders] = await Promise.all([
-        this.orderRepository.findOrdersForExport({ from: fromDate, to: toDate }),
-        this.posOrderRepository.findPosOrdersForExport({ from: fromDate, to: toDate }),
+        this.orderRepository.findOrdersForExport({
+          from: fromDate,
+          to: toDate,
+        }),
+        this.posOrderRepository.findPosOrdersForExport({
+          from: fromDate,
+          to: toDate,
+        }),
       ]);
 
       const ecommerceSales = ecommerceOrders.map((o) => {
@@ -66,7 +76,10 @@ export class ExportReportUseCase {
       if (params.format === 'pdf') {
         return this.pdfReportService.generateSalesReport(allSales);
       } else {
-        return this.excelReportService.generateSalesReport(allSales, params.format);
+        return this.excelReportService.generateSalesReport(
+          allSales,
+          params.format
+        );
       }
     } else if (params.type === 'inventory') {
       const stockResults = await this.branchStockRepository.getStockReport({});
@@ -88,15 +101,24 @@ export class ExportReportUseCase {
       if (params.format === 'pdf') {
         return this.pdfReportService.generateInventoryReport(stockRows);
       } else {
-        return this.excelReportService.generateInventoryReport(stockRows, params.format);
+        return this.excelReportService.generateInventoryReport(
+          stockRows,
+          params.format
+        );
       }
     } else {
-      const clients = await this.clientRepository.findForExport({ from: fromDate, to: toDate });
+      const clients = await this.clientRepository.findForExport({
+        from: fromDate,
+        to: toDate,
+      });
 
       if (params.format === 'pdf') {
         return this.pdfReportService.generateClientsReport(clients);
       } else {
-        return this.excelReportService.generateClientsReport(clients, params.format);
+        return this.excelReportService.generateClientsReport(
+          clients,
+          params.format
+        );
       }
     }
   }

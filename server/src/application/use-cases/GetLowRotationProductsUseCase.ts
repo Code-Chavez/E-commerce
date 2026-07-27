@@ -1,5 +1,5 @@
-import { IReportRepository } from "../../domain/repositories/IReportRepository";
-import { LowRotationProduct } from "../../domain/entities/LowRotationProduct";
+import { IReportRepository } from '../../domain/repositories/IReportRepository';
+import { LowRotationProduct } from '../../domain/entities/LowRotationProduct';
 
 export class GetLowRotationProductsUseCase {
   constructor(private reportRepository: IReportRepository) {}

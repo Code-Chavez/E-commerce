@@ -12,7 +12,7 @@ interface RegisterCashMovementDTO {
 export class RegisterCashMovementUseCase {
   constructor(
     private readonly cashTurnRepository: ICashTurnRepository,
-    private readonly cashMovementRepository: ICashMovementRepository,
+    private readonly cashMovementRepository: ICashMovementRepository
   ) {}
 
   async execute(dto: RegisterCashMovementDTO): Promise<CashMovement> {
@@ -24,7 +24,9 @@ export class RegisterCashMovementUseCase {
 
     // 2. Validar que el turno esté abierto
     if (turn.status !== 'OPEN') {
-      throw new Error('No se puede registrar un movimiento en un turno cerrado');
+      throw new Error(
+        'No se puede registrar un movimiento en un turno cerrado'
+      );
     }
 
     // 3. Crear el movimiento

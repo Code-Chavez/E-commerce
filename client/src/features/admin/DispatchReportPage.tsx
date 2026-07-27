@@ -48,7 +48,7 @@ function successTextColor(rate: number): string {
 }
 
 const DispatchReportPage: React.FC = () => {
-  useDocumentTitle("Eficiencia de Despacho — D'Mendoza");
+  useDocumentTitle("Eficiencia de Despacho — E-Commerce");
 
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');

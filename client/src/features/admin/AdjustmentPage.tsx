@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
-import { PackageCheck, Search, HelpCircle, Loader2, RefreshCw, Sparkles, Building2, Archive } from 'lucide-react';
+import { PackageCheck, Search, HelpCircle, Loader2, Sparkles, Building2, Archive } from 'lucide-react';
 import { handleNumericKeyDown } from '@/shared/validation/documentValidators';
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
 
@@ -14,7 +14,7 @@ interface VariantStock {
 }
 
 const AdjustmentPage: React.FC = () => {
-  useDocumentTitle('Ajuste de Inventario - D\'Mendoza');
+  useDocumentTitle('Ajuste de Inventario - E-Commerce');
 
   const [sku, setSku] = useState('');
   const [searching, setSearching] = useState(false);
@@ -222,7 +222,7 @@ const AdjustmentPage: React.FC = () => {
         <div className="text-xs text-[#6B6B6B] space-y-1">
           <span className="font-semibold text-[#3F3F3F]">Auditoría y Trazabilidad de Ajustes:</span>
           <p>
-            Cualquier alteración manual de stock está sujeta a auditoría regulatoria inmediata. Los registros de ajuste se vinculan con el ID del operador activo y se informan en el reporte mensual de varianzas comerciales de D'Mendoza.
+            Cualquier alteración manual de stock está sujeta a auditoría regulatoria inmediata. Los registros de ajuste se vinculan con el ID del operador activo y se informan en el reporte mensual de varianzas comerciales de E-Commerce.
           </p>
         </div>
       </div>

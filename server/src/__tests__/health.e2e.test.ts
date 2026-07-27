@@ -11,5 +11,3 @@ describe('Health Check (E2E)', () => {
     expect(response.body).toHaveProperty('timestamp');
   });
 });
-
-

@@ -1,4 +1,4 @@
-# API Documentation - D-Mendoza Project Backend
+# API Documentation - E-Commerce Project Backend
 
 Esta documentación proporciona las especificaciones técnicas detalladas para consumir los endpoints de la API. Servirá de base para la integración con el cliente (Frontend).
 
@@ -952,7 +952,7 @@ Retorna la configuración actual. Si no se ha configurado ninguna, retorna los v
   "success": true,
   "data": {
     "id": 1,
-    "brandName": "D'Mendoza",
+    "brandName": "E-Commerce",
     "faviconUrl": "https://res.cloudinary.com/...",
     "logoHorizontalUrl": "https://res.cloudinary.com/...",
     "logoVerticalUrl": "https://res.cloudinary.com/...",
@@ -961,7 +961,7 @@ Retorna la configuración actual. Si no se ha configurado ninguna, retorna los v
     "colorBrandText": "#6B6B6B",
     "colorBrandAccent": "#3F3F3F",
     "socialLinksJson": {
-      "facebook": "https://facebook.com/dmendoza"
+      "facebook": "https://facebook.com/e-commerce"
     },
     "updatedAt": "2026-05-20T16:53:28.000Z"
   }
@@ -984,7 +984,7 @@ Actualiza la configuración de identidad visual y branding del sistema de forma 
 
 ```json
 {
-  "brandName": "D'Mendoza Premium",
+  "brandName": "E-Commerce Premium",
   "faviconUrl": "https://res.cloudinary.com/...",
   "logoHorizontalUrl": "https://res.cloudinary.com/...",
   "logoVerticalUrl": "https://res.cloudinary.com/...",
@@ -993,8 +993,8 @@ Actualiza la configuración de identidad visual y branding del sistema de forma 
   "colorBrandText": "#6B6B6B",
   "colorBrandAccent": "#3F3F3F",
   "socialLinksJson": {
-    "facebook": "https://facebook.com/dmendoza",
-    "instagram": "https://instagram.com/dmendoza"
+    "facebook": "https://facebook.com/e-commerce",
+    "instagram": "https://instagram.com/e-commerce"
   }
 }
 ```
@@ -1022,7 +1022,7 @@ Actualiza la configuración de identidad visual y branding del sistema de forma 
   "success": true,
   "data": {
     "id": 1,
-    "brandName": "D'Mendoza Premium",
+    "brandName": "E-Commerce Premium",
     "faviconUrl": "https://res.cloudinary.com/...",
     "logoHorizontalUrl": "https://res.cloudinary.com/...",
     "logoVerticalUrl": "https://res.cloudinary.com/...",
@@ -1031,8 +1031,8 @@ Actualiza la configuración de identidad visual y branding del sistema de forma 
     "colorBrandText": "#6B6B6B",
     "colorBrandAccent": "#3F3F3F",
     "socialLinksJson": {
-      "facebook": "https://facebook.com/dmendoza",
-      "instagram": "https://instagram.com/dmendoza"
+      "facebook": "https://facebook.com/e-commerce",
+      "instagram": "https://instagram.com/e-commerce"
     },
     "updatedAt": "2026-05-20T16:54:00.000Z"
   }
@@ -2673,7 +2673,7 @@ Se espera un objeto JSON con la siguiente estructura:
     "total": 112.48,
     "appliedBy": {
       "userId": 3,
-      "email": "cajero@dmendoza.com"
+      "email": "cajero@e-commerce.com"
     }
   }
 }
@@ -2748,7 +2748,7 @@ Devuelve los datos completos y estructurados de una venta específica, optimizad
   "data": {
     "orderId": 1,
     "date": "2026-06-02T12:00:00.000Z",
-    "seller": "Carlos Mendoza",
+    "seller": "E-Commerce",
     "branch": {
       "id": 1,
       "name": "Sede Principal",
@@ -3218,12 +3218,12 @@ Consulta de manera paginada y filtrada las ventas/comprobantes electrónicos emi
           "id": 5,
           "name": "Juan",
           "lastName": "Perez",
-          "email": "juan.perez@dmendoza.com"
+          "email": "juan.perez@e-commerce.com"
         },
         "client": {
           "id": 3,
           "name": "Carlos",
-          "lastName": "Mendoza",
+          "lastName": "E-Commerce",
           "documentId": "45678912"
         }
       }
@@ -3354,7 +3354,7 @@ Búsqueda predictiva y filtrado avanzado de productos para el portal público de
       },
       "brand": {
         "id": 1,
-        "name": "D-Mendoza"
+        "name": "E-Commerce"
       },
       "images": [
         {
@@ -3434,7 +3434,7 @@ Obtiene la ficha técnica detallada de un producto activo basado en su `slug` ú
     },
     "brand": {
       "id": 1,
-      "name": "D-Mendoza"
+      "name": "E-Commerce"
     },
     "images": [
       {
@@ -5664,7 +5664,7 @@ Obtiene la configuración actual del servicio de backups automáticos.
   "data": {
     "id": 1,
     "retentionDays": 7,
-    "adminEmail": "admin@dmendoza.com",
+    "adminEmail": "admin@e-commerce.com",
     "cronExpression": "0 0 * * *",
     "createdAt": "2026-07-13T00:00:00.000Z",
     "updatedAt": "2026-07-13T00:00:00.000Z"
@@ -5697,7 +5697,7 @@ Actualiza la configuración del servicio de backups. Cambios en `cronExpression`
 ```json
 {
   "retentionDays": 14,
-  "adminEmail": "tecnico@dmendoza.com",
+  "adminEmail": "tecnico@e-commerce.com",
   "cronExpression": "0 2 * * *"
 }
 ```
@@ -5712,7 +5712,7 @@ Todos los campos son opcionales; solo se actualizan los proporcionados.
   "data": {
     "id": 1,
     "retentionDays": 14,
-    "adminEmail": "tecnico@dmendoza.com",
+    "adminEmail": "tecnico@e-commerce.com",
     "cronExpression": "0 2 * * *",
     "createdAt": "2026-07-13T00:00:00.000Z",
     "updatedAt": "2026-07-13T10:00:00.000Z"
@@ -5989,7 +5989,7 @@ Obtiene el historial estructurado de cambios de precio del producto/variante, in
       "user": {
         "id": 1,
         "name": "Carlos Perez",
-        "email": "user1@dmendoza.com"
+        "email": "user1@e-commerce.com"
       }
     }
   ]

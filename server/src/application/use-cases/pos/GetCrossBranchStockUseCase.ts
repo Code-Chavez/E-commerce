@@ -7,7 +7,10 @@ export interface CrossBranchStockResult {
 }
 
 export class GetCrossBranchStockUseCase {
-  async execute(variantId: number, userId: number): Promise<CrossBranchStockResult[]> {
+  async execute(
+    variantId: number,
+    userId: number
+  ): Promise<CrossBranchStockResult[]> {
     // 1. Validar que la variante exista y esté activa
     const variant = await prisma.productVariant.findFirst({
       where: {
@@ -17,7 +20,9 @@ export class GetCrossBranchStockUseCase {
     });
 
     if (!variant) {
-      const err = new Error(`La variante de producto con ID ${variantId} no existe o se encuentra inactiva`);
+      const err = new Error(
+        `La variante de producto con ID ${variantId} no existe o se encuentra inactiva`
+      );
       (err as any).statusCode = 404;
       throw err;
     }
@@ -34,7 +39,9 @@ export class GetCrossBranchStockUseCase {
     });
 
     if (!activeTurn) {
-      const err = new Error('No tienes un turno de caja abierto. Por favor, abre caja antes de realizar consultas de stock intersucursales.');
+      const err = new Error(
+        'No tienes un turno de caja abierto. Por favor, abre caja antes de realizar consultas de stock intersucursales.'
+      );
       (err as any).statusCode = 400;
       throw err;
     }

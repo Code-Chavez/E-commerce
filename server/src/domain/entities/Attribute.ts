@@ -17,5 +17,11 @@ export interface Attribute {
   updatedAt: Date;
 }
 
-export interface CreateAttributeDTO { name: string; isVisualDriver?: boolean; }
-export interface CreateAttributeValueDTO { value: string; attributeId: number; }
+export interface CreateAttributeDTO {
+  name: string;
+  isVisualDriver?: boolean;
+}
+export interface CreateAttributeValueDTO {
+  value: string;
+  attributeId: number;
+}

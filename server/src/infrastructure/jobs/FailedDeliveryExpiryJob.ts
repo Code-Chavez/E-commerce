@@ -10,12 +10,17 @@ export class FailedDeliveryExpiryJob {
       try {
         const count = await FailedDeliveryExpiryJob.processExpired();
         if (count > 0) {
-          console.log(`✅ [Cron Job] Auto-returned ${count} expired delivery(ies).`);
+          console.log(
+            `✅ [Cron Job] Auto-returned ${count} expired delivery(ies).`
+          );
         } else {
           console.log('✅ [Cron Job] No expired deliveries found.');
         }
       } catch (error) {
-        console.error('❌ [Cron Job] Error in Failed Delivery Expiry check:', error);
+        console.error(
+          '❌ [Cron Job] Error in Failed Delivery Expiry check:',
+          error
+        );
       }
     });
   }
@@ -23,7 +28,7 @@ export class FailedDeliveryExpiryJob {
   public static async processExpired(): Promise<number> {
     const hoursStr = await SystemSettingCacheService.getSetting(
       'FAILED_DELIVERY_DECISION_WINDOW_HOURS',
-      '72',
+      '72'
     );
     const windowHours = parseInt(hoursStr, 10);
     const cutoffDate = new Date(Date.now() - windowHours * 60 * 60 * 1000);
@@ -49,7 +54,10 @@ export class FailedDeliveryExpiryJob {
     for (const delivery of expiredDeliveries) {
       const order = delivery.order;
       const notes = `Devolución automática — cliente no respondió en ${windowHours}h (Pedido #${order.id})`;
-      const totalUnits = delivery.pickingItems.reduce((sum, i) => sum + i.qty, 0);
+      const totalUnits = delivery.pickingItems.reduce(
+        (sum, i) => sum + i.qty,
+        0
+      );
 
       const itemsToRestore = delivery.pickingItems.map((i) => ({
         variantId: i.variantId,
@@ -98,9 +106,14 @@ export class FailedDeliveryExpiryJob {
         });
 
         processed++;
-        console.log(`[FailedDeliveryExpiryJob] Auto-returned order #${order.id} (${totalUnits} units restored).`);
+        console.log(
+          `[FailedDeliveryExpiryJob] Auto-returned order #${order.id} (${totalUnits} units restored).`
+        );
       } catch (err) {
-        console.error(`[FailedDeliveryExpiryJob] Failed to auto-return order #${order.id}:`, err);
+        console.error(
+          `[FailedDeliveryExpiryJob] Failed to auto-return order #${order.id}:`,
+          err
+        );
       }
     }
 

@@ -1,6 +1,9 @@
 import prisma from '@infrastructure/database/prisma';
 import { IPriceHistoryRepository } from '@domain/repositories/IPriceHistoryRepository';
-import { PriceHistory, CreatePriceHistoryDTO } from '@domain/entities/PriceHistory';
+import {
+  PriceHistory,
+  CreatePriceHistoryDTO,
+} from '@domain/entities/PriceHistory';
 
 export class PrismaPriceHistoryRepository implements IPriceHistoryRepository {
   async create(data: CreatePriceHistoryDTO): Promise<PriceHistory> {
@@ -47,7 +50,7 @@ export class PrismaPriceHistoryRepository implements IPriceHistoryRepository {
       },
     });
 
-    return records.map(r => this.toDomain(r));
+    return records.map((r) => this.toDomain(r));
   }
 
   async findByVariantId(variantId: number): Promise<PriceHistory[]> {
@@ -69,7 +72,7 @@ export class PrismaPriceHistoryRepository implements IPriceHistoryRepository {
       },
     });
 
-    return records.map(r => this.toDomain(r));
+    return records.map((r) => this.toDomain(r));
   }
 
   private toDomain(record: any): PriceHistory {
@@ -81,11 +84,13 @@ export class PrismaPriceHistoryRepository implements IPriceHistoryRepository {
       oldPrice: Number(record.oldPrice),
       newPrice: Number(record.newPrice),
       createdAt: record.createdAt,
-      user: record.user ? {
-        id: record.user.id,
-        name: record.user.name,
-        email: record.user.email,
-      } : null,
+      user: record.user
+        ? {
+            id: record.user.id,
+            name: record.user.name,
+            email: record.user.email,
+          }
+        : null,
     };
   }
 }

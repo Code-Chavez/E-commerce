@@ -9,7 +9,10 @@ export interface BulkLinkReport {
 export class BulkLinkClientsUseCase {
   constructor(private readonly linkClientUseCase: LinkClientUseCase) {}
 
-  async execute(clientIds: number[], emails?: Record<number, string>): Promise<BulkLinkReport> {
+  async execute(
+    clientIds: number[],
+    emails?: Record<number, string>
+  ): Promise<BulkLinkReport> {
     const report: BulkLinkReport = {
       linked: 0,
       skipped: 0,

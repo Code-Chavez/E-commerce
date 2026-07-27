@@ -10,20 +10,26 @@ const systemSettingService = new SystemSettingCacheService();
 export class AbandonedCartJob {
   public static start(): void {
     console.log('[Job] AbandonedCartJob inicializado (0 * * * *)');
-    
+
     // Ejecutar en el minuto 0 de cada hora (cada hora)
     cron.schedule('0 * * * *', async () => {
       console.log('[Job] Ejecutando AbandonedCartJob...');
       try {
         await this.processAbandonedCarts();
       } catch (error) {
-        console.error('[Job Error] Fallo al procesar carritos abandonados:', error);
+        console.error(
+          '[Job Error] Fallo al procesar carritos abandonados:',
+          error
+        );
       }
     });
   }
 
   public static async processAbandonedCarts(): Promise<void> {
-    const hoursStr = await SystemSettingCacheService.getSetting('ABANDONED_CART_HOURS', '24');
+    const hoursStr = await SystemSettingCacheService.getSetting(
+      'ABANDONED_CART_HOURS',
+      '24'
+    );
     const hours = parseInt(hoursStr, 10);
     const thresholdDate = new Date(Date.now() - hours * 60 * 60 * 1000);
 
@@ -57,15 +63,19 @@ export class AbandonedCartJob {
       return;
     }
 
-    console.log(`[Job] Encontrados ${abandonedCarts.length} carritos abandonados.`);
+    console.log(
+      `[Job] Encontrados ${abandonedCarts.length} carritos abandonados.`
+    );
 
     for (const cart of abandonedCarts) {
       if (!cart.user || !cart.user.email) continue;
 
       const itemsForTemplate = cart.items.map((item) => {
         const product = item.variant.product;
-        const mainImage = product.images.find((img) => img.isMain)?.url || product.images[0]?.url;
-        
+        const mainImage =
+          product.images.find((img) => img.isMain)?.url ||
+          product.images[0]?.url;
+
         return {
           productName: product.name,
           variantName: item.variant.sku, // Usamos el sku o atributos si los tuviéramos
@@ -88,7 +98,7 @@ export class AbandonedCartJob {
       try {
         await emailService.sendEmail(
           cart.user.email,
-          "🛒 ¡No olvides tus productos en D'Mendoza!",
+          '🛒 ¡No olvides tus productos en E-Commerce!',
           htmlContent
         );
 
@@ -98,9 +108,14 @@ export class AbandonedCartJob {
           data: { abandonedEmailSent: true },
         });
 
-        console.log(`[Job] Correo enviado a ${cart.user.email} (Cart ID: ${cart.id})`);
+        console.log(
+          `[Job] Correo enviado a ${cart.user.email} (Cart ID: ${cart.id})`
+        );
       } catch (error) {
-        console.error(`[Job Error] Fallo al enviar correo a ${cart.user.email}:`, error);
+        console.error(
+          `[Job Error] Fallo al enviar correo a ${cart.user.email}:`,
+          error
+        );
       }
     }
   }

@@ -30,7 +30,7 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     req = {
       headers: {},
     };
@@ -53,14 +53,14 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
       expect.objectContaining({
         success: false,
         error: expect.stringContaining('Token faltante'),
-      }),
+      })
     );
     expect(next).not.toHaveBeenCalled();
   });
 
   it('should return 401 if the JWT token is malformed or expired', async () => {
     req.headers!.authorization = 'Bearer invalid.expired.token';
-    
+
     // Force rejection representing bad signature or time limit exceedance
     const tokenError = new Error('jwt expired');
     tokenError.name = 'TokenExpiredError';
@@ -76,14 +76,14 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
       expect.objectContaining({
         success: false,
         error: expect.stringContaining('Sesión expirada'),
-      }),
+      })
     );
     expect(next).not.toHaveBeenCalled();
   });
 
   it('should return 403 Forbidden if account exists but is deactivated (isActive: false)', async () => {
     req.headers!.authorization = 'Bearer valid.token';
-    
+
     mockVerifyAccessToken.mockReturnValue({
       userId: 99,
       email: 'inactive@mail.com',
@@ -105,7 +105,7 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
       expect.objectContaining({
         success: false,
         error: expect.stringContaining('cuenta se encuentra inactiva'),
-      }),
+      })
     );
   });
 
@@ -114,7 +114,7 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
   // =================================================================
   it('T-041 CORE: should return 403 with { success: false } if user HAS role but role LACKS target permission', async () => {
     req.headers!.authorization = 'Bearer valid.token';
-    
+
     mockVerifyAccessToken.mockReturnValue({
       userId: 100,
       email: 'client@mail.com',
@@ -128,10 +128,8 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
       roles: [
         {
           name: 'CLIENT',
-          permissions: [
-            { name: 'orders:read' }
-          ]
-        }
+          permissions: [{ name: 'orders:read' }],
+        },
       ],
     });
 
@@ -150,7 +148,7 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
 
   it('should gracefully call next() if the user effectively possesses the required capability', async () => {
     req.headers!.authorization = 'Bearer power.user.token';
-    
+
     mockVerifyAccessToken.mockReturnValue({
       userId: 1,
       email: 'godmode@mail.com',
@@ -164,11 +162,8 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
       roles: [
         {
           name: 'SUPERADMIN',
-          permissions: [
-            { name: 'users:read' },
-            { name: 'roles:manage' }
-          ]
-        }
+          permissions: [{ name: 'users:read' }, { name: 'roles:manage' }],
+        },
       ],
     });
 
@@ -178,7 +173,7 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
     // Explicit permission match discovered - allowing bypass
     expect(next).toHaveBeenCalledTimes(1);
     expect(res.status).not.toHaveBeenCalled();
-    
+
     // Also ensure the principal metadata correctly mounted onto Req object
     expect((req as any).auth).toEqual({
       userId: 1,
@@ -187,5 +182,3 @@ describe('requirePermission Middleware (T-041 Unit Test)', () => {
     });
   });
 });
-
-

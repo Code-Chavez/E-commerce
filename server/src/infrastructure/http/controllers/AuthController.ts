@@ -24,12 +24,22 @@ import { JwtService } from '@infrastructure/services/JwtService';
 const userRepository = new PrismaUserRepository();
 const emailService = new ResendEmailService();
 const jwtService = new JwtService();
-const registerUserUseCase = new RegisterUserUseCase(userRepository, emailService);
+const registerUserUseCase = new RegisterUserUseCase(
+  userRepository,
+  emailService
+);
 const verifyUserUseCase = new VerifyUserUseCase(userRepository);
 // Note: auditService will be wired once TT-001 AsyncLocalStorage middleware is integrated (HU-004)
 const loginUseCase = new LoginUseCase(userRepository, jwtService);
-const forgotPasswordUseCase = new ForgotPasswordUseCase(userRepository, emailService, jwtService);
-const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, jwtService);
+const forgotPasswordUseCase = new ForgotPasswordUseCase(
+  userRepository,
+  emailService,
+  jwtService
+);
+const resetPasswordUseCase = new ResetPasswordUseCase(
+  userRepository,
+  jwtService
+);
 const googleLoginUseCase = new GoogleLoginUseCase(userRepository, jwtService);
 const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, jwtService);
 
@@ -92,8 +102,10 @@ export class AuthController {
       }
 
       if (
-        error.message === 'El código de verificación ha expirado. Por favor, regístrese nuevamente.' ||
-        error.message === 'No existe un código de verificación activo para esta cuenta'
+        error.message ===
+          'El código de verificación ha expirado. Por favor, regístrese nuevamente.' ||
+        error.message ===
+          'No existe un código de verificación activo para esta cuenta'
       ) {
         return res.status(410).json({ success: false, error: error.message });
       }
@@ -147,7 +159,8 @@ export class AuthController {
         return res.status(403).json({
           success: false,
           requirePasswordChange: true,
-          error: 'Se requiere un cambio de contraseña obligatorio en su primer inicio de sesión.',
+          error:
+            'Se requiere un cambio de contraseña obligatorio en su primer inicio de sesión.',
         });
       }
 
@@ -181,7 +194,8 @@ export class AuthController {
       // Always return 200 regardless of whether the email exists (prevents enumeration)
       return res.status(200).json({
         success: true,
-        message: 'Si el correo está registrado, recibirás un enlace de recuperación en breve.',
+        message:
+          'Si el correo está registrado, recibirás un enlace de recuperación en breve.',
       });
     } catch (error: any) {
       console.error('[AuthController.forgotPassword] Error:', error);
@@ -215,11 +229,17 @@ export class AuthController {
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({
           success: false,
-          error: 'El enlace de recuperación ha expirado. Por favor, solicita uno nuevo.',
+          error:
+            'El enlace de recuperación ha expirado. Por favor, solicita uno nuevo.',
         });
       }
 
-      if (error.name === 'JsonWebTokenError' || error.message === 'Token inválido' || error.message === 'El enlace de recuperación ya fue utilizado o no es válido') {
+      if (
+        error.name === 'JsonWebTokenError' ||
+        error.message === 'Token inválido' ||
+        error.message ===
+          'El enlace de recuperación ya fue utilizado o no es válido'
+      ) {
         return res.status(401).json({
           success: false,
           error: 'El token de recuperación no es válido o ya fue utilizado.',
@@ -233,7 +253,9 @@ export class AuthController {
         });
       }
 
-      if (error.message === 'La nueva contraseña no puede ser igual a la actual') {
+      if (
+        error.message === 'La nueva contraseña no puede ser igual a la actual'
+      ) {
         return res.status(400).json({
           success: false,
           error: error.message,
@@ -263,7 +285,9 @@ export class AuthController {
         });
       }
 
-      const tokens = await refreshTokenUseCase.execute(validationResult.data.refreshToken);
+      const tokens = await refreshTokenUseCase.execute(
+        validationResult.data.refreshToken
+      );
 
       return res.status(200).json({
         success: true,
@@ -284,12 +308,17 @@ export class AuthController {
         });
       }
 
-      if (error.message === 'Cuenta inactiva' || error.message === 'Usuario no encontrado') {
+      if (
+        error.message === 'Cuenta inactiva' ||
+        error.message === 'Usuario no encontrado'
+      ) {
         return res.status(403).json({ success: false, error: error.message });
       }
 
       console.error('[AuthController.refresh] Error:', error);
-      return res.status(500).json({ success: false, error: 'Internal server error' });
+      return res
+        .status(500)
+        .json({ success: false, error: 'Internal server error' });
     }
   }
 
@@ -332,7 +361,9 @@ export class AuthController {
       return res.redirect(`${process.env.CORS_ORIGIN}/auth/google/success`);
     } catch (error: any) {
       console.error('[AuthController.googleCallback] Error:', error);
-      return res.redirect(`${process.env.CORS_ORIGIN}/login?error=oauth_failed`);
+      return res.redirect(
+        `${process.env.CORS_ORIGIN}/login?error=oauth_failed`
+      );
     }
   }
 

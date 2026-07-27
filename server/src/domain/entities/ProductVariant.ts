@@ -4,9 +4,9 @@
 export interface ProductVariant {
   id: number;
   productId: number;
-  sku: string;           // SKU único auto-generado: CODIGO-TALLA-COLOR
-  price: number;         // Precio de venta de la variante (Decimal en BD → number en dominio)
-  costPrice: number;     // Precio de costo (última compra registrada)
+  sku: string; // SKU único auto-generado: CODIGO-TALLA-COLOR
+  price: number; // Precio de venta de la variante (Decimal en BD → number en dominio)
+  costPrice: number; // Precio de costo (última compra registrada)
   attributesJson: Record<string, string>; // Atributos clave-valor de la variante
   isActive: boolean;
   minStock: number;

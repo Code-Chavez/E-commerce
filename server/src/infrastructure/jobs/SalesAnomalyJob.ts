@@ -97,7 +97,9 @@ export class SalesAnomalyJob {
       if (sigmas > SIGMA_THRESHOLD) {
         const direction = yesterdaySales > mean ? 'HIGH' : 'LOW';
         await prisma.salesAnomaly.upsert({
-          where: { branchId_productId_date: { branchId, productId, date: yesterday } },
+          where: {
+            branchId_productId_date: { branchId, productId, date: yesterday },
+          },
           create: {
             branchId,
             productId,
@@ -123,7 +125,9 @@ export class SalesAnomalyJob {
       } else {
         // Si existía una anomalía activa y ya se normalizó, resolverla
         const existing = await prisma.salesAnomaly.findUnique({
-          where: { branchId_productId_date: { branchId, productId, date: yesterday } },
+          where: {
+            branchId_productId_date: { branchId, productId, date: yesterday },
+          },
         });
         if (existing?.isActive) {
           await prisma.salesAnomaly.update({
@@ -135,6 +139,8 @@ export class SalesAnomalyJob {
       }
     }
 
-    console.log(`[Job] SalesAnomalyJob: ${created} anomalías detectadas, ${resolved} resueltas automáticamente.`);
+    console.log(
+      `[Job] SalesAnomalyJob: ${created} anomalías detectadas, ${resolved} resueltas automáticamente.`
+    );
   }
 }

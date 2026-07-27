@@ -34,7 +34,7 @@ import { AdminBackupConfigController } from '@infrastructure/http/controllers/ad
 const DEFAULT_CONFIG = {
   id: 1,
   retentionDays: 7,
-  adminEmail: 'admin@dmendoza.com',
+  adminEmail: 'admin@e-commerce.com',
   cronExpression: '0 0 * * *',
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
@@ -42,16 +42,22 @@ const DEFAULT_CONFIG = {
 
 function mockReq(overrides: Partial<Request> = {}): Partial<Request> {
   return {
-    auth: { userId: 1, email: 'admin@dmendoza.com', role: 'ADMIN' } as any,
+    auth: { userId: 1, email: 'admin@e-commerce.com', role: 'ADMIN' } as any,
     body: {},
     headers: {},
     ...overrides,
   };
 }
 
-function mockRes(): { res: Partial<Response>; status: jest.Mock; json: jest.Mock } {
+function mockRes(): {
+  res: Partial<Response>;
+  status: jest.Mock;
+  json: jest.Mock;
+} {
   const json = jest.fn<Response['json']>().mockReturnThis() as any;
-  const status = jest.fn<Response['status']>().mockReturnValue({ json } as any) as any;
+  const status = jest
+    .fn<Response['status']>()
+    .mockReturnValue({ json } as any) as any;
   return { res: { status, json } as any, status, json };
 }
 
@@ -76,17 +82,23 @@ describe('AdminBackupConfigController', () => {
     await controller.getConfig(req as Request, res as Response);
 
     expect(status).toHaveBeenCalledWith(200);
-    expect(json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ success: true })
+    );
   });
 
   it('GET devuelve 403 cuando el rol es CLIENT', async () => {
-    const req = mockReq({ auth: { userId: 2, email: 'client@test.com', role: 'CLIENT' } as any });
+    const req = mockReq({
+      auth: { userId: 2, email: 'client@test.com', role: 'CLIENT' } as any,
+    });
     const { res, status, json } = mockRes();
 
     await controller.getConfig(req as Request, res as Response);
 
     expect(status).toHaveBeenCalledWith(403);
-    expect(json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ success: false })
+    );
   });
 
   it('GET devuelve 403 cuando no hay auth (sin token)', async () => {
@@ -112,7 +124,9 @@ describe('AdminBackupConfigController', () => {
     await controller.updateConfig(req as Request, res as Response);
 
     expect(status).toHaveBeenCalledWith(200);
-    expect(json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ success: true })
+    );
   });
 
   it('PUT devuelve 400 cuando retentionDays es 0', async () => {
@@ -122,6 +136,8 @@ describe('AdminBackupConfigController', () => {
     await controller.updateConfig(req as Request, res as Response);
 
     expect(status).toHaveBeenCalledWith(400);
-    expect(json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ success: false })
+    );
   });
 });

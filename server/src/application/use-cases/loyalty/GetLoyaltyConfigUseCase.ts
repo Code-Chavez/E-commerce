@@ -7,7 +7,7 @@ export class GetLoyaltyConfigUseCase {
     if (!config) {
       config = await prisma.loyaltyConfig.create({
         data: {
-          solesPerPoint: 100.00,
+          solesPerPoint: 100.0,
           isActive: true,
         },
       });

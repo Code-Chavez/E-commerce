@@ -30,18 +30,38 @@ export class ReturnRequestController {
     this.pdfGenerator = new PdfGeneratorAdapter();
     this.emailSender = new ResendEmailSenderAdapter();
 
-    this.createReturnRequestUseCase = new CreateReturnRequestUseCase(returnRequestRepo, orderRepo);
-    this.approveReturnRequestUseCase = new ApproveReturnRequestUseCase(returnRequestRepo, deliveryRepo);
-    this.rejectReturnRequestUseCase = new RejectReturnRequestUseCase(returnRequestRepo);
-    this.issueCreditNoteUseCase = new IssueCreditNoteUseCase(this.creditNoteRepo, this.pdfGenerator, this.emailSender);
-    this.getAdminReturnRequestsUseCase = new GetAdminReturnRequestsUseCase(returnRequestRepo);
+    this.createReturnRequestUseCase = new CreateReturnRequestUseCase(
+      returnRequestRepo,
+      orderRepo
+    );
+    this.approveReturnRequestUseCase = new ApproveReturnRequestUseCase(
+      returnRequestRepo,
+      deliveryRepo
+    );
+    this.rejectReturnRequestUseCase = new RejectReturnRequestUseCase(
+      returnRequestRepo
+    );
+    this.issueCreditNoteUseCase = new IssueCreditNoteUseCase(
+      this.creditNoteRepo,
+      this.pdfGenerator,
+      this.emailSender
+    );
+    this.getAdminReturnRequestsUseCase = new GetAdminReturnRequestsUseCase(
+      returnRequestRepo
+    );
   }
 
-  create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  create = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const userId = req.auth?.userId;
       if (!userId) {
-        res.status(401).json({ success: false, error: 'Unauthorized: User ID not found' });
+        res
+          .status(401)
+          .json({ success: false, error: 'Unauthorized: User ID not found' });
         return;
       }
 
@@ -71,7 +91,11 @@ export class ReturnRequestController {
     }
   };
 
-  approve = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  approve = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (isNaN(id)) {
@@ -94,7 +118,11 @@ export class ReturnRequestController {
     }
   };
 
-  reject = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  reject = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (isNaN(id)) {
@@ -117,7 +145,11 @@ export class ReturnRequestController {
     }
   };
 
-  issueCreditNote = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  issueCreditNote = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (isNaN(id)) {
@@ -140,7 +172,11 @@ export class ReturnRequestController {
     }
   };
 
-  list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  list = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const returnRequests = await this.getAdminReturnRequestsUseCase.execute();
       res.status(200).json({ success: true, data: returnRequests });
@@ -149,7 +185,11 @@ export class ReturnRequestController {
     }
   };
 
-  listCreditNotes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  listCreditNotes = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const creditNotes = await this.creditNoteRepo.findAll();
       res.status(200).json({ success: true, data: creditNotes });
@@ -158,7 +198,11 @@ export class ReturnRequestController {
     }
   };
 
-  resendCreditNote = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  resendCreditNote = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (isNaN(id)) {
@@ -191,13 +235,18 @@ export class ReturnRequestController {
       });
 
       if (!creditNote) {
-        res.status(404).json({ success: false, error: 'Credit note not found' });
+        res
+          .status(404)
+          .json({ success: false, error: 'Credit note not found' });
         return;
       }
 
       const returnRequest = creditNote.returnRequest;
       if (!returnRequest) {
-        res.status(400).json({ success: false, error: 'Associated return request not found' });
+        res.status(400).json({
+          success: false,
+          error: 'Associated return request not found',
+        });
         return;
       }
 
@@ -227,19 +276,22 @@ export class ReturnRequestController {
           </ul>
           <p>Adjunto a este correo encontrará el documento PDF correspondiente.</p>
           <br/>
-          <p>Atentamente,<br/>El equipo de DMendoza</p>
+          <p>Atentamente,<br/>El equipo de E-Commerce</p>
         </div>
       `;
 
       await this.emailSender.sendEmailWithAttachment({
         to: returnRequest.user.email,
-        subject: `Dmendoza - Reenvío Nota de Crédito ${creditNote.code}`,
+        subject: `E-Commerce - Reenvío Nota de Crédito ${creditNote.code}`,
         html: emailHtml,
         attachmentName: `Nota_de_Credito_${creditNote.code}.pdf`,
         attachmentBuffer: pdfBuffer,
       });
 
-      res.status(200).json({ success: true, message: `Credit note PDF resent successfully to ${returnRequest.user.email}` });
+      res.status(200).json({
+        success: true,
+        message: `Credit note PDF resent successfully to ${returnRequest.user.email}`,
+      });
     } catch (error) {
       next(error);
     }

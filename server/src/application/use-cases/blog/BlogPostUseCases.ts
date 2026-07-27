@@ -1,6 +1,9 @@
 import { IBlogPostRepository } from '@domain/repositories/IBlogPostRepository';
 import { BlogPost } from '@domain/entities/BlogPost';
-import { CreateBlogPostRequestDTO, UpdateBlogPostRequestDTO } from '@application/dtos/BlogPostDTOs';
+import {
+  CreateBlogPostRequestDTO,
+  UpdateBlogPostRequestDTO,
+} from '@application/dtos/BlogPostDTOs';
 
 export function generateSlug(title: string): string {
   return title
@@ -14,7 +17,10 @@ export function generateSlug(title: string): string {
 export class CreateBlogPostUseCase {
   constructor(private readonly blogPostRepository: IBlogPostRepository) {}
 
-  async execute(dto: CreateBlogPostRequestDTO, authorId: number): Promise<BlogPost> {
+  async execute(
+    dto: CreateBlogPostRequestDTO,
+    authorId: number
+  ): Promise<BlogPost> {
     const baseSlug = generateSlug(dto.title);
     let slug = baseSlug;
     let counter = 1;
@@ -96,7 +102,9 @@ export class UpdateBlogPostUseCase {
     }
 
     if (dto.publishedAt !== undefined) {
-      updateData.publishedAt = dto.publishedAt ? new Date(dto.publishedAt) : null;
+      updateData.publishedAt = dto.publishedAt
+        ? new Date(dto.publishedAt)
+        : null;
     }
 
     return this.blogPostRepository.update(id, updateData);
@@ -141,7 +149,11 @@ export class ListPublicBlogPostsUseCase {
   async execute(): Promise<BlogPost[]> {
     const all = await this.blogPostRepository.findAll();
     const now = new Date();
-    return all.filter(post => post.status === 'PUBLISHED' && (!post.publishedAt || post.publishedAt <= now));
+    return all.filter(
+      (post) =>
+        post.status === 'PUBLISHED' &&
+        (!post.publishedAt || post.publishedAt <= now)
+    );
   }
 }
 
@@ -151,7 +163,11 @@ export class GetPublicBlogPostBySlugUseCase {
   async execute(slug: string): Promise<BlogPost | null> {
     const post = await this.blogPostRepository.findBySlug(slug);
     const now = new Date();
-    if (!post || post.status !== 'PUBLISHED' || (post.publishedAt && post.publishedAt > now)) {
+    if (
+      !post ||
+      post.status !== 'PUBLISHED' ||
+      (post.publishedAt && post.publishedAt > now)
+    ) {
       return null;
     }
     await this.blogPostRepository.incrementViews(post.id);

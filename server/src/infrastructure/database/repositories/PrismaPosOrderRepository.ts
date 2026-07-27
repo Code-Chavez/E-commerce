@@ -18,7 +18,10 @@ export class PrismaPosOrderRepository implements IPosOrderRepository {
     return result._sum.total ? Number(result._sum.total) : 0;
   }
 
-  async getSalesByBranchInRange(start: Date, end: Date): Promise<Array<{ branchId: number; totalSales: number }>> {
+  async getSalesByBranchInRange(
+    start: Date,
+    end: Date
+  ): Promise<Array<{ branchId: number; totalSales: number }>> {
     const groups = await prisma.posOrder.groupBy({
       by: ['branchId'],
       where: {
@@ -39,7 +42,10 @@ export class PrismaPosOrderRepository implements IPosOrderRepository {
     }));
   }
 
-  async findPosOrdersForExport(params: { from?: Date; to?: Date }): Promise<any[]> {
+  async findPosOrdersForExport(params: {
+    from?: Date;
+    to?: Date;
+  }): Promise<any[]> {
     const { from, to } = params;
     const where: any = {
       status: 'COMPLETED',
@@ -83,12 +89,17 @@ export class PrismaPosOrderRepository implements IPosOrderRepository {
     }));
   }
 
-  async getFinancialSales(from?: Date, to?: Date): Promise<Array<{
-    amount: number;
-    createdAt: Date;
-    branchId: number;
-    branchName: string;
-  }>> {
+  async getFinancialSales(
+    from?: Date,
+    to?: Date
+  ): Promise<
+    Array<{
+      amount: number;
+      createdAt: Date;
+      branchId: number;
+      branchName: string;
+    }>
+  > {
     const where: any = {
       status: 'COMPLETED',
     };
@@ -121,4 +132,3 @@ export class PrismaPosOrderRepository implements IPosOrderRepository {
     }));
   }
 }
-

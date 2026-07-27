@@ -1,7 +1,9 @@
 import { IOperatingExpenseRepository } from '@domain/repositories/IOperatingExpenseRepository';
 
 export class DeleteOperatingExpenseUseCase {
-  constructor(private readonly expenseRepository: IOperatingExpenseRepository) {}
+  constructor(
+    private readonly expenseRepository: IOperatingExpenseRepository
+  ) {}
 
   async execute(id: number): Promise<void> {
     const existing = await this.expenseRepository.findById(id);

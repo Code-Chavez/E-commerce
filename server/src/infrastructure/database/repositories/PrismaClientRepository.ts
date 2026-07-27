@@ -96,10 +96,7 @@ export class PrismaClientRepository implements IClientRepository {
 
     if (type === 'POS') {
       conditions.push({
-        OR: [
-          { userId: null },
-          { user: { isActive: false } },
-        ],
+        OR: [{ userId: null }, { user: { isActive: false } }],
       });
     } else if (type === 'ECOMMERCE') {
       conditions.push({ userId: { not: null } });
@@ -134,10 +131,12 @@ export class PrismaClientRepository implements IClientRepository {
       const domainClient = this.toDomain(record);
       return {
         ...domainClient,
-        user: record.user ? {
-          isActive: record.user.isActive,
-          ordersCount: record.user._count?.orders ?? 0,
-        } : null,
+        user: record.user
+          ? {
+              isActive: record.user.isActive,
+              ordersCount: record.user._count?.orders ?? 0,
+            }
+          : null,
       };
     });
 
@@ -155,7 +154,8 @@ export class PrismaClientRepository implements IClientRepository {
         name: data.name !== undefined ? data.name : undefined,
         lastName: data.lastName !== undefined ? data.lastName : undefined,
         phone: data.phone !== undefined ? data.phone : undefined,
-        documentType: data.documentType !== undefined ? data.documentType : undefined,
+        documentType:
+          data.documentType !== undefined ? data.documentType : undefined,
         documentId: data.documentId !== undefined ? data.documentId : undefined,
         address: data.address !== undefined ? data.address : undefined,
         department: data.department !== undefined ? data.department : undefined,
@@ -177,7 +177,7 @@ export class PrismaClientRepository implements IClientRepository {
       conditions.push({ createdAt: dateCond });
     }
     const whereClause = conditions.length > 0 ? { AND: conditions } : {};
-    
+
     const records = await prisma.client.findMany({
       where: whereClause,
       include: {
@@ -185,21 +185,23 @@ export class PrismaClientRepository implements IClientRepository {
           select: {
             isActive: true,
             _count: {
-              select: { orders: true }
-            }
-          }
-        }
+              select: { orders: true },
+            },
+          },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
     return records.map((record: any) => {
       const domainClient = this.toDomain(record);
       return {
         ...domainClient,
-        user: record.user ? {
-          isActive: record.user.isActive,
-          ordersCount: record.user._count?.orders ?? 0,
-        } : null,
+        user: record.user
+          ? {
+              isActive: record.user.isActive,
+              ordersCount: record.user._count?.orders ?? 0,
+            }
+          : null,
       };
     });
   }
@@ -224,4 +226,3 @@ export class PrismaClientRepository implements IClientRepository {
     };
   }
 }
-

@@ -37,7 +37,7 @@ interface VariantStockInfo {
 }
 
 const TransferPage: React.FC = () => {
-  useDocumentTitle('Transferencia de Mercadería - D\'Mendoza');
+  useDocumentTitle('Transferencia de Mercadería - E-Commerce');
 
   // Branch list
   const [branches, setBranches] = useState<Branch[]>([]);

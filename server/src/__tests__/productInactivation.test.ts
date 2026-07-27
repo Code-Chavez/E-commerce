@@ -25,7 +25,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     product: mockProduct,
     productVariant: mockProductVariant,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -36,7 +38,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'SUPERADMIN',
     }),
   })),
@@ -47,7 +49,7 @@ import prisma from '@infrastructure/database/prisma';
 // Mocks de Usuario admin con permisos de productos
 const dummyAdmin = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {
@@ -158,5 +160,3 @@ describe('Tests de Integración — HU-015: Inactivación Lógica de Productos',
     });
   });
 });
-
-

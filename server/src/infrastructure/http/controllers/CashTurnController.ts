@@ -11,12 +11,21 @@ import prisma from '@infrastructure/database/prisma';
 const cashTurnRepository = new PrismaCashTurnRepository();
 const cashMovementRepository = new PrismaCashMovementRepository();
 const openCashTurnUseCase = new OpenCashTurnUseCase(cashTurnRepository);
-const registerCashMovementUseCase = new RegisterCashMovementUseCase(cashTurnRepository, cashMovementRepository);
-const closeCashTurnUseCase = new CloseCashTurnUseCase(cashTurnRepository, cashMovementRepository);
+const registerCashMovementUseCase = new RegisterCashMovementUseCase(
+  cashTurnRepository,
+  cashMovementRepository
+);
+const closeCashTurnUseCase = new CloseCashTurnUseCase(
+  cashTurnRepository,
+  cashMovementRepository
+);
 
 // Schemas de Zod
 const OpenCashTurnSchema = z.object({
-  registerId: z.number().int().positive('El ID de la caja debe ser un entero positivo'),
+  registerId: z
+    .number()
+    .int()
+    .positive('El ID de la caja debe ser un entero positivo'),
   openAmount: z.number().nonnegative('El monto inicial no puede ser negativo'),
 });
 
@@ -27,7 +36,10 @@ const RegisterMovementSchema = z.object({
 });
 
 const CloseTurnSchema = z.object({
-  closeAmount: z.number().min(0, 'El monto de cierre no puede ser negativo').optional(),
+  closeAmount: z
+    .number()
+    .min(0, 'El monto de cierre no puede ser negativo')
+    .optional(),
 });
 
 const mapZodErrors = (issues: z.ZodIssue[]) =>
@@ -47,20 +59,26 @@ export class CashTurnController {
       if (role !== 'ADMIN' && role !== 'SELLER') {
         return res.status(403).json({
           success: false,
-          error: 'Acceso denegado: Solo los roles Administrador o Vendedor están autorizados para abrir caja',
+          error:
+            'Acceso denegado: Solo los roles Administrador o Vendedor están autorizados para abrir caja',
         });
       }
 
       // 2. Validar Schema
       const validation = OpenCashTurnSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       // 3. Ejecutar Caso de Uso
       const userId = req.auth?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
       const result = await openCashTurnUseCase.execute({
@@ -74,7 +92,10 @@ export class CashTurnController {
       if (error.message?.includes('no existe')) {
         return res.status(404).json({ success: false, error: error.message });
       }
-      if (error.message?.includes('ya tiene') || error.message?.includes('ya tiene un turno abierto')) {
+      if (
+        error.message?.includes('ya tiene') ||
+        error.message?.includes('ya tiene un turno abierto')
+      ) {
         return res.status(409).json({ success: false, error: error.message });
       }
       next(error);
@@ -89,10 +110,15 @@ export class CashTurnController {
     try {
       const branchId = parseInt(String(req.query.branchId), 10);
       if (isNaN(branchId)) {
-        return res.status(400).json({ success: false, error: 'El parámetro branchId es obligatorio y debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error:
+            'El parámetro branchId es obligatorio y debe ser un número entero',
+        });
       }
 
-      const registers = await cashTurnRepository.findRegistersByBranch(branchId);
+      const registers =
+        await cashTurnRepository.findRegistersByBranch(branchId);
       return res.status(200).json({ success: true, data: registers });
     } catch (error: any) {
       next(error);
@@ -107,7 +133,9 @@ export class CashTurnController {
     try {
       const userId = req.auth?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
       const activeTurn = await cashTurnRepository.findActiveByUser(userId);
@@ -129,16 +157,21 @@ export class CashTurnController {
       const method = req.query.method as string | undefined;
 
       if (isNaN(turnId)) {
-        return res.status(400).json({ success: false, error: 'El ID del turno debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID del turno debe ser un número entero',
+        });
       }
 
       // 1. Obtener el turno
       const turn = await prisma.cashTurn.findUnique({
-        where: { id: turnId }
+        where: { id: turnId },
       });
 
       if (!turn) {
-        return res.status(404).json({ success: false, error: 'Turno de caja no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Turno de caja no encontrado' });
       }
 
       // 2. Construir la consulta de ventas (PosOrder)
@@ -146,7 +179,7 @@ export class CashTurnController {
         userId: turn.userId,
         createdAt: {
           gte: turn.openedAt,
-        }
+        },
       };
 
       if (turn.closedAt) {
@@ -160,8 +193,8 @@ export class CashTurnController {
       if (method) {
         whereClause.payments = {
           some: {
-            method: method.toUpperCase()
-          }
+            method: method.toUpperCase(),
+          },
         };
       }
 
@@ -174,16 +207,19 @@ export class CashTurnController {
           items: {
             include: {
               variant: {
-                include: { product: true }
-              }
-            }
-          }
-        }
+                include: { product: true },
+              },
+            },
+          },
+        },
       });
 
       return res.status(200).json({ success: true, data: sales });
     } catch (error: any) {
-      console.error('[CashTurnController] Error obteniendo ventas del turno:', error);
+      console.error(
+        '[CashTurnController] Error obteniendo ventas del turno:',
+        error
+      );
       next(error);
     }
   }
@@ -196,12 +232,18 @@ export class CashTurnController {
     try {
       const turnId = parseInt(String(req.params.id), 10);
       if (isNaN(turnId)) {
-        return res.status(400).json({ success: false, error: 'El ID del turno debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID del turno debe ser un número entero',
+        });
       }
 
       const validation = RegisterMovementSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const movement = await registerCashMovementUseCase.execute({
@@ -231,7 +273,10 @@ export class CashTurnController {
     try {
       const turnId = parseInt(String(req.params.id), 10);
       if (isNaN(turnId)) {
-        return res.status(400).json({ success: false, error: 'El ID del turno debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID del turno debe ser un número entero',
+        });
       }
 
       const movements = await cashMovementRepository.findByTurnId(turnId);
@@ -249,17 +294,25 @@ export class CashTurnController {
     try {
       const turnId = parseInt(String(req.params.id), 10);
       if (isNaN(turnId)) {
-        return res.status(400).json({ success: false, error: 'El ID del turno debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID del turno debe ser un número entero',
+        });
       }
 
       const userId = req.auth?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
       const validation = CloseTurnSchema.safeParse(req.body || {});
       if (!validation.success) {
-        return res.status(400).json({ success: false, errors: mapZodErrors(validation.error.issues) });
+        return res.status(400).json({
+          success: false,
+          errors: mapZodErrors(validation.error.issues),
+        });
       }
 
       const summary = await closeCashTurnUseCase.execute({
@@ -273,11 +326,13 @@ export class CashTurnController {
       if (error.message?.includes('no existe')) {
         return res.status(404).json({ success: false, error: error.message });
       }
-      if (error.message?.includes('cerrado') || error.message?.includes('permiso')) {
+      if (
+        error.message?.includes('cerrado') ||
+        error.message?.includes('permiso')
+      ) {
         return res.status(409).json({ success: false, error: error.message });
       }
       next(error);
     }
   }
 }
-

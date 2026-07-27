@@ -68,7 +68,7 @@ export const AuditTable: React.FC<AuditTableProps> = ({ isLoading }) => {
         <tbody className="divide-y divide-[#D9D9D2]/20">
           {fields.map((field, index) => {
             const systemQty = Number(field.systemQty) || 0;
-            const physicalQty = Number(watchedItems[index]?.physicalQty) ?? 0;
+            const physicalQty = Number(watchedItems[index]?.physicalQty) || 0;
             const difference = physicalQty - systemQty;
             const itemError = errors.items?.[index]?.physicalQty;
 

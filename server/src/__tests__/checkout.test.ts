@@ -71,7 +71,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     cartItem: mockCartItem,
     user: mockUser,
     loyaltyConfig: mockLoyaltyConfig,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -95,7 +97,14 @@ const stripeMockInstance = new Stripe('mock_key') as any;
 
 describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y Confirmación de Orden (T-194)', () => {
   const dummyUser = { id: 1, email: 'client@example.com', isActive: true };
-  const dummyAddress = { id: 5, userId: 1, alias: 'Casa', fullAddress: 'Av Larco 123', district: 'Miraflores', reference: 'Frente al parque' };
+  const dummyAddress = {
+    id: 5,
+    userId: 1,
+    alias: 'Casa',
+    fullAddress: 'Av Larco 123',
+    district: 'Miraflores',
+    reference: 'Frente al parque',
+  };
   const dummyCart = {
     id: 2,
     userId: 1,
@@ -107,7 +116,7 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
         variant: {
           id: 20,
           sku: 'SKU-JEAN-M-BLUE',
-          price: 50.00,
+          price: 50.0,
         },
       },
     ],
@@ -115,17 +124,24 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
   const dummyDeliveryZone = {
     id: 1,
     districts: ['Miraflores', 'San Isidro'],
-    deliveryCost: 15.00,
+    deliveryCost: 15.0,
     estimatedDays: 2,
   };
-  const dummyBranch = { id: 1, name: 'Principal', isMain: true, isActive: true };
+  const dummyBranch = {
+    id: 1,
+    name: 'Principal',
+    isMain: true,
+    isActive: true,
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
     (prisma.user.findUnique as any).mockResolvedValue(dummyUser);
     (prisma.address.findUnique as any).mockResolvedValue(dummyAddress);
     (prisma.cart.findUnique as any).mockResolvedValue(dummyCart);
-    (prisma.deliveryZone.findMany as any).mockResolvedValue([dummyDeliveryZone]);
+    (prisma.deliveryZone.findMany as any).mockResolvedValue([
+      dummyDeliveryZone,
+    ]);
     (prisma.branch.findFirst as any).mockResolvedValue(dummyBranch);
     (prisma.loyaltyConfig.findFirst as any).mockResolvedValue(null);
   });
@@ -135,9 +151,7 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
       const res = await request(app)
         .post('/api/v1/checkout/payment-intent')
         .set('Authorization', 'Bearer mock-token')
-        .send({ cartId: 2, addressId: 5 })
-        ;
-
+        .send({ cartId: 2, addressId: 5 });
       expect(res.body.success).toBe(true);
       expect(res.body.data.clientSecret).toBe('pi_mock_123_secret_abc');
     });
@@ -154,7 +168,10 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
     });
 
     it('debe retornar 400 si el carrito no pertenece al usuario autenticado', async () => {
-      (prisma.cart.findUnique as any).mockResolvedValue({ ...dummyCart, userId: 99 });
+      (prisma.cart.findUnique as any).mockResolvedValue({
+        ...dummyCart,
+        userId: 99,
+      });
 
       const res = await request(app)
         .post('/api/v1/checkout/payment-intent')
@@ -194,9 +211,26 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
 
       // Mocks de BD para la transacción
       (prisma.order.findUnique as any).mockResolvedValue(null); // No existe orden anterior (idempotente as never)
-      (prisma.branchStock.findUnique as any).mockResolvedValue({ id: 1, variantId: 20, branchId: 1, quantity: 10 });
-      (prisma.kardexEntry.findFirst as any).mockResolvedValue({ id: 5, variantId: 20, branchId: 1, unitCost: 35.00, balanceQty: 10, balanceCost: 350.00 });
-      (prisma.order.create as any).mockResolvedValue({ id: 100, userId: 1, total: 115.00, paymentIntentId: 'pi_test_succeeded_999' });
+      (prisma.branchStock.findUnique as any).mockResolvedValue({
+        id: 1,
+        variantId: 20,
+        branchId: 1,
+        quantity: 10,
+      });
+      (prisma.kardexEntry.findFirst as any).mockResolvedValue({
+        id: 5,
+        variantId: 20,
+        branchId: 1,
+        unitCost: 35.0,
+        balanceQty: 10,
+        balanceCost: 350.0,
+      });
+      (prisma.order.create as any).mockResolvedValue({
+        id: 100,
+        userId: 1,
+        total: 115.0,
+        paymentIntentId: 'pi_test_succeeded_999',
+      });
 
       const res = await request(app)
         .post('/api/v1/checkout/webhook')
@@ -216,32 +250,36 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
           orderId: 100,
           variantId: 20,
           qty: 2,
-          unitPrice: 50.00,
-        }
+          unitPrice: 50.0,
+        },
       });
-      expect(prisma.branchStock.update).toHaveBeenCalledWith(expect.objectContaining({
-        where: {
-          variantId_branchId_status: {
+      expect(prisma.branchStock.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            variantId_branchId_status: {
+              variantId: 20,
+              branchId: 1,
+              status: 'AVAILABLE',
+            },
+          },
+          data: {
+            quantity: 8,
+          },
+        })
+      );
+      expect(prisma.kardexEntry.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
             variantId: 20,
             branchId: 1,
-            status: 'AVAILABLE',
-          },
-        },
-        data: {
-          quantity: 8,
-        },
-      }));
-      expect(prisma.kardexEntry.create).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({
-          variantId: 20,
-          branchId: 1,
-          type: 'VENTA',
-          quantity: 2,
-          unitCost: 35.00,
-          balanceQty: 8,
-          balanceCost: 280.00, // 350.00 - (2 * 35.00)
-        }),
-      }));
+            type: 'VENTA',
+            quantity: 2,
+            unitCost: 35.0,
+            balanceQty: 8,
+            balanceCost: 280.0, // 350.00 - (2 * 35.00)
+          }),
+        })
+      );
       expect(prisma.cartItem.deleteMany).toHaveBeenCalledWith({
         where: { cartId: 2 },
       });
@@ -265,16 +303,19 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
       mockStripeInstance.webhooks.constructEvent.mockReturnValue(mockEvent);
 
       // La orden ya existe
-      (prisma.order.findUnique as any).mockResolvedValue({ id: 100, paymentIntentId: 'pi_test_succeeded_already_exists' });
+      (prisma.order.findUnique as any).mockResolvedValue({
+        id: 100,
+        paymentIntentId: 'pi_test_succeeded_already_exists',
+      });
 
       const res = await request(app)
         .post('/api/v1/checkout/webhook')
         .set('stripe-signature', 't=123,v1=mock_signature')
         .set('Content-Type', 'application/json')
-        .send(Buffer.from(JSON.stringify(mockEvent)))
-        ;
-
-      console.log(res.body); expect(res.status).toBe(200); expect(res.body.received).toBe(true);
+        .send(Buffer.from(JSON.stringify(mockEvent)));
+      console.log(res.body);
+      expect(res.status).toBe(200);
+      expect(res.body.received).toBe(true);
       expect(res.body.processed).toBe(true);
       expect(res.body.orderId).toBe(100);
 
@@ -299,5 +340,3 @@ describe('Tests de Integración — HU-043: Procesamiento de Pago con Stripe y C
     });
   });
 });
-
-

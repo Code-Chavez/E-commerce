@@ -28,6 +28,7 @@ import { BlogPreviewModal } from './components/BlogPreviewModal';
 import type { BlogPost } from '@/shared/types/blog';
 
 // Mini editor menu bar
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const EditorMenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
 

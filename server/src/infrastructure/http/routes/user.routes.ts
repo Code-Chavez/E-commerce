@@ -12,7 +12,7 @@ const userController = new UserController();
 router.patch(
   '/users/:id/status',
   requirePermission('users:write'),
-  userController.updateStatus.bind(userController),
+  userController.updateStatus.bind(userController)
 );
 
 export default router;

@@ -47,15 +47,17 @@ describe('Admin Cross-Branch API (HU-057)', () => {
               variantId: 10,
               quantity: 2,
               unitPrice: 50,
-              variant: { sku: 'SKU10', product: { name: 'Product 10' } }
-            }
-          ]
+              variant: { sku: 'SKU10', product: { name: 'Product 10' } },
+            },
+          ],
         },
       ];
       (prisma.posOrder.findMany as any).mockResolvedValue(mockOrders);
       (prisma.auditLog.findMany as any).mockResolvedValue([]);
 
-      const response = await request(app).get('/api/v1/admin/cross-branch/pending');
+      const response = await request(app).get(
+        '/api/v1/admin/cross-branch/pending'
+      );
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -65,9 +67,13 @@ describe('Admin Cross-Branch API (HU-057)', () => {
     });
 
     it('should handle repository errors gracefully', async () => {
-      (prisma.posOrder.findMany as any).mockRejectedValue(new Error('Database error'));
+      (prisma.posOrder.findMany as any).mockRejectedValue(
+        new Error('Database error')
+      );
 
-      const response = await request(app).get('/api/v1/admin/cross-branch/pending');
+      const response = await request(app).get(
+        '/api/v1/admin/cross-branch/pending'
+      );
 
       // The Express error handler will convert unhandled generic errors to 500
       expect(response.status).toBe(500);

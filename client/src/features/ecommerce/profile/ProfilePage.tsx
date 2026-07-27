@@ -173,7 +173,7 @@ export const ProfilePage = () => {
               Contacto y Seguridad
             </h3>
             <p className="text-xs text-[#6B6B6B] mb-4">
-              Credenciales de acceso y contacto registradas en D'Mendoza.
+              Credenciales de acceso y contacto registradas en E-Commerce.
             </p>
             <div className={`h-[1px] mb-6 ${isAdmin ? 'bg-[#D9D9D2]/40' : 'bg-brand-primary/40'}`}></div>
 
@@ -227,7 +227,7 @@ export const ProfilePage = () => {
             <div className="pt-4">
               <h3 className="text-sm font-bold uppercase tracking-wider mb-1 text-brand-accent flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-yellow-500" />
-                Mis Puntos D'Mendoza
+                Mis Puntos E-Commerce
               </h3>
               <p className="text-xs text-[#6B6B6B] mb-4">
                 Puntos acumulados por tus compras. Úsalos como descuento en tu próximo pedido.
@@ -327,7 +327,7 @@ export const ProfilePage = () => {
                 Mi Perfil
               </h1>
               <p className="text-sm text-[#6B6B6B] mt-1 max-w-xl">
-                Administra tu información personal y foto de perfil dentro del portal administrativo de D'Mendoza.
+                Administra tu información personal y foto de perfil dentro del portal administrativo de E-Commerce.
               </p>
             </div>
             <button

@@ -35,24 +35,31 @@ export class GetDispatchEfficiencyUseCase {
     });
 
     const total = deliveries.length;
-    const deliveredList = deliveries.filter(d => d.status === 'DELIVERED' && d.deliveredAt);
-    const failedList = deliveries.filter(d => d.status === 'FAILED');
+    const deliveredList = deliveries.filter(
+      (d) => d.status === 'DELIVERED' && d.deliveredAt
+    );
+    const failedList = deliveries.filter((d) => d.status === 'FAILED');
 
     const minutesDiffs = deliveredList
-      .map(d => (d.deliveredAt!.getTime() - d.createdAt.getTime()) / 60000)
-      .filter(m => m > 0);
+      .map((d) => (d.deliveredAt!.getTime() - d.createdAt.getTime()) / 60000)
+      .filter((m) => m > 0);
 
     const avgDeliveryMinutes = minutesDiffs.length
-      ? Math.round(minutesDiffs.reduce((a, b) => a + b, 0) / minutesDiffs.length)
+      ? Math.round(
+          minutesDiffs.reduce((a, b) => a + b, 0) / minutesDiffs.length
+        )
       : null;
 
-    const driverMap = new Map<number, {
-      name: string;
-      total: number;
-      delivered: number;
-      failed: number;
-      minutes: number[];
-    }>();
+    const driverMap = new Map<
+      number,
+      {
+        name: string;
+        total: number;
+        delivered: number;
+        failed: number;
+        minutes: number[];
+      }
+    >();
 
     for (const d of deliveries) {
       if (!d.deliveryManId || !d.deliveryMan) continue;
@@ -60,8 +67,15 @@ export class GetDispatchEfficiencyUseCase {
       const id = d.deliveryManId;
       if (!driverMap.has(id)) {
         const fullName = [d.deliveryMan.name, (d.deliveryMan as any).lastName]
-          .filter(Boolean).join(' ');
-        driverMap.set(id, { name: fullName, total: 0, delivered: 0, failed: 0, minutes: [] });
+          .filter(Boolean)
+          .join(' ');
+        driverMap.set(id, {
+          name: fullName,
+          total: 0,
+          delivered: 0,
+          failed: 0,
+          minutes: [],
+        });
       }
 
       const entry = driverMap.get(id)!;
@@ -76,17 +90,20 @@ export class GetDispatchEfficiencyUseCase {
       }
     }
 
-    const byDriver: DriverStat[] = Array.from(driverMap.entries()).map(([deliveryManId, s]) => ({
-      deliveryManId,
-      name: s.name,
-      total: s.total,
-      delivered: s.delivered,
-      failed: s.failed,
-      successRate: s.total > 0 ? Math.round((s.delivered / s.total) * 100) : 0,
-      avgDeliveryMinutes: s.minutes.length
-        ? Math.round(s.minutes.reduce((a, b) => a + b, 0) / s.minutes.length)
-        : null,
-    })).sort((a, b) => b.successRate - a.successRate);
+    const byDriver: DriverStat[] = Array.from(driverMap.entries())
+      .map(([deliveryManId, s]) => ({
+        deliveryManId,
+        name: s.name,
+        total: s.total,
+        delivered: s.delivered,
+        failed: s.failed,
+        successRate:
+          s.total > 0 ? Math.round((s.delivered / s.total) * 100) : 0,
+        avgDeliveryMinutes: s.minutes.length
+          ? Math.round(s.minutes.reduce((a, b) => a + b, 0) / s.minutes.length)
+          : null,
+      }))
+      .sort((a, b) => b.successRate - a.successRate);
 
     return {
       from,
@@ -94,8 +111,10 @@ export class GetDispatchEfficiencyUseCase {
       totalDeliveries: total,
       delivered: deliveredList.length,
       failed: failedList.length,
-      successRate: total > 0 ? Math.round((deliveredList.length / total) * 100) : 0,
-      failureRate: total > 0 ? Math.round((failedList.length / total) * 100) : 0,
+      successRate:
+        total > 0 ? Math.round((deliveredList.length / total) * 100) : 0,
+      failureRate:
+        total > 0 ? Math.round((failedList.length / total) * 100) : 0,
       avgDeliveryMinutes,
       byDriver,
     };

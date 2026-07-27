@@ -3,25 +3,38 @@ import app from '../app';
 
 jest.mock('@application/use-cases/returns/CreateReturnRequestUseCase', () => ({
   CreateReturnRequestUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, orderId: 1, userId: 1, status: 'PENDING' } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      orderId: 1,
+      userId: 1,
+      status: 'PENDING',
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/returns/ApproveReturnRequestUseCase', () => ({
   ApproveReturnRequestUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, status: 'APPROVED', pickupOrderId: 99 } as never),
+    execute: jest.fn().mockResolvedValue({
+      id: 1,
+      status: 'APPROVED',
+      pickupOrderId: 99,
+    } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/returns/RejectReturnRequestUseCase', () => ({
   RejectReturnRequestUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, status: 'REJECTED' } as never),
+    execute: jest
+      .fn()
+      .mockResolvedValue({ id: 1, status: 'REJECTED' } as never),
   })),
 }));
 
 jest.mock('@application/use-cases/returns/IssueCreditNoteUseCase', () => ({
   IssueCreditNoteUseCase: jest.fn().mockImplementation(() => ({
-    execute: jest.fn().mockResolvedValue({ id: 1, code: 'CN-001', amount: 100 } as never),
+    execute: jest
+      .fn()
+      .mockResolvedValue({ id: 1, code: 'CN-001', amount: 100 } as never),
   })),
 }));
 
@@ -54,7 +67,7 @@ describe('Returns API (HU-031 / HU-032)', () => {
           orderId: 1,
           reason: 'Defective product',
           refundType: 'STORE_CREDIT',
-          items: [{ orderItemId: 1, qty: 1 }]
+          items: [{ orderItemId: 1, qty: 1 }],
         });
 
       expect([200, 201]).toContain(response.status);
@@ -88,5 +101,3 @@ describe('Returns API (HU-031 / HU-032)', () => {
     });
   });
 });
-
-

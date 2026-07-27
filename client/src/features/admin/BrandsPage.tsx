@@ -128,7 +128,7 @@ const BrandsPage: React.FC = () => {
             Marcas Comerciales
           </h1>
           <p className="text-sm text-[#6B6B6B] mt-1 max-w-2xl">
-            Gestiona los sellos y marcas comerciales vinculados al catálogo de prendas y productos de D'Mendoza.
+            Gestiona los sellos y marcas comerciales vinculados al catálogo de prendas y productos de E-Commerce.
           </p>
         </div>
 
@@ -288,7 +288,7 @@ const BrandsPage: React.FC = () => {
                 <input
                   className="w-full px-4 py-2.5 rounded-xl border border-[#D9D9D2]/70 bg-[#FAFAFA] text-sm text-[#3F3F3F] placeholder-[#6B6B6B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F3F3F]/20 focus:border-[#3F3F3F] transition-all"
                   value={form.name}
-                  placeholder="Ej. D'Mendoza Premium"
+                  placeholder="Ej. E-Commerce Premium"
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   required
                 />

@@ -30,7 +30,9 @@ const linkClientUseCase = new LinkClientUseCase(
 );
 const bulkLinkClientsUseCase = new BulkLinkClientsUseCase(linkClientUseCase);
 const getUnifiedClientsUseCase = new GetUnifiedClientsUseCase(clientRepository);
-const getClientCommunicationsUseCase = new GetClientCommunicationsUseCase(new PrismaCommunicationLogRepository());
+const getClientCommunicationsUseCase = new GetClientCommunicationsUseCase(
+  new PrismaCommunicationLogRepository()
+);
 
 const LinkClientSchema = z.object({
   email: z.string().email('Email inválido').optional(),
@@ -42,47 +44,54 @@ const BulkLinkSchema = z.object({
 });
 
 const GetUnifiedClientsQuerySchema = z.object({
-  page: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().default(1)),
-  limit: z.preprocess((val) => (val ? Number(val) : undefined), z.number().int().positive().default(10)),
+  page: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().default(1)
+  ),
+  limit: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().int().positive().default(10)
+  ),
   type: z.enum(['POS', 'ECOMMERCE', 'ALL']).default('ALL'),
   search: z.string().optional(),
 });
 
-const UpdateClientSchema = z.object({
-  email: z.string().email('Email inválido').nullable().optional(),
-  name: z.string().min(1, 'El nombre es requerido'),
-  lastName: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
-  documentType: z.string().nullable().optional(),
-  documentId: z.string().nullable().optional(),
-  address: z.string().nullable().optional(),
-  department: z.string().nullable().optional(),
-  province: z.string().nullable().optional(),
-  district: z.string().nullable().optional(),
-  ubigeo: z.string().nullable().optional(),
-}).superRefine((val, ctx) => {
-  if (val.documentType === 'DNI' && val.documentId) {
-    const parsed = dniSchema.safeParse(val.documentId);
-    if (!parsed.success) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: parsed.error.issues[0]?.message || 'DNI Inválido',
-        path: ['documentId'],
-      });
+const UpdateClientSchema = z
+  .object({
+    email: z.string().email('Email inválido').nullable().optional(),
+    name: z.string().min(1, 'El nombre es requerido'),
+    lastName: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
+    documentType: z.string().nullable().optional(),
+    documentId: z.string().nullable().optional(),
+    address: z.string().nullable().optional(),
+    department: z.string().nullable().optional(),
+    province: z.string().nullable().optional(),
+    district: z.string().nullable().optional(),
+    ubigeo: z.string().nullable().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.documentType === 'DNI' && val.documentId) {
+      const parsed = dniSchema.safeParse(val.documentId);
+      if (!parsed.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: parsed.error.issues[0]?.message || 'DNI Inválido',
+          path: ['documentId'],
+        });
+      }
     }
-  }
-  if (val.documentType === 'RUC' && val.documentId) {
-    const parsed = rucSchema.safeParse(val.documentId);
-    if (!parsed.success) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: parsed.error.issues[0]?.message || 'RUC Inválido',
-        path: ['documentId'],
-      });
+    if (val.documentType === 'RUC' && val.documentId) {
+      const parsed = rucSchema.safeParse(val.documentId);
+      if (!parsed.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: parsed.error.issues[0]?.message || 'RUC Inválido',
+          path: ['documentId'],
+        });
+      }
     }
-  }
-});
-
+  });
 
 export class ClientController {
   /**
@@ -105,15 +114,22 @@ export class ClientController {
     try {
       const clientId = parseInt(String(req.params.id), 10);
       if (isNaN(clientId)) {
-        return res.status(400).json({ success: false, error: 'ID de cliente inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de cliente inválido' });
       }
 
       const validation = LinkClientSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
-      const result = await linkClientUseCase.execute(clientId, validation.data.email);
+      const result = await linkClientUseCase.execute(
+        clientId,
+        validation.data.email
+      );
       return res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -127,17 +143,25 @@ export class ClientController {
     try {
       const validation = BulkLinkSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ success: false, error: validation.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: validation.error.issues });
       }
 
       // Convert string keys from JSON to number keys expected by the use case
       const emails = validation.data.emails
-        ? Object.fromEntries(
-            Object.entries(validation.data.emails).map(([k, v]) => [Number(k), v])
-          ) as Record<number, string>
+        ? (Object.fromEntries(
+            Object.entries(validation.data.emails).map(([k, v]) => [
+              Number(k),
+              v,
+            ])
+          ) as Record<number, string>)
         : undefined;
 
-      const report = await bulkLinkClientsUseCase.execute(validation.data.ids, emails);
+      const report = await bulkLinkClientsUseCase.execute(
+        validation.data.ids,
+        emails
+      );
       return res.status(200).json({ success: true, data: report });
     } catch (error) {
       next(error);
@@ -181,7 +205,9 @@ export class ClientController {
     try {
       const clientId = parseInt(String(req.params.id), 10);
       if (isNaN(clientId)) {
-        return res.status(400).json({ success: false, error: 'ID de cliente inválido' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'ID de cliente inválido' });
       }
 
       const validation = UpdateClientSchema.safeParse(req.body);
@@ -195,16 +221,26 @@ export class ClientController {
 
       const existing = await clientRepository.findById(clientId);
       if (!existing) {
-        return res.status(404).json({ success: false, error: 'Cliente no encontrado' });
+        return res
+          .status(404)
+          .json({ success: false, error: 'Cliente no encontrado' });
       }
 
       // If email is changing, verify it is not already used by another client
       if (validation.data.email && validation.data.email !== existing.email) {
-        const emailExists = await clientRepository.findByEmail(validation.data.email);
+        const emailExists = await clientRepository.findByEmail(
+          validation.data.email
+        );
         if (emailExists && emailExists.id !== clientId) {
           return res.status(400).json({
             success: false,
-            error: [{ field: 'email', message: 'El correo electrónico ya está registrado por otro cliente' }],
+            error: [
+              {
+                field: 'email',
+                message:
+                  'El correo electrónico ya está registrado por otro cliente',
+              },
+            ],
           });
         }
       }
@@ -220,7 +256,11 @@ export class ClientController {
    * GET /api/v1/admin/clients/:id/communications
    * HU-089: Get client's communication history
    */
-  async getClientCommunications(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getClientCommunications(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const clientId = Number(req.params.id);
       if (isNaN(clientId)) {
@@ -235,5 +275,3 @@ export class ClientController {
     }
   }
 }
-
-

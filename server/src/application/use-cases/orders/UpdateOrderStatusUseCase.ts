@@ -32,14 +32,20 @@ export class UpdateOrderStatusUseCase {
     }
 
     // 2. Update the status
-    const updatedOrder = await this.orderRepository.updateStatus(orderId, status);
+    const updatedOrder = await this.orderRepository.updateStatus(
+      orderId,
+      status
+    );
 
     // 2.5 Auto-generate picking list if status is PAID
     if (status === 'PAID' && this.generatePickingListUseCase) {
       try {
         await this.generatePickingListUseCase.execute([orderId]);
       } catch (pickingError) {
-        console.error(`Failed to automatically generate picking list for order #${orderId}:`, pickingError);
+        console.error(
+          `Failed to automatically generate picking list for order #${orderId}:`,
+          pickingError
+        );
       }
     }
 
@@ -49,7 +55,7 @@ export class UpdateOrderStatusUseCase {
       const statusNameEs = STATUS_TRANSLATIONS[status] || status;
       const userName = user.name || 'Cliente';
 
-      const emailSubject = `Actualización de tu Pedido #${order.id} — D'Mendoza`;
+      const emailSubject = `Actualización de tu Pedido #${order.id} — E-Commerce`;
       const emailHtml = `
 <!DOCTYPE html>
 <html lang="es">
@@ -80,7 +86,7 @@ export class UpdateOrderStatusUseCase {
       </div>
       
       <p style="color: #888; font-size: 12px; border-top: 1px solid #eeeeee; padding-top: 20px; margin-top: 32px; text-align: center;">
-        Este es un correo automático enviado por D'Mendoza S.A.C. Por favor no respondas a este mensaje.
+        Este es un correo automático enviado por E-Commerce S.A.C. Por favor no respondas a este mensaje.
       </p>
     </div>
   </body>
@@ -88,10 +94,17 @@ export class UpdateOrderStatusUseCase {
       `;
 
       try {
-        await this.emailService.sendEmail(user.email, emailSubject, emailHtml.trim());
+        await this.emailService.sendEmail(
+          user.email,
+          emailSubject,
+          emailHtml.trim()
+        );
       } catch (emailError) {
         // We log email failures but don't crash the operation to maintain robust API response
-        console.error(`Failed to send order status email notification for order #${order.id}:`, emailError);
+        console.error(
+          `Failed to send order status email notification for order #${order.id}:`,
+          emailError
+        );
       }
 
       // 4. Send WhatsApp Notification if applicable and phone exists
@@ -106,7 +119,10 @@ export class UpdateOrderStatusUseCase {
             }
           );
         } catch (whatsappError) {
-          console.error(`Failed to send order status WhatsApp notification for order #${order.id}:`, whatsappError);
+          console.error(
+            `Failed to send order status WhatsApp notification for order #${order.id}:`,
+            whatsappError
+          );
         }
       }
     }

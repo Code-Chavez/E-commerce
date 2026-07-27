@@ -8,7 +8,10 @@ export class GetOrderReceiptPdfUseCase {
     private readonly receiptPdfService: IReceiptPdfService
   ) {}
 
-  async execute(userId: number, orderId: number): Promise<NodeJS.ReadableStream> {
+  async execute(
+    userId: number,
+    orderId: number
+  ): Promise<NodeJS.ReadableStream> {
     // 1. Obtener la orden por ID
     const order = await this.orderRepository.findById(orderId);
     if (!order) {

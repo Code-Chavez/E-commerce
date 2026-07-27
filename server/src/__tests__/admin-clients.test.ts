@@ -17,15 +17,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     client: mockClient,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -36,7 +38,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -47,15 +49,12 @@ import prisma from '@infrastructure/database/prisma';
 describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Clientes (T-205)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {
         name: 'ADMIN',
-        permissions: [
-          { name: 'users:read' },
-          { name: 'users:write' },
-        ],
+        permissions: [{ name: 'users:read' }, { name: 'users:write' }],
       },
     ],
   };
@@ -174,10 +173,7 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
           where: {
             AND: [
               {
-                OR: [
-                  { userId: null },
-                  { user: { isActive: false } },
-                ],
+                OR: [{ userId: null }, { user: { isActive: false } }],
               },
             ],
           },
@@ -233,7 +229,9 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
 
       expect(response.status).toBe(403);
       expect(response.body).toHaveProperty('success', false);
-      expect(response.body.error).toContain("Acceso denegado: Se requiere el permiso 'users:read'");
+      expect(response.body.error).toContain(
+        "Acceso denegado: Se requiere el permiso 'users:read'"
+      );
     });
 
     it('debería retornar HTTP 400 si se envía un valor inválido en el parámetro type', async () => {
@@ -265,8 +263,12 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
       (prisma.client.findUnique as any)
         .mockResolvedValueOnce(dummyClient) // findById
         .mockResolvedValueOnce(null); // findByEmail conflict check
-      
-      const updatedClient = { ...dummyClient, name: 'Juan Carlos', email: 'juancarlos@example.com' };
+
+      const updatedClient = {
+        ...dummyClient,
+        name: 'Juan Carlos',
+        email: 'juancarlos@example.com',
+      };
       (prisma.client.update as any).mockResolvedValue(updatedClient);
 
       const response = await request(app)
@@ -318,7 +320,9 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.error[0].field).toBe('email');
-      expect(response.body.error[0].message).toContain('ya está registrado por otro cliente');
+      expect(response.body.error[0].message).toContain(
+        'ya está registrado por otro cliente'
+      );
     });
 
     it('debería denegar acceso con HTTP 403 si el usuario carece del permiso users:write', async () => {
@@ -329,9 +333,7 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
         roles: [
           {
             name: 'CLIENT',
-            permissions: [
-              { name: 'users:read' }
-            ],
+            permissions: [{ name: 'users:read' }],
           },
         ],
       };
@@ -346,7 +348,9 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
 
       expect(response.status).toBe(403);
       expect(response.body.success).toBe(false);
-      expect(response.body.error).toContain("Acceso denegado: Se requiere el permiso 'users:write'");
+      expect(response.body.error).toContain(
+        "Acceso denegado: Se requiere el permiso 'users:write'"
+      );
     });
 
     it('debería retornar HTTP 400 si se envía un body inválido', async () => {
@@ -360,10 +364,12 @@ describe('Tests de Integración — HU-052: Gestión Unificada de la Base de Cli
 
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.error.some((err: any) => err.field === 'name')).toBe(true);
-      expect(response.body.error.some((err: any) => err.field === 'email')).toBe(true);
+      expect(response.body.error.some((err: any) => err.field === 'name')).toBe(
+        true
+      );
+      expect(
+        response.body.error.some((err: any) => err.field === 'email')
+      ).toBe(true);
     });
   });
 });
-
-

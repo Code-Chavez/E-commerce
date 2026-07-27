@@ -36,7 +36,9 @@ describe('Role API (HU-049)', () => {
 
   describe('GET /api/v1/roles', () => {
     it('should list all roles', async () => {
-      const mockRoles = [{ id: 1, name: 'ADMIN', description: 'Administrator' }];
+      const mockRoles = [
+        { id: 1, name: 'ADMIN', description: 'Administrator' },
+      ];
       (prisma.role.findMany as any).mockResolvedValue(mockRoles);
 
       const response = await request(app).get('/api/v1/roles');
@@ -63,7 +65,10 @@ describe('Role API (HU-049)', () => {
     });
 
     it('should fail if role already exists', async () => {
-      (prisma.role.findUnique as any).mockResolvedValue({ id: 1, name: 'ADMIN' });
+      (prisma.role.findUnique as any).mockResolvedValue({
+        id: 1,
+        name: 'ADMIN',
+      });
 
       const response = await request(app)
         .post('/api/v1/roles')
@@ -76,8 +81,14 @@ describe('Role API (HU-049)', () => {
 
   describe('PUT /api/v1/users/:id/role', () => {
     it('should assign a role to a user', async () => {
-      (prisma.user.findUnique as any).mockResolvedValue({ id: 2, email: 'user@example.com' });
-      (prisma.role.findUnique as any).mockResolvedValue({ id: 3, name: 'VENDEDOR' });
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: 2,
+        email: 'user@example.com',
+      });
+      (prisma.role.findUnique as any).mockResolvedValue({
+        id: 3,
+        name: 'VENDEDOR',
+      });
       (prisma.user.update as any).mockResolvedValue({});
 
       const response = await request(app)

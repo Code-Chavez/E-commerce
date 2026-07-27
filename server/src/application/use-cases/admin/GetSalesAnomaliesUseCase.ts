@@ -28,7 +28,7 @@ export class GetSalesAnomaliesUseCase {
       orderBy: [{ isActive: 'desc' }, { date: 'desc' }],
     });
 
-    return anomalies.map(a => ({
+    return anomalies.map((a) => ({
       id: a.id,
       branchId: a.branchId,
       branchName: a.branch.name,

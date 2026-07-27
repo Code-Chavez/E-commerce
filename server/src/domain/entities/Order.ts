@@ -1,4 +1,11 @@
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'FAILED' | 'RETURNED';
+export type OrderStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'CANCELLED'
+  | 'FAILED'
+  | 'RETURNED';
 
 export type RefundStatus = 'NONE' | 'PENDING' | 'PROCESSED';
 
@@ -56,4 +63,3 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
 }
-

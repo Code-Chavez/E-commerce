@@ -4,7 +4,7 @@ import { useReconciliation } from './hooks/useReconciliation';
 import { RefreshCw, Search, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 export const ReconcilePage: React.FC = () => {
-  useDocumentTitle('Conciliación - D\'Mendoza');
+  useDocumentTitle('Conciliación - E-Commerce');
   
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');

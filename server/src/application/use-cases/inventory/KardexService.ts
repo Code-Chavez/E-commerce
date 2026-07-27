@@ -18,7 +18,9 @@ export class KardexService {
     costoEntrada: number
   ): Promise<number> {
     const stock = await prisma.branchStock.findUnique({
-      where: { variantId_branchId_status: { variantId, branchId, status: 'AVAILABLE' } },
+      where: {
+        variantId_branchId_status: { variantId, branchId, status: 'AVAILABLE' },
+      },
     });
 
     const lastEntry = await prisma.kardexEntry.findFirst({
@@ -31,8 +33,9 @@ export class KardexService {
 
     if (stockActual <= 0) return costoEntrada;
 
-    const cpp = (stockActual * costoActual + cantidadEntrada * costoEntrada)
-      / (stockActual + cantidadEntrada);
+    const cpp =
+      (stockActual * costoActual + cantidadEntrada * costoEntrada) /
+      (stockActual + cantidadEntrada);
 
     return Math.round(cpp * 100) / 100;
   }
@@ -41,7 +44,9 @@ export class KardexService {
   private async resolveStrategy(): Promise<IKardexCostStrategy> {
     const settingsRepo = new PrismaInventorySettingsRepository();
     const settings = await settingsRepo.get();
-    return settings.valuationMethod === 'PEPS' ? new PepsStrategy() : new PromedioStrategy();
+    return settings.valuationMethod === 'PEPS'
+      ? new PepsStrategy()
+      : new PromedioStrategy();
   }
 
   /**
@@ -63,10 +68,21 @@ export class KardexService {
 
     const userId = args.userId ?? requestContext.getStore()?.userId ?? null;
 
-    await prisma.$transaction(async tx => {
+    await prisma.$transaction(async (tx) => {
       const stock = await tx.branchStock.upsert({
-        where: { variantId_branchId_status: { variantId: args.variantId, branchId: args.branchId, status: 'AVAILABLE' } },
-        create: { variantId: args.variantId, branchId: args.branchId, quantity: args.quantity, status: 'AVAILABLE' },
+        where: {
+          variantId_branchId_status: {
+            variantId: args.variantId,
+            branchId: args.branchId,
+            status: 'AVAILABLE',
+          },
+        },
+        create: {
+          variantId: args.variantId,
+          branchId: args.branchId,
+          quantity: args.quantity,
+          status: 'AVAILABLE',
+        },
         update: { quantity: { increment: args.quantity } },
       });
 
@@ -101,9 +117,15 @@ export class KardexService {
   }): Promise<void> {
     const userId = args.userId ?? requestContext.getStore()?.userId ?? null;
 
-    await prisma.$transaction(async tx => {
+    await prisma.$transaction(async (tx) => {
       const stock = await tx.branchStock.findUnique({
-        where: { variantId_branchId_status: { variantId: args.variantId, branchId: args.branchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId: args.variantId,
+            branchId: args.branchId,
+            status: 'AVAILABLE',
+          },
+        },
       });
 
       if (!stock || stock.quantity < args.quantity) {
@@ -126,7 +148,13 @@ export class KardexService {
       const newQty = stock.quantity - args.quantity;
 
       await tx.branchStock.update({
-        where: { variantId_branchId_status: { variantId: args.variantId, branchId: args.branchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId: args.variantId,
+            branchId: args.branchId,
+            status: 'AVAILABLE',
+          },
+        },
         data: { quantity: newQty },
       });
 

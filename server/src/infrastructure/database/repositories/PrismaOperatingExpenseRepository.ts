@@ -1,6 +1,10 @@
 import prisma from '@infrastructure/database/prisma';
 import { IOperatingExpenseRepository } from '@domain/repositories/IOperatingExpenseRepository';
-import { OperatingExpense, CreateOperatingExpenseDTO, UpdateOperatingExpenseDTO } from '@domain/entities/OperatingExpense';
+import {
+  OperatingExpense,
+  CreateOperatingExpenseDTO,
+  UpdateOperatingExpenseDTO,
+} from '@domain/entities/OperatingExpense';
 
 export class PrismaOperatingExpenseRepository implements IOperatingExpenseRepository {
   private toDomain(record: any): OperatingExpense {
@@ -38,7 +42,11 @@ export class PrismaOperatingExpenseRepository implements IOperatingExpenseReposi
     return record ? this.toDomain(record) : null;
   }
 
-  async findAll(filters: { branchId?: number; from?: Date; to?: Date }): Promise<OperatingExpense[]> {
+  async findAll(filters: {
+    branchId?: number;
+    from?: Date;
+    to?: Date;
+  }): Promise<OperatingExpense[]> {
     const where: any = {};
     if (filters.branchId) {
       where.branchId = filters.branchId;
@@ -60,7 +68,10 @@ export class PrismaOperatingExpenseRepository implements IOperatingExpenseReposi
     return records.map((r) => this.toDomain(r));
   }
 
-  async update(id: number, data: UpdateOperatingExpenseDTO): Promise<OperatingExpense> {
+  async update(
+    id: number,
+    data: UpdateOperatingExpenseDTO
+  ): Promise<OperatingExpense> {
     const record = await prisma.operatingExpense.update({
       where: { id },
       data: {

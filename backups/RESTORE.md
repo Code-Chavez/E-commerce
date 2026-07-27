@@ -1,4 +1,4 @@
-# Procedimiento de Restauración de Base de Datos — D'Mendoza
+# Procedimiento de Restauración de Base de Datos — E-Commerce
 
 Este documento describe el proceso exacto y probado para restaurar la base de datos MariaDB desde un archivo de respaldo generado por el servicio `db-backup`.
 
@@ -98,4 +98,4 @@ docker compose restart server
 
 ## 7. Contacto en caso de Fallo
 
-Si el backup falla, el sistema enviará automáticamente un correo de alerta al email configurado en `adminEmail` (configurable via `PUT /api/v1/admin/backup-config`). Por defecto: `admin@dmendoza.com`.
+Si el backup falla, el sistema enviará automáticamente un correo de alerta al email configurado en `adminEmail` (configurable via `PUT /api/v1/admin/backup-config`). Por defecto: `admin@e-commerce.com`.

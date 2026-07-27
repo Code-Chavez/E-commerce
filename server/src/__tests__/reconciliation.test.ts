@@ -26,15 +26,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     order: mockOrder,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -45,7 +47,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -56,14 +58,12 @@ import prisma from '@infrastructure/database/prisma';
 describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-209)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {
         name: 'ADMIN',
-        permissions: [
-          { name: 'roles:manage' },
-        ],
+        permissions: [{ name: 'roles:manage' }],
       },
     ],
   };
@@ -72,28 +72,28 @@ describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-20
     {
       id: 101,
       paymentIntentId: 'pi_matched_1',
-      total: 150.00,
+      total: 150.0,
       status: 'PAID',
       createdAt: new Date('2026-06-25T10:00:00Z'),
     },
     {
       id: 102,
       paymentIntentId: 'pi_mismatch_2',
-      total: 195.00, // DB order total: 195.00, Stripe total will be 200.00
+      total: 195.0, // DB order total: 195.00, Stripe total will be 200.00
       status: 'PAID',
       createdAt: new Date('2026-06-25T11:00:00Z'),
     },
     {
       id: 103,
       paymentIntentId: 'pi_db_only_4',
-      total: 80.00, // Exists in DB but not in Stripe list
+      total: 80.0, // Exists in DB but not in Stripe list
       status: 'PAID',
       createdAt: new Date('2026-06-25T12:00:00Z'),
     },
     {
       id: 104,
       paymentIntentId: 'pi_db_only_cancelled',
-      total: 60.00, // Exists in DB but not in Stripe, and is CANCELLED (should be ignored from dbOnly discrepancies)
+      total: 60.0, // Exists in DB but not in Stripe, and is CANCELLED (should be ignored from dbOnly discrepancies)
       status: 'CANCELLED',
       createdAt: new Date('2026-06-25T13:00:00Z'),
     },
@@ -143,7 +143,10 @@ describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-20
         return {
           next: () => {
             if (index < mockStripeIntents.length) {
-              return Promise.resolve({ value: mockStripeIntents[index++], done: false });
+              return Promise.resolve({
+                value: mockStripeIntents[index++],
+                done: false,
+              });
             } else {
               return Promise.resolve({ value: undefined, done: true });
             }
@@ -172,22 +175,22 @@ describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-20
     expect(matched).toContainEqual({
       stripePaymentIntentId: 'pi_matched_1',
       orderId: 101,
-      stripeAmount: 150.00,
-      orderAmount: 150.00,
+      stripeAmount: 150.0,
+      orderAmount: 150.0,
       status: 'MATCHED',
     });
     expect(matched).toContainEqual({
       stripePaymentIntentId: 'pi_mismatch_2',
       orderId: 102,
-      stripeAmount: 200.00,
-      orderAmount: 195.00,
+      stripeAmount: 200.0,
+      orderAmount: 195.0,
       status: 'AMOUNT_MISMATCH',
     });
 
     // Unmatched: Stripe Only (succeeded only)
     expect(unmatched.stripeOnly.length).toBe(1);
     expect(unmatched.stripeOnly[0].id).toBe('pi_stripe_only_3');
-    expect(unmatched.stripeOnly[0].amount).toBe(50.00);
+    expect(unmatched.stripeOnly[0].amount).toBe(50.0);
 
     // Unmatched: DB Only (PAID, SHIPPED, DELIVERED only)
     expect(unmatched.dbOnly.length).toBe(1);
@@ -226,7 +229,7 @@ describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-20
   it('debería denegar acceso con HTTP 403 si el usuario carece del permiso roles:manage', async () => {
     const dummySellerUser = {
       id: 2,
-      email: 'seller@dmendoza.com',
+      email: 'seller@e-commerce.com',
       isActive: true,
       roles: [
         {
@@ -250,5 +253,3 @@ describe('Tests de Integración — HU-073: Conciliación de Transacciones (T-20
     expect(response.body.error).toContain('roles:manage');
   });
 });
-
-

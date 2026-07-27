@@ -8,7 +8,7 @@ import { useFinancialDashboard } from './hooks/useFinancialDashboard';
 import { Landmark, Loader2 } from 'lucide-react';
 
 export const FinancialDashboardPage: React.FC = () => {
-  useDocumentTitle('Dashboard Financiero - D\'Mendoza');
+  useDocumentTitle('Dashboard Financiero - E-Commerce');
 
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');

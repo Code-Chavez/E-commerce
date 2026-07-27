@@ -5,7 +5,9 @@ export class PrismaAttributeRepository {
   async findAll(): Promise<Attribute[]> {
     return prisma.attribute.findMany({
       where: { isActive: true },
-      include: { values: { where: { isActive: true }, orderBy: { value: 'asc' } } },
+      include: {
+        values: { where: { isActive: true }, orderBy: { value: 'asc' } },
+      },
       orderBy: { name: 'asc' },
     }) as Promise<Attribute[]>;
   }
@@ -18,11 +20,20 @@ export class PrismaAttributeRepository {
   }
 
   async create(name: string, isVisualDriver?: boolean): Promise<Attribute> {
-    return prisma.attribute.create({ data: { name, isVisualDriver: isVisualDriver ?? false } }) as Promise<Attribute>;
+    return prisma.attribute.create({
+      data: { name, isVisualDriver: isVisualDriver ?? false },
+    }) as Promise<Attribute>;
   }
 
-  async update(id: number, name: string, isVisualDriver?: boolean): Promise<Attribute> {
-    return prisma.attribute.update({ where: { id }, data: { name, isVisualDriver } }) as Promise<Attribute>;
+  async update(
+    id: number,
+    name: string,
+    isVisualDriver?: boolean
+  ): Promise<Attribute> {
+    return prisma.attribute.update({
+      where: { id },
+      data: { name, isVisualDriver },
+    }) as Promise<Attribute>;
   }
 
   async deactivate(id: number): Promise<void> {
@@ -30,10 +41,15 @@ export class PrismaAttributeRepository {
   }
 
   async addValue(attributeId: number, value: string): Promise<AttributeValue> {
-    return prisma.attributeValue.create({ data: { attributeId, value } }) as Promise<AttributeValue>;
+    return prisma.attributeValue.create({
+      data: { attributeId, value },
+    }) as Promise<AttributeValue>;
   }
 
   async deactivateValue(valueId: number): Promise<void> {
-    await prisma.attributeValue.update({ where: { id: valueId }, data: { isActive: false } });
+    await prisma.attributeValue.update({
+      where: { id: valueId },
+      data: { isActive: false },
+    });
   }
 }

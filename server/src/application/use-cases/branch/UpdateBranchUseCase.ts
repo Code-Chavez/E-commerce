@@ -1,11 +1,17 @@
 import { IBranchRepository } from '@domain/repositories/IBranchRepository';
 import { Branch } from '@domain/entities/Branch';
-import { UpdateBranchRequestDTO, BranchResponseDTO } from '../../dtos/BranchDTOs';
+import {
+  UpdateBranchRequestDTO,
+  BranchResponseDTO,
+} from '../../dtos/BranchDTOs';
 
 export class UpdateBranchUseCase {
   constructor(private readonly branchRepository: IBranchRepository) {}
 
-  async execute(id: number, dto: UpdateBranchRequestDTO): Promise<BranchResponseDTO> {
+  async execute(
+    id: number,
+    dto: UpdateBranchRequestDTO
+  ): Promise<BranchResponseDTO> {
     const branch = await this.branchRepository.findById(id);
     if (!branch) {
       throw new Error('La sucursal no existe');
@@ -35,10 +41,12 @@ export class UpdateBranchUseCase {
       isActive: branch.isActive,
       isMain: branch.isMain,
       igvExempt: branch.igvExempt,
-      warehouse: branch.warehouse ? {
-        id: branch.warehouse.id,
-        createdAt: branch.warehouse.createdAt,
-      } : null,
+      warehouse: branch.warehouse
+        ? {
+            id: branch.warehouse.id,
+            createdAt: branch.warehouse.createdAt,
+          }
+        : null,
       createdAt: branch.createdAt,
       updatedAt: branch.updatedAt,
     };

@@ -1,5 +1,12 @@
-import { IProductRepository, IProductVariantRepository } from '@domain/repositories/IProductVariantRepository';
-import { CreateVariantsRequestDTO, ProductWithVariantsResponseDTO, VariantResponseDTO } from '../../dtos/ProductVariantDTOs';
+import {
+  IProductRepository,
+  IProductVariantRepository,
+} from '@domain/repositories/IProductVariantRepository';
+import {
+  CreateVariantsRequestDTO,
+  ProductWithVariantsResponseDTO,
+  VariantResponseDTO,
+} from '../../dtos/ProductVariantDTOs';
 import { ProductVariant } from '@domain/entities/ProductVariant';
 import prisma from '@infrastructure/database/prisma';
 
@@ -17,10 +24,13 @@ import prisma from '@infrastructure/database/prisma';
 export class CreateVariantsUseCase {
   constructor(
     private readonly productRepository: IProductRepository,
-    private readonly variantRepository: IProductVariantRepository,
+    private readonly variantRepository: IProductVariantRepository
   ) {}
 
-  async execute(productId: number, dto: CreateVariantsRequestDTO): Promise<ProductWithVariantsResponseDTO> {
+  async execute(
+    productId: number,
+    dto: CreateVariantsRequestDTO
+  ): Promise<ProductWithVariantsResponseDTO> {
     // 1. Verificar que el producto existe
     const product = await this.productRepository.findById(productId);
     if (!product) {
@@ -30,7 +40,9 @@ export class CreateVariantsUseCase {
     // 2. Validar que hay al menos un atributo con al menos un valor
     const attributeKeys = Object.keys(dto.attributes);
     if (attributeKeys.length === 0) {
-      throw new Error('Debes proporcionar al menos un atributo para generar variantes');
+      throw new Error(
+        'Debes proporcionar al menos un atributo para generar variantes'
+      );
     }
     for (const key of attributeKeys) {
       if (!dto.attributes[key] || dto.attributes[key].length === 0) {
@@ -50,7 +62,9 @@ export class CreateVariantsUseCase {
     // 4. Construir datos de variantes con SKU auto-generado
     const variantsData = combinations.map((attrs) => {
       // SKU: CODIGO_PRODUCTO-VALOR_ATTR1-VALOR_ATTR2... (en mayúsculas, sin espacios)
-      const attrValues = attributeKeys.map((k) => attrs[k].toUpperCase().replace(/\s+/g, '_'));
+      const attrValues = attributeKeys.map((k) =>
+        attrs[k].toUpperCase().replace(/\s+/g, '_')
+      );
       const sku = [product.code.toUpperCase(), ...attrValues].join('-');
 
       // Build enriched attributesJson: {"attributeId": { name, valueId, value }}
@@ -87,7 +101,8 @@ export class CreateVariantsUseCase {
     });
 
     // 5. Verificar que no haya SKUs duplicados con variantes ya existentes
-    const existingVariants = await this.variantRepository.findByProductId(productId);
+    const existingVariants =
+      await this.variantRepository.findByProductId(productId);
     const existingSkus = new Set(existingVariants.map((v) => v.sku));
     const duplicatedSkus = variantsData.filter((v) => existingSkus.has(v.sku));
     if (duplicatedSkus.length > 0) {
@@ -97,10 +112,14 @@ export class CreateVariantsUseCase {
     }
 
     // 6. Crear todas las variantes en la BD
-    const createdVariants = await this.variantRepository.createMany(variantsData);
+    const createdVariants =
+      await this.variantRepository.createMany(variantsData);
 
     // 7. Retornar DTO de producto con variantes
-    return this.mapToProductDTO(product, [...existingVariants, ...createdVariants]);
+    return this.mapToProductDTO(product, [
+      ...existingVariants,
+      ...createdVariants,
+    ]);
   }
 
   /**
@@ -109,7 +128,9 @@ export class CreateVariantsUseCase {
    *   → [{ talla:"S", color:"NEGRO" }, { talla:"S", color:"BLANCO" },
    *      { talla:"M", color:"NEGRO" }, { talla:"M", color:"BLANCO" }]
    */
-  private cartesianProduct(attributes: Record<string, string[]>): Record<string, string>[] {
+  private cartesianProduct(
+    attributes: Record<string, string[]>
+  ): Record<string, string>[] {
     const keys = Object.keys(attributes);
     const values = keys.map((k) => attributes[k]);
 
@@ -137,7 +158,10 @@ export class CreateVariantsUseCase {
     };
   }
 
-  private mapToProductDTO(product: any, variants: ProductVariant[]): ProductWithVariantsResponseDTO {
+  private mapToProductDTO(
+    product: any,
+    variants: ProductVariant[]
+  ): ProductWithVariantsResponseDTO {
     return {
       id: product.id,
       code: product.code,

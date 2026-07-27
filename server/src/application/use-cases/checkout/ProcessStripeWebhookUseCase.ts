@@ -9,10 +9,12 @@ export class ProcessStripeWebhookUseCase {
   constructor(
     private readonly paymentService: IPaymentService,
     private readonly emailService?: IEmailService,
-    private readonly generatePickingListUseCase?: GeneratePickingListUseCase,
+    private readonly generatePickingListUseCase?: GeneratePickingListUseCase
   ) {}
 
-  async execute(input: ProcessWebhookInputDTO): Promise<{ processed: boolean; orderId?: number }> {
+  async execute(
+    input: ProcessWebhookInputDTO
+  ): Promise<{ processed: boolean; orderId?: number }> {
     const { payload, signature } = input;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -23,7 +25,11 @@ export class ProcessStripeWebhookUseCase {
     // 1. Construir el evento y verificar la firma de Stripe
     let event: any;
     try {
-      event = this.paymentService.constructEvent(payload, signature, webhookSecret);
+      event = this.paymentService.constructEvent(
+        payload,
+        signature,
+        webhookSecret
+      );
     } catch (err: any) {
       throw new Error(`Error de firma en Webhook de Stripe: ${err.message}`);
     }
@@ -37,8 +43,15 @@ export class ProcessStripeWebhookUseCase {
     const paymentIntentId = paymentIntent.id;
     const metadata = paymentIntent.metadata;
 
-    if (!metadata || !metadata.userId || !metadata.cartId || !metadata.addressId) {
-      throw new Error('Metadatos insuficientes en el PaymentIntent para procesar la orden');
+    if (
+      !metadata ||
+      !metadata.userId ||
+      !metadata.cartId ||
+      !metadata.addressId
+    ) {
+      throw new Error(
+        'Metadatos insuficientes en el PaymentIntent para procesar la orden'
+      );
     }
 
     const userId = parseInt(metadata.userId, 10);
@@ -51,13 +64,17 @@ export class ProcessStripeWebhookUseCase {
     });
 
     if (existingOrder) {
-      console.log(`Orden ya procesada anteriormente para el paymentIntentId: ${paymentIntentId}`);
+      console.log(
+        `Orden ya procesada anteriormente para el paymentIntentId: ${paymentIntentId}`
+      );
       return { processed: true, orderId: existingOrder.id };
     }
 
     // 4. Invocar el caso de uso compartido para crear la orden
-    const createEcommerceOrderUseCase = new CreateEcommerceOrderUseCase(this.emailService);
-    
+    const createEcommerceOrderUseCase = new CreateEcommerceOrderUseCase(
+      this.emailService
+    );
+
     // Si la nota de crédito fue pasada en la metadata, aplicarla
     const creditNoteCode = metadata.creditNoteCode || undefined;
 
@@ -74,7 +91,10 @@ export class ProcessStripeWebhookUseCase {
       try {
         await this.generatePickingListUseCase.execute([result.orderId]);
       } catch (pickingError) {
-        console.error(`Failed to automatically generate picking list for order #${result.orderId}:`, pickingError);
+        console.error(
+          `Failed to automatically generate picking list for order #${result.orderId}:`,
+          pickingError
+        );
       }
     }
 

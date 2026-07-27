@@ -53,7 +53,7 @@ const NEXT_LABEL: Record<ComplaintStatus, string> = {
 };
 
 const ComplaintsAdminPage: React.FC = () => {
-  useDocumentTitle("Libro de Reclamaciones — D'Mendoza Admin");
+  useDocumentTitle("Libro de Reclamaciones — E-Commerce Admin");
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);

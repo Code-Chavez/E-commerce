@@ -1,5 +1,9 @@
 import { IGenderRepository } from '@domain/repositories/IGenderRepository';
-import { Gender, CreateGenderDTO, UpdateGenderDTO } from '@domain/entities/Gender';
+import {
+  Gender,
+  CreateGenderDTO,
+  UpdateGenderDTO,
+} from '@domain/entities/Gender';
 
 export class GetAllGendersUseCase {
   constructor(private readonly genderRepository: IGenderRepository) {}

@@ -34,7 +34,10 @@ export const getAbandonedCartEmailTemplate = (
     )
     .join('');
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return `
     <!DOCTYPE html>
@@ -131,7 +134,7 @@ export const getAbandonedCartEmailTemplate = (
         <div class="content">
           <div class="greeting">Hola ${userName},</div>
           <div class="message">
-            Notamos que dejaste algunos artículos excelentes en tu carrito de compras en <strong>D'Mendoza</strong>. 
+            Notamos que dejaste algunos artículos excelentes en tu carrito de compras en <strong>E-Commerce</strong>. 
             Tus productos aún te están esperando, pero nuestro inventario se mueve rápido. ¡Completa tu compra antes de que se agoten!
           </div>
           
@@ -149,7 +152,7 @@ export const getAbandonedCartEmailTemplate = (
         </div>
         <div class="footer">
           <p>Si tienes alguna pregunta, no dudes en contactarnos respondiendo a este correo.</p>
-          <p>&copy; ${new Date().getFullYear()} D'Mendoza. Todos los derechos reservados.</p>
+          <p>&copy; ${new Date().getFullYear()} E-Commerce. Todos los derechos reservados.</p>
           <p style="margin-top: 15px; font-size: 12px;"><a href="${unsubscribeUrl}" style="color: #6b7280; text-decoration: underline;">Cancelar suscripción al newsletter</a></p>
         </div>
       </div>

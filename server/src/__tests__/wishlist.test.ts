@@ -46,7 +46,7 @@ describe('Wishlist API (HU-010)', () => {
   describe('GET /api/v1/wishlist', () => {
     it('should get the wishlist successfully (Happy Path)', async () => {
       (prisma.wishlist.findMany as jest.Mock).mockResolvedValue([
-        { id: 1, userId: 1, variantId: 1, addedAt: new Date() }
+        { id: 1, userId: 1, variantId: 1, addedAt: new Date() },
       ]);
 
       const response = await request(app).get('/api/v1/wishlist');
@@ -57,7 +57,9 @@ describe('Wishlist API (HU-010)', () => {
     });
 
     it('should handle errors when fetching wishlist (Error Case)', async () => {
-      (prisma.wishlist.findMany as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (prisma.wishlist.findMany as jest.Mock).mockRejectedValue(
+        new Error('Database error')
+      );
 
       const response = await request(app).get('/api/v1/wishlist');
 
@@ -68,9 +70,15 @@ describe('Wishlist API (HU-010)', () => {
 
   describe('POST /api/v1/wishlist/:variantId', () => {
     it('should add item to wishlist if not exists (Happy Path)', async () => {
-      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({ id: 1 });
+      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+      });
       (prisma.wishlist.findUnique as jest.Mock).mockResolvedValue(null); // Not in wishlist
-      (prisma.wishlist.create as jest.Mock).mockResolvedValue({ id: 1, userId: 1, variantId: 1 });
+      (prisma.wishlist.create as jest.Mock).mockResolvedValue({
+        id: 1,
+        userId: 1,
+        variantId: 1,
+      });
 
       const response = await request(app).post('/api/v1/wishlist/1');
 
@@ -80,8 +88,14 @@ describe('Wishlist API (HU-010)', () => {
     });
 
     it('should remove item from wishlist if it already exists (Happy Path)', async () => {
-      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({ id: 1 });
-      (prisma.wishlist.findUnique as jest.Mock).mockResolvedValue({ id: 1, userId: 1, variantId: 1 }); // Exists
+      (prisma.productVariant.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+      });
+      (prisma.wishlist.findUnique as jest.Mock).mockResolvedValue({
+        id: 1,
+        userId: 1,
+        variantId: 1,
+      }); // Exists
       (prisma.wishlist.delete as jest.Mock).mockResolvedValue({ id: 1 });
 
       const response = await request(app).post('/api/v1/wishlist/1');

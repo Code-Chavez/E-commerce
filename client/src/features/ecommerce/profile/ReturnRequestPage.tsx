@@ -9,7 +9,7 @@ import { ReturnReasonForm } from './components/ReturnReasonForm';
 import { useReturnRequest } from '../hooks/useReturnRequest';
 
 export const ReturnRequestPage: React.FC = () => {
-  useDocumentTitle('Solicitud de Devolución - D\'Mendoza');
+  useDocumentTitle('Solicitud de Devolución - E-Commerce');
   const { orderId } = useParams<{ orderId: string }>();
 
   const [order, setOrder] = useState<Order | null>(null);

@@ -67,7 +67,10 @@ describe('Receipt API (HU-055)', () => {
 
   describe('GET /api/v1/receipts/:id/pdf', () => {
     it('should return a PDF receipt for A4 format by default', async () => {
-      mockGetPosReceiptPdfExecute.mockResolvedValue({ id: 1, type: 'FACTURA' } as never);
+      mockGetPosReceiptPdfExecute.mockResolvedValue({
+        id: 1,
+        type: 'FACTURA',
+      } as never);
 
       const response = await request(app).get('/api/v1/receipts/1/pdf');
 
@@ -79,9 +82,14 @@ describe('Receipt API (HU-055)', () => {
     });
 
     it('should return a ticket receipt if format=ticket', async () => {
-      mockGetPosReceiptPdfExecute.mockResolvedValue({ id: 2, type: 'BOLETA' } as never);
+      mockGetPosReceiptPdfExecute.mockResolvedValue({
+        id: 2,
+        type: 'BOLETA',
+      } as never);
 
-      const response = await request(app).get('/api/v1/receipts/2/pdf?format=ticket');
+      const response = await request(app).get(
+        '/api/v1/receipts/2/pdf?format=ticket'
+      );
 
       expect(response.status).toBe(200);
       expect(response.header['content-type']).toBe('application/pdf');
@@ -95,7 +103,9 @@ describe('Receipt API (HU-055)', () => {
     });
 
     it('should return 404 if receipt not found', async () => {
-      mockGetPosReceiptPdfExecute.mockRejectedValue(new Error('Comprobante no encontrado') as never);
+      mockGetPosReceiptPdfExecute.mockRejectedValue(
+        new Error('Comprobante no encontrado') as never
+      );
 
       const response = await request(app).get('/api/v1/receipts/999/pdf');
       expect(response.status).toBe(404);
@@ -112,7 +122,9 @@ describe('Receipt API (HU-055)', () => {
       };
       mockGetReceiptsExecute.mockResolvedValue(mockResult as never);
 
-      const response = await request(app).get('/api/v1/receipts?page=1&limit=10&branchId=1');
+      const response = await request(app).get(
+        '/api/v1/receipts?page=1&limit=10&branchId=1'
+      );
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);

@@ -9,7 +9,7 @@ const emailService = new ResendEmailService();
 export class BirthdayCouponJob {
   public static start(): void {
     console.log('[Job] BirthdayCouponJob inicializado (0 8 * * *)');
-    
+
     // Ejecutar a las 8:00 AM todos los días (hora local del servidor)
     cron.schedule('0 8 * * *', async () => {
       console.log('[Job] Ejecutando BirthdayCouponJob...');
@@ -33,18 +33,25 @@ export class BirthdayCouponJob {
       },
     });
 
-    const todayBirthdayUsers = birthdayUsers.filter(user => {
+    const todayBirthdayUsers = birthdayUsers.filter((user) => {
       if (!user.birthdate) return false;
       const bDate = new Date(user.birthdate);
-      return (bDate.getUTCMonth() + 1 === currentMonth) && (bDate.getUTCDate() === currentDay);
+      return (
+        bDate.getUTCMonth() + 1 === currentMonth &&
+        bDate.getUTCDate() === currentDay
+      );
     });
 
     if (todayBirthdayUsers.length === 0) {
-      console.log('[Job] No se encontraron usuarios con cumpleaños el día de hoy.');
+      console.log(
+        '[Job] No se encontraron usuarios con cumpleaños el día de hoy.'
+      );
       return;
     }
 
-    console.log(`[Job] Encontrados ${todayBirthdayUsers.length} usuarios de cumpleaños hoy.`);
+    console.log(
+      `[Job] Encontrados ${todayBirthdayUsers.length} usuarios de cumpleaños hoy.`
+    );
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
@@ -55,7 +62,7 @@ export class BirthdayCouponJob {
         // Verificar si ya se le generó un cupón de cumpleaños este año para evitar duplicados
         const currentYear = today.getFullYear();
         const startOfYear = new Date(currentYear, 0, 1);
-        
+
         const existingCoupon = await prisma.coupon.findFirst({
           where: {
             userId: user.id,
@@ -65,17 +72,25 @@ export class BirthdayCouponJob {
         });
 
         if (existingCoupon) {
-          console.log(`[Job] El usuario ${user.email} ya recibió un cupón de cumpleaños este año.`);
+          console.log(
+            `[Job] El usuario ${user.email} ya recibió un cupón de cumpleaños este año.`
+          );
           continue;
         }
 
         // Crear cupón único
-        const randomString = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const randomString = Math.random()
+          .toString(36)
+          .substring(2, 8)
+          .toUpperCase();
         const couponCode = `BDAY-${user.id}-${randomString}`;
-        
-        const daysStr = await SystemSettingCacheService.getSetting('BIRTHDAY_COUPON_DAYS', '7');
+
+        const daysStr = await SystemSettingCacheService.getSetting(
+          'BIRTHDAY_COUPON_DAYS',
+          '7'
+        );
         const days = parseInt(daysStr, 10);
-        
+
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + days); // Válido por los días configurados
 
@@ -83,7 +98,7 @@ export class BirthdayCouponJob {
           data: {
             code: couponCode,
             type: 'PERCENT',
-            value: 15.00,
+            value: 15.0,
             expiresAt,
             maxUses: 1,
             userId: user.id,
@@ -101,13 +116,18 @@ export class BirthdayCouponJob {
 
         await emailService.sendEmail(
           user.email,
-          "🎉 ¡Feliz Cumpleaños! Aquí tienes tu regalo de D'Mendoza 🎁",
+          '🎉 ¡Feliz Cumpleaños! Aquí tienes tu regalo de E-Commerce 🎁',
           htmlContent
         );
 
-        console.log(`[Job] Cupón de cumpleaños enviado a ${user.email} (Cupón: ${couponCode})`);
+        console.log(
+          `[Job] Cupón de cumpleaños enviado a ${user.email} (Cupón: ${couponCode})`
+        );
       } catch (error) {
-        console.error(`[Job Error] Fallo al procesar cumpleaños para ${user.email}:`, error);
+        console.error(
+          `[Job Error] Fallo al procesar cumpleaños para ${user.email}:`,
+          error
+        );
       }
     }
   }

@@ -11,13 +11,19 @@ export class UpdateSystemSettingUseCase {
       'MIN_STOCK_ALERT',
       'PENDING_ORDER_TOLERANCE_HOURS',
       'ABANDONED_CART_HOURS',
-      'BIRTHDAY_COUPON_DAYS'
+      'BIRTHDAY_COUPON_DAYS',
     ];
 
     if (validKeys.includes(key)) {
       const numericValue = parseInt(value, 10);
-      if (isNaN(numericValue) || numericValue <= 0 || numericValue.toString() !== value.trim()) {
-        const error = new Error(`El valor para ${key} debe ser un número entero positivo.`);
+      if (
+        isNaN(numericValue) ||
+        numericValue <= 0 ||
+        numericValue.toString() !== value.trim()
+      ) {
+        const error = new Error(
+          `El valor para ${key} debe ser un número entero positivo.`
+        );
         (error as any).status = 400;
         throw error;
       }

@@ -11,7 +11,7 @@ describe('UpdateProfileUseCase (HU-005)', () => {
 
   const mockUser: User = {
     id: 1,
-    email: 'client@mendoza.com',
+    email: 'client@e-commerce.com',
     name: 'Juan',
     lastName: 'Pérez',
     phone: '+51999888777',
@@ -28,29 +28,38 @@ describe('UpdateProfileUseCase (HU-005)', () => {
     jest.clearAllMocks();
 
     mockUserRepository = {
-      findById: jest.fn<IUserRepository['findById']>().mockResolvedValue(mockUser),
+      findById: jest
+        .fn<IUserRepository['findById']>()
+        .mockResolvedValue(mockUser),
       findByEmail: jest.fn<IUserRepository['findByEmail']>(),
       findByGoogleId: jest.fn<IUserRepository['findByGoogleId']>(),
       create: jest.fn<IUserRepository['create']>(),
       updateLastLogin: jest.fn<IUserRepository['updateLastLogin']>(),
-      updateVerificationPin: jest.fn<IUserRepository['updateVerificationPin']>(),
+      updateVerificationPin:
+        jest.fn<IUserRepository['updateVerificationPin']>(),
       deleteById: jest.fn<IUserRepository['deleteById']>(),
       activateUser: jest.fn<IUserRepository['activateUser']>(),
       updatePassword: jest.fn<IUserRepository['updatePassword']>(),
       updateGoogleId: jest.fn<IUserRepository['updateGoogleId']>(),
       updateStatus: jest.fn<IUserRepository['updateStatus']>(),
-      updateProfile: jest.fn<IUserRepository['updateProfile']>().mockImplementation(async (userId, data) => ({
-        ...mockUser,
-        id: userId,
-        name: data.name !== undefined ? data.name : mockUser.name,
-        lastName: data.lastName !== undefined ? data.lastName : mockUser.lastName,
-        phone: data.phone !== undefined ? data.phone : mockUser.phone,
-        avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : mockUser.avatarUrl,
-      })),
+      updateProfile: jest
+        .fn<IUserRepository['updateProfile']>()
+        .mockImplementation(async (userId, data) => ({
+          ...mockUser,
+          id: userId,
+          name: data.name !== undefined ? data.name : mockUser.name,
+          lastName:
+            data.lastName !== undefined ? data.lastName : mockUser.lastName,
+          phone: data.phone !== undefined ? data.phone : mockUser.phone,
+          avatarUrl:
+            data.avatarUrl !== undefined ? data.avatarUrl : mockUser.avatarUrl,
+        })),
     } as any;
 
     mockStorageService = {
-      uploadImage: jest.fn<IStorageService['uploadImage']>().mockResolvedValue('https://cloudinary.com/new_avatar.png'),
+      uploadImage: jest
+        .fn<IStorageService['uploadImage']>()
+        .mockResolvedValue('https://cloudinary.com/new_avatar.png'),
       deleteImage: jest.fn<IStorageService['deleteImage']>(),
     };
 
@@ -119,9 +128,9 @@ describe('UpdateProfileUseCase (HU-005)', () => {
       name: 'Carlos',
     };
 
-    await expect(useCase.execute(999, dto)).rejects.toThrow('Usuario no encontrado');
+    await expect(useCase.execute(999, dto)).rejects.toThrow(
+      'Usuario no encontrado'
+    );
     expect(mockUserRepository.updateProfile).not.toHaveBeenCalled();
   });
 });
-
-

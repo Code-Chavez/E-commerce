@@ -1,5 +1,8 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { BulkLinkClientsUseCase, BulkLinkReport } from '@application/use-cases/admin/BulkLinkClientsUseCase';
+import {
+  BulkLinkClientsUseCase,
+  BulkLinkReport,
+} from '@application/use-cases/admin/BulkLinkClientsUseCase';
 import { LinkClientUseCase } from '@application/use-cases/admin/LinkClientUseCase';
 
 // ---------------------------------------------------------------------------
@@ -7,7 +10,9 @@ import { LinkClientUseCase } from '@application/use-cases/admin/LinkClientUseCas
 // ---------------------------------------------------------------------------
 
 describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
-  let mockLinkClientUseCase: { execute: jest.MockedFunction<LinkClientUseCase['execute']> };
+  let mockLinkClientUseCase: {
+    execute: jest.MockedFunction<LinkClientUseCase['execute']>;
+  };
   let bulkUseCase: BulkLinkClientsUseCase;
 
   beforeEach(() => {
@@ -24,7 +29,10 @@ describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
   // ── Happy paths ──────────────────────────────────────────────────────────
 
   it('T-058: returns linked count equal to number of successful operations', async () => {
-    mockLinkClientUseCase.execute.mockResolvedValue({ success: true, message: 'Cliente vinculado y credenciales enviadas' });
+    mockLinkClientUseCase.execute.mockResolvedValue({
+      success: true,
+      message: 'Cliente vinculado y credenciales enviadas',
+    });
 
     const report = await bulkUseCase.execute([1, 2, 3]);
 
@@ -48,7 +56,9 @@ describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
   it('increments skipped counter when client is already linked', async () => {
     mockLinkClientUseCase.execute
       .mockResolvedValueOnce({ success: true, message: 'ok' })
-      .mockRejectedValueOnce(new Error('El cliente ya tiene una cuenta vinculada'))
+      .mockRejectedValueOnce(
+        new Error('El cliente ya tiene una cuenta vinculada')
+      )
       .mockResolvedValueOnce({ success: true, message: 'ok' });
 
     const report = await bulkUseCase.execute([1, 2, 3]);
@@ -77,7 +87,9 @@ describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
   it('handles mixed results: some linked, some skipped, some errored', async () => {
     mockLinkClientUseCase.execute
       .mockResolvedValueOnce({ success: true, message: 'ok' })
-      .mockRejectedValueOnce(new Error('El cliente ya tiene una cuenta vinculada'))
+      .mockRejectedValueOnce(
+        new Error('El cliente ya tiene una cuenta vinculada')
+      )
       .mockRejectedValueOnce(new Error('Cliente no encontrado'))
       .mockResolvedValueOnce({ success: true, message: 'ok' });
 
@@ -94,7 +106,10 @@ describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
 
   it('processes more than 10 clients across multiple batches', async () => {
     const ids = Array.from({ length: 25 }, (_, i) => i + 1);
-    mockLinkClientUseCase.execute.mockResolvedValue({ success: true, message: 'ok' });
+    mockLinkClientUseCase.execute.mockResolvedValue({
+      success: true,
+      message: 'ok',
+    });
 
     const report = await bulkUseCase.execute(ids);
 
@@ -115,8 +130,9 @@ describe('BulkLinkClientsUseCase (HU-008 — Bulk)', () => {
 
     expect(report.linked).toBe(14);
     expect(report.errors).toHaveLength(1);
-    expect(report.errors[0]).toEqual({ id: 13, error: 'Error in second batch' });
+    expect(report.errors[0]).toEqual({
+      id: 13,
+      error: 'Error in second batch',
+    });
   });
 });
-
-

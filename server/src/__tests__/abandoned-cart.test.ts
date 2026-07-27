@@ -7,7 +7,8 @@ jest.mock('@infrastructure/services/ResendEmailService', () => {
   return {
     ResendEmailService: jest.fn().mockImplementation(() => {
       return {
-        sendEmail: (to: string, subject: string, html: string) => mockSendEmail(to, subject, html),
+        sendEmail: (to: string, subject: string, html: string) =>
+          mockSendEmail(to, subject, html),
       };
     }),
   };

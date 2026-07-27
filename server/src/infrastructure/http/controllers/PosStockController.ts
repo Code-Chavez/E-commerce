@@ -13,7 +13,9 @@ export class PosStockController {
     try {
       const userId = req.auth?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
       const variantIdStr = req.query.variantId;
@@ -32,7 +34,10 @@ export class PosStockController {
         });
       }
 
-      const result = await getCrossBranchStockUseCase.execute(variantId, userId);
+      const result = await getCrossBranchStockUseCase.execute(
+        variantId,
+        userId
+      );
       return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
       if (error.statusCode === 404) {

@@ -16,7 +16,10 @@ export interface RelatedProductItem {
 }
 
 export class GetRelatedProductsUseCase {
-  async execute(productId: number, userId?: number): Promise<RelatedProductItem[]> {
+  async execute(
+    productId: number,
+    userId?: number
+  ): Promise<RelatedProductItem[]> {
     const product = await prisma.product.findUnique({
       where: { id: productId },
       select: { id: true, categoryId: true },
@@ -27,7 +30,7 @@ export class GetRelatedProductsUseCase {
       where: { productId, isActive: true },
       select: { id: true },
     });
-    const variantIds = productVariants.map(v => v.id);
+    const variantIds = productVariants.map((v) => v.id);
 
     // Cross-sell: find products bought in same orders (ecommerce + POS)
     const crossSellVariantIds = new Set<number>();
@@ -38,13 +41,16 @@ export class GetRelatedProductsUseCase {
         select: { orderId: true },
         take: 200,
       });
-      const orderIds = [...new Set(orderItems.map(oi => oi.orderId))];
+      const orderIds = [...new Set(orderItems.map((oi) => oi.orderId))];
       if (orderIds.length > 0) {
         const coItems = await prisma.orderItem.findMany({
-          where: { orderId: { in: orderIds }, variantId: { notIn: variantIds } },
+          where: {
+            orderId: { in: orderIds },
+            variantId: { notIn: variantIds },
+          },
           select: { variantId: true },
         });
-        coItems.forEach(ci => crossSellVariantIds.add(ci.variantId));
+        coItems.forEach((ci) => crossSellVariantIds.add(ci.variantId));
       }
 
       const posOrderItems = await prisma.posOrderItem.findMany({
@@ -52,13 +58,18 @@ export class GetRelatedProductsUseCase {
         select: { posOrderId: true },
         take: 200,
       });
-      const posOrderIds = [...new Set(posOrderItems.map(pi => pi.posOrderId))];
+      const posOrderIds = [
+        ...new Set(posOrderItems.map((pi) => pi.posOrderId)),
+      ];
       if (posOrderIds.length > 0) {
         const posCoItems = await prisma.posOrderItem.findMany({
-          where: { posOrderId: { in: posOrderIds }, variantId: { notIn: variantIds } },
+          where: {
+            posOrderId: { in: posOrderIds },
+            variantId: { notIn: variantIds },
+          },
           select: { variantId: true },
         });
-        posCoItems.forEach(ci => crossSellVariantIds.add(ci.variantId));
+        posCoItems.forEach((ci) => crossSellVariantIds.add(ci.variantId));
       }
     }
 
@@ -69,7 +80,9 @@ export class GetRelatedProductsUseCase {
         select: { productId: true },
         distinct: ['productId'],
       });
-      crossSellProductIds = variants.map(v => v.productId).filter(id => id !== productId);
+      crossSellProductIds = variants
+        .map((v) => v.productId)
+        .filter((id) => id !== productId);
     }
 
     // RFM: if userId provided, derive user's typical price range from order history
@@ -82,7 +95,7 @@ export class GetRelatedProductsUseCase {
         take: 100,
       });
       if (userOrderItems.length >= 3) {
-        const prices = userOrderItems.map(oi => Number(oi.unitPrice));
+        const prices = userOrderItems.map((oi) => Number(oi.unitPrice));
         const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
         rfmMinPrice = avg * 0.3;
         rfmMaxPrice = avg * 2.5;
@@ -90,8 +103,13 @@ export class GetRelatedProductsUseCase {
     }
 
     const mainBranch =
-      (await prisma.branch.findFirst({ where: { isMain: true, isActive: true } })) ??
-      (await prisma.branch.findFirst({ where: { isActive: true }, orderBy: { id: 'asc' } }));
+      (await prisma.branch.findFirst({
+        where: { isMain: true, isActive: true },
+      })) ??
+      (await prisma.branch.findFirst({
+        where: { isActive: true },
+        orderBy: { id: 'asc' },
+      }));
 
     const branchStockInclude = mainBranch
       ? { where: { branchId: mainBranch.id, status: 'AVAILABLE' as const } }
@@ -116,9 +134,13 @@ export class GetRelatedProductsUseCase {
 
     // Fill remaining slots with same-category products
     if (results.length < 8 && product.categoryId) {
-      const excludeIds = [productId, ...results.map(p => p.id)];
+      const excludeIds = [productId, ...results.map((p) => p.id)];
       const categoryProducts = await prisma.product.findMany({
-        where: { categoryId: product.categoryId, isActive: true, id: { notIn: excludeIds } },
+        where: {
+          categoryId: product.categoryId,
+          isActive: true,
+          id: { notIn: excludeIds },
+        },
         include: {
           images: true,
           category: { select: { id: true, name: true } },
@@ -135,12 +157,12 @@ export class GetRelatedProductsUseCase {
     }
 
     return results
-      .map(p => {
-        const active = p.variants.filter(v => v.isActive);
+      .map((p) => {
+        const active = p.variants.filter((v) => v.isActive);
         if (active.length === 0) return null;
 
-        const prices = active.map(v => Number(v.price));
-        const discounts = active.map(v => (v as any).discountPercent ?? 0);
+        const prices = active.map((v) => Number(v.price));
+        const discounts = active.map((v) => (v as any).discountPercent ?? 0);
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
         const minDiscount = Math.min(...discounts);
@@ -150,7 +172,7 @@ export class GetRelatedProductsUseCase {
           if (maxPrice < rfmMinPrice || minPrice > rfmMaxPrice) return null;
         }
 
-        const stockedVariant = active.find(v => {
+        const stockedVariant = active.find((v) => {
           const stocks = (v as any).branchStock as any[];
           return stocks.reduce((s: number, bs: any) => s + bs.quantity, 0) > 0;
         });
@@ -160,7 +182,7 @@ export class GetRelatedProductsUseCase {
           id: p.id,
           name: p.name,
           slug: p.slug,
-          images: p.images.map(img => ({ url: img.url, isMain: img.isMain })),
+          images: p.images.map((img) => ({ url: img.url, isMain: img.isMain })),
           category: p.category,
           brand: p.brand,
           minPrice,

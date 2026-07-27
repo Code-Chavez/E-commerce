@@ -57,7 +57,7 @@ export const Receipt: React.FC<ReceiptProps> = ({ data }) => {
         {brandConfig?.logoHorizontalUrl ? (
           <img
             src={brandConfig.logoHorizontalUrl}
-            alt={brandConfig?.brandName || "D'MENDOZA"}
+            alt={brandConfig?.brandName || "E-Commerce"}
             className="max-h-12 max-w-full mx-auto object-contain mb-2 grayscale"
             onError={(e) => {
               // Si la imagen falla, ocultar y mostrar texto
@@ -67,13 +67,13 @@ export const Receipt: React.FC<ReceiptProps> = ({ data }) => {
               if (parent && !parent.querySelector('.logo-fallback')) {
                 const h = document.createElement('h1');
                 h.className = 'text-xl font-black uppercase mb-1 logo-fallback';
-                h.textContent = brandConfig?.brandName || "D'MENDOZA";
+                h.textContent = brandConfig?.brandName || "E-Commerce";
                 parent.insertBefore(h, target.nextSibling);
               }
             }}
           />
         ) : (
-          <h1 className="text-xl font-black uppercase mb-1">{brandConfig?.brandName || "D'MENDOZA"}</h1>
+          <h1 className="text-xl font-black uppercase mb-1">{brandConfig?.brandName || "E-Commerce"}</h1>
         )}
         <h2 className="text-base font-bold uppercase">{data.branch.name}</h2>
         {data.branch.address && <p className="text-xs">{data.branch.address}</p>}

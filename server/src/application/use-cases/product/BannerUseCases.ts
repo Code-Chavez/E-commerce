@@ -1,4 +1,8 @@
-import { IBannerRepository, CreateBannerDTO, UpdateBannerDTO } from '@domain/repositories/IBannerRepository';
+import {
+  IBannerRepository,
+  CreateBannerDTO,
+  UpdateBannerDTO,
+} from '@domain/repositories/IBannerRepository';
 import { Banner } from '@domain/entities/Banner';
 
 export class GetActiveBannersUseCase {

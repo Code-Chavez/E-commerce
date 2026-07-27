@@ -8,7 +8,7 @@ export class SendRFMCampaignUseCase {
   async execute(
     segment: RFMSegment,
     subject: string,
-    body: string,
+    body: string
   ): Promise<{ sent: number; failed: number; total: number }> {
     const { clients } = await this.rfmUseCase.execute(segment);
 

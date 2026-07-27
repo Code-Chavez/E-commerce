@@ -40,7 +40,7 @@ interface GroupedPendingSales {
 }
 
 export const CrossBranchMonitorPage: React.FC = () => {
-  useDocumentTitle('Ventas Intersucursal Pendientes - D\'Mendoza');
+  useDocumentTitle('Ventas Intersucursal Pendientes - E-Commerce');
 
   const [groupedData, setGroupedData] = useState<GroupedPendingSales[]>([]);
   const [loading, setLoading] = useState(true);

@@ -25,6 +25,9 @@ export class AssignDeliveryManUseCase {
       throw new Error('User does not have the DELIVERY role');
     }
 
-    return await this.deliveryRepository.assignDeliveryMan(deliveryId, deliveryManId);
+    return await this.deliveryRepository.assignDeliveryMan(
+      deliveryId,
+      deliveryManId
+    );
   }
 }

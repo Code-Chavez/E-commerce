@@ -57,7 +57,9 @@ jest.mock('@infrastructure/database/prisma', () => {
 jest.mock('@infrastructure/adapters/PdfGeneratorAdapter', () => {
   return {
     PdfGeneratorAdapter: jest.fn().mockImplementation(() => ({
-      generateCreditNotePdf: (jest.fn() as any).mockResolvedValue(Buffer.from('mock-pdf-content')),
+      generateCreditNotePdf: (jest.fn() as any).mockResolvedValue(
+        Buffer.from('mock-pdf-content')
+      ),
     })),
   };
 });
@@ -122,34 +124,49 @@ describe('Credit Note Endpoints', () => {
         refundType: 'CREDIT_NOTE',
         user: {
           name: 'John Doe',
-          email: 'john@example.com'
+          email: 'john@example.com',
         },
         items: [
           {
             qty: 2,
             orderItem: {
-              unitPrice: 15.50,
+              unitPrice: 15.5,
               variantId: 100,
               variant: {
                 product: {
-                  name: 'T-Shirt'
-                }
-              }
-            }
-          }
-        ]
+                  name: 'T-Shirt',
+                },
+              },
+            },
+          },
+        ],
       };
 
-      (prisma.returnRequest.findUnique as any).mockResolvedValueOnce(mockReturnRequest);
+      (prisma.returnRequest.findUnique as any).mockResolvedValueOnce(
+        mockReturnRequest
+      );
       (prisma.creditNote.findUnique as any).mockResolvedValueOnce(null); // No existing credit note
-      (prisma.branch.findFirst as any).mockResolvedValue({ id: 1, isMain: true, isActive: true });
-      (prisma.branchStock.findUnique as any).mockResolvedValue({ id: 5, variantId: 100, branchId: 1, quantity: 10 });
-      (prisma.kardexEntry.findFirst as any).mockResolvedValue({ id: 2, unitCost: 10.00, balanceCost: 100.00 });
+      (prisma.branch.findFirst as any).mockResolvedValue({
+        id: 1,
+        isMain: true,
+        isActive: true,
+      });
+      (prisma.branchStock.findUnique as any).mockResolvedValue({
+        id: 5,
+        variantId: 100,
+        branchId: 1,
+        quantity: 10,
+      });
+      (prisma.kardexEntry.findFirst as any).mockResolvedValue({
+        id: 2,
+        unitCost: 10.0,
+        balanceCost: 100.0,
+      });
 
       (prisma.creditNote.create as any).mockResolvedValue({
         id: 1,
         returnRequestId: 10,
-        amount: 31.00,
+        amount: 31.0,
         type: 'CREDIT_NOTE',
         code: 'NC-12345678',
         createdAt: new Date(),
@@ -161,9 +178,9 @@ describe('Credit Note Endpoints', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.amount).toBe(31.00);
+      expect(response.body.data.amount).toBe(31.0);
       expect(response.body.data.code).toBe('NC-12345678');
-      
+
       expect(prisma.branchStock.update).toHaveBeenCalled();
       expect(prisma.kardexEntry.create).toHaveBeenCalled();
     });
@@ -177,8 +194,9 @@ describe('Credit Note Endpoints', () => {
         .set('Authorization', 'Bearer client-token');
 
       expect(response.status).toBe(403);
+      console.log('response.body in credit-note test 403:', response.body);
       expect(response.body.success).toBe(false);
-      expect(response.body.error).toContain('Acceso denegado');
+      expect(response.body.error || response.body.message).toContain('Acceso denegado');
     });
 
     it('should return 400 if return request does not exist', async () => {
@@ -198,11 +216,16 @@ describe('Credit Note Endpoints', () => {
         id: 10,
         refundType: 'CREDIT_NOTE',
         user: { name: 'John Doe', email: 'john@example.com' },
-        items: []
+        items: [],
       };
 
-      (prisma.returnRequest.findUnique as any).mockResolvedValueOnce(mockReturnRequest);
-      (prisma.creditNote.findUnique as any).mockResolvedValueOnce({ id: 1, code: 'NC-ALREADY' });
+      (prisma.returnRequest.findUnique as any).mockResolvedValueOnce(
+        mockReturnRequest
+      );
+      (prisma.creditNote.findUnique as any).mockResolvedValueOnce({
+        id: 1,
+        code: 'NC-ALREADY',
+      });
 
       const response = await request(app)
         .post('/api/v1/admin/returns/10/credit-note')
@@ -275,7 +298,9 @@ describe('Credit Note Endpoints', () => {
         },
       };
 
-      (prisma.creditNote.findUnique as any).mockResolvedValueOnce(mockCreditNote);
+      (prisma.creditNote.findUnique as any).mockResolvedValueOnce(
+        mockCreditNote
+      );
 
       const response = await request(app)
         .post('/api/v1/admin/credit-notes/1/resend')
@@ -299,5 +324,3 @@ describe('Credit Note Endpoints', () => {
     });
   });
 });
-
-

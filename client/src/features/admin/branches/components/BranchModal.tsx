@@ -192,7 +192,7 @@ export const BranchModal: React.FC<BranchModalProps> = ({
         {
           headers: {
             'Accept-Language': 'es',
-            'User-Agent': 'd-mendoza-project-client',
+            'User-Agent': 'E-Commerce-project-client',
           },
         }
       );
@@ -223,7 +223,7 @@ export const BranchModal: React.FC<BranchModalProps> = ({
         {
           headers: {
             'Accept-Language': 'es',
-            'User-Agent': 'd-mendoza-project-client',
+            'User-Agent': 'E-Commerce-project-client',
           },
         }
       );

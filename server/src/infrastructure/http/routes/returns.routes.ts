@@ -20,14 +20,44 @@ const checkAdmin = (req: any, res: any, next: any) => {
 };
 
 // Client endpoint
-router.post('/returns', requireAuth, validateCreateReturnRequest, controller.create);
+router.post(
+  '/returns',
+  requireAuth,
+  validateCreateReturnRequest,
+  controller.create
+);
 
 // Admin endpoints
 router.get('/admin/returns', requireAuth, checkAdmin, controller.list);
-router.patch('/admin/returns/:id/approve', requireAuth, checkAdmin, controller.approve);
-router.patch('/admin/returns/:id/reject', requireAuth, checkAdmin, controller.reject);
-router.post('/admin/returns/:id/credit-note', requireAuth, checkAdmin, controller.issueCreditNote);
-router.get('/admin/credit-notes', requireAuth, checkAdmin, controller.listCreditNotes);
-router.post('/admin/credit-notes/:id/resend', requireAuth, checkAdmin, controller.resendCreditNote);
+router.patch(
+  '/admin/returns/:id/approve',
+  requireAuth,
+  checkAdmin,
+  controller.approve
+);
+router.patch(
+  '/admin/returns/:id/reject',
+  requireAuth,
+  checkAdmin,
+  controller.reject
+);
+router.post(
+  '/admin/returns/:id/credit-note',
+  requireAuth,
+  checkAdmin,
+  controller.issueCreditNote
+);
+router.get(
+  '/admin/credit-notes',
+  requireAuth,
+  checkAdmin,
+  controller.listCreditNotes
+);
+router.post(
+  '/admin/credit-notes/:id/resend',
+  requireAuth,
+  checkAdmin,
+  controller.resendCreditNote
+);
 
 export default router;

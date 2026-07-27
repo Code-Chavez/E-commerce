@@ -14,7 +14,15 @@ const SaleItemSchema = z.object({
 });
 
 const SalePaymentSchema = z.object({
-  method: z.enum(['CASH', 'CREDIT_CARD', 'DEBIT_CARD', 'TRANSFER', 'YAPE', 'PLIN', 'CREDIT_NOTE']),
+  method: z.enum([
+    'CASH',
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'TRANSFER',
+    'YAPE',
+    'PLIN',
+    'CREDIT_NOTE',
+  ]),
   amount: positiveMoney,
   code: z.string().optional(),
 });
@@ -29,7 +37,10 @@ const ProcessSaleSchema = z.object({
   payments: z.array(SalePaymentSchema).min(1, 'Debe haber al menos un pago'),
   isCrossBranch: z.boolean().optional(),
   sourceBranchId: z.number().int().positive().optional().nullable(),
-  documentType: z.enum(['TICKET', 'BOLETA', 'FACTURA']).optional().default('TICKET'),
+  documentType: z
+    .enum(['TICKET', 'BOLETA', 'FACTURA'])
+    .optional()
+    .default('TICKET'),
 });
 
 const cancelSaleUseCase = new CancelSaleUseCase();
@@ -47,7 +58,18 @@ export class SaleController {
         });
       }
 
-      let { branchId, clientId, items, subtotal, discountTotal, total, payments, isCrossBranch, sourceBranchId, documentType } = parsed.data;
+      let {
+        branchId,
+        clientId,
+        items,
+        subtotal,
+        discountTotal,
+        total,
+        payments,
+        isCrossBranch,
+        sourceBranchId,
+        documentType,
+      } = parsed.data;
       const userId = req.auth?.userId;
       const userRole = req.auth?.role;
       const authBranchId = req.auth?.branchId;
@@ -62,9 +84,14 @@ export class SaleController {
 
       // Validar cliente si fue proporcionado
       if (clientId) {
-        const clientExists = await prisma.client.findUnique({ where: { id: clientId } });
+        const clientExists = await prisma.client.findUnique({
+          where: { id: clientId },
+        });
         if (!clientExists) {
-          return res.status(400).json({ success: false, error: 'El cliente proporcionado no existe.' });
+          return res.status(400).json({
+            success: false,
+            error: 'El cliente proporcionado no existe.',
+          });
         }
       }
 
@@ -88,7 +115,10 @@ export class SaleController {
       }
 
       // Validar que la suma de pagos cubra el total
-      const paymentsSum = payments.reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+      const paymentsSum = payments.reduce(
+        (sum: number, p: any) => sum + Number(p.amount),
+        0
+      );
       if (paymentsSum < total) {
         return res.status(400).json({
           success: false,
@@ -98,7 +128,8 @@ export class SaleController {
 
       // 2. Transacción
       const result = await prisma.$transaction(async (tx) => {
-        const isTransfer = (isCrossBranch && sourceBranchId && sourceBranchId !== branchId);
+        const isTransfer =
+          isCrossBranch && sourceBranchId && sourceBranchId !== branchId;
         const targetStockBranchId = isTransfer ? sourceBranchId : branchId;
 
         // A) Validar Stock
@@ -114,7 +145,9 @@ export class SaleController {
           });
 
           if (!branchStock || branchStock.quantity < item.quantity) {
-            throw new Error(`Stock insuficiente para el producto/variante ID ${item.variantId}. Disponible: ${branchStock?.quantity || 0}, Requerido: ${item.quantity}.`);
+            throw new Error(
+              `Stock insuficiente para el producto/variante ID ${item.variantId}. Disponible: ${branchStock?.quantity || 0}, Requerido: ${item.quantity}.`
+            );
           }
         }
 
@@ -129,7 +162,10 @@ export class SaleController {
           costByVariant[v.id] = Number(v.costPrice ?? 0);
         }
 
-        const docType = (documentType && ['BOLETA', 'FACTURA', 'TICKET'].includes(documentType)) ? documentType : 'TICKET';
+        const docType =
+          documentType && ['BOLETA', 'FACTURA', 'TICKET'].includes(documentType)
+            ? documentType
+            : 'TICKET';
 
         const sequence = await tx.documentSequence.upsert({
           where: {
@@ -146,8 +182,11 @@ export class SaleController {
           create: {
             branchId,
             documentType: docType,
-            series: docType === 'BOLETA' ? `B${String(branchId).padStart(3, '0')}`
-                  : docType === 'FACTURA' ? `F${String(branchId).padStart(3, '0')}`
+            series:
+              docType === 'BOLETA'
+                ? `B${String(branchId).padStart(3, '0')}`
+                : docType === 'FACTURA'
+                  ? `F${String(branchId).padStart(3, '0')}`
                   : `T${String(branchId).padStart(3, '0')}`,
             nextNumber: 2,
           },
@@ -178,7 +217,8 @@ export class SaleController {
                 unitPrice: item.unitPrice,
                 unitCost: costByVariant[item.variantId] ?? 0,
                 discountAmount: item.discountAmount || 0,
-                lineTotal: (item.unitPrice * item.quantity) - (item.discountAmount || 0),
+                lineTotal:
+                  item.unitPrice * item.quantity - (item.discountAmount || 0),
               })),
             },
           },
@@ -196,19 +236,25 @@ export class SaleController {
 
           if (p.method === 'CREDIT_NOTE') {
             if (!p.code) {
-              throw new Error('Debe proporcionar el código del vale de crédito.');
+              throw new Error(
+                'Debe proporcionar el código del vale de crédito.'
+              );
             }
-            
+
             const creditNote = await tx.creditNote.findUnique({
-              where: { code: p.code }
+              where: { code: p.code },
             });
 
             if (!creditNote) {
-              throw new Error(`El vale de crédito con código ${p.code} no existe.`);
+              throw new Error(
+                `El vale de crédito con código ${p.code} no existe.`
+              );
             }
 
             if (creditNote.type !== 'STORE_CREDIT') {
-              throw new Error(`El código proporcionado no es un saldo a favor válido para canjear en tienda.`);
+              throw new Error(
+                `El código proporcionado no es un saldo a favor válido para canjear en tienda.`
+              );
             }
 
             if (creditNote.usedAt !== null) {
@@ -216,7 +262,9 @@ export class SaleController {
             }
 
             if (creditNote.amount > remainingTotal) {
-              throw new Error(`El monto del vale (S/. ${creditNote.amount}) supera el saldo restante de la venta (S/. ${remainingTotal}). Debe complementarse con otra venta de igual o mayor monto.`);
+              throw new Error(
+                `El monto del vale (S/. ${creditNote.amount}) supera el saldo restante de la venta (S/. ${remainingTotal}). Debe complementarse con otra venta de igual o mayor monto.`
+              );
             }
 
             // Aplicar vale
@@ -226,23 +274,26 @@ export class SaleController {
             // Marcar como usado atómicamente previendo concurrencia
             const updated = await tx.creditNote.updateMany({
               where: { code: p.code, usedAt: null },
-              data: { usedAt: new Date() }
+              data: { usedAt: new Date() },
             });
 
             if (updated.count !== 1) {
-              throw new Error(`El vale de crédito ${p.code} ya fue utilizado concurrente mente.`);
+              throw new Error(
+                `El vale de crédito ${p.code} ya fue utilizado concurrente mente.`
+              );
             }
           }
 
           let mappedMethod: any = p.method;
-          if (p.method === 'CREDIT_CARD' || p.method === 'DEBIT_CARD') mappedMethod = 'CARD';
+          if (p.method === 'CREDIT_CARD' || p.method === 'DEBIT_CARD')
+            mappedMethod = 'CARD';
           if (p.method === 'PLIN') mappedMethod = 'TRANSFER';
 
           paymentsToCreate.push({
             posOrderId: order.id,
             method: mappedMethod,
             amount: amountToCharge,
-            creditNoteId: creditNoteId
+            creditNoteId: creditNoteId,
           });
           remainingTotal -= amountToCharge;
         }
@@ -313,7 +364,10 @@ export class SaleController {
 
             // Kardex
             const lastKardex = await tx.kardexEntry.findFirst({
-              where: { variantId: item.variantId, branchId: targetStockBranchId },
+              where: {
+                variantId: item.variantId,
+                branchId: targetStockBranchId,
+              },
               orderBy: { id: 'desc' },
             });
 
@@ -330,7 +384,8 @@ export class SaleController {
                 quantity: item.quantity,
                 unitCost: currentUnitCost,
                 balanceQty: newBalanceQty,
-                balanceCost: currentBalanceCost - (item.quantity * currentUnitCost),
+                balanceCost:
+                  currentBalanceCost - item.quantity * currentUnitCost,
                 userId: userId ?? null,
               },
             });
@@ -371,7 +426,6 @@ export class SaleController {
         success: true,
         data: result,
       });
-
     } catch (error: any) {
       console.error('[SaleController] Error procesando venta:', error);
       return res.status(400).json({
@@ -391,13 +445,18 @@ export class SaleController {
     try {
       const orderId = parseInt(String(req.params.id), 10);
       if (isNaN(orderId)) {
-        return res.status(400).json({ success: false, error: 'El ID de la venta debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID de la venta debe ser un número entero',
+        });
       }
 
       const userId = req.auth?.userId;
       const userRole = req.auth?.role;
       if (!userId || !userRole) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
       const { adminEmail, adminPassword } = req.body || {};
@@ -419,7 +478,11 @@ export class SaleController {
       if (error.message?.includes('no existe')) {
         return res.status(404).json({ success: false, error: error.message });
       }
-      if (error.message?.includes('autorización') || error.message?.includes('credenciales') || error.message?.includes('administrador')) {
+      if (
+        error.message?.includes('autorización') ||
+        error.message?.includes('credenciales') ||
+        error.message?.includes('administrador')
+      ) {
         return res.status(403).json({ success: false, error: error.message });
       }
       if (error.message?.includes('Solo se pueden')) {
@@ -482,12 +545,18 @@ export class SaleController {
       }
 
       // Calculamos totales y organizamos datos para el recibo
-      const totalPagado = order.payments.reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+      const totalPagado = order.payments.reduce(
+        (sum: number, p: any) => sum + Number(p.amount),
+        0
+      );
       const efectivoTotal = order.payments
         .filter((p: any) => p.method === 'CASH')
         .reduce((sum: number, p: any) => sum + Number(p.amount), 0);
-      
-      const change = Math.max(0, efectivoTotal - (Number(order.total) - (totalPagado - efectivoTotal)));
+
+      const change = Math.max(
+        0,
+        efectivoTotal - (Number(order.total) - (totalPagado - efectivoTotal))
+      );
 
       return res.status(200).json({
         success: true,
@@ -536,25 +605,39 @@ export class SaleController {
     try {
       const orderId = parseInt(String(req.params.id), 10);
       if (isNaN(orderId)) {
-        return res.status(400).json({ success: false, error: 'El ID de la venta debe ser un número entero' });
+        return res.status(400).json({
+          success: false,
+          error: 'El ID de la venta debe ser un número entero',
+        });
       }
 
       const userId = req.auth?.userId;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
+        return res
+          .status(401)
+          .json({ success: false, error: 'Usuario no autenticado' });
       }
 
-      const result = await confirmCrossBranchSaleUseCase.execute({ orderId, userId });
+      const result = await confirmCrossBranchSaleUseCase.execute({
+        orderId,
+        userId,
+      });
       return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
-      console.error('[SaleController] Error confirmando entrega cross-branch:', error);
+      console.error(
+        '[SaleController] Error confirmando entrega cross-branch:',
+        error
+      );
       if (error.statusCode === 400) {
         return res.status(400).json({ success: false, error: error.message });
       }
       if (error.statusCode === 404) {
         return res.status(404).json({ success: false, error: error.message });
       }
-      return res.status(500).json({ success: false, error: error.message || 'Error al confirmar la entrega.' });
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Error al confirmar la entrega.',
+      });
     }
   }
 
@@ -567,23 +650,35 @@ export class SaleController {
       const code = String(req.params.code);
 
       if (!code || code === 'undefined') {
-        return res.status(400).json({ success: false, error: 'Debe proporcionar el código del vale.' });
+        return res.status(400).json({
+          success: false,
+          error: 'Debe proporcionar el código del vale.',
+        });
       }
 
       const creditNote = await prisma.creditNote.findUnique({
-        where: { code }
+        where: { code },
       });
 
       if (!creditNote) {
-        return res.status(404).json({ success: false, error: `El vale de crédito con código ${code} no existe.` });
+        return res.status(404).json({
+          success: false,
+          error: `El vale de crédito con código ${code} no existe.`,
+        });
       }
 
       if (creditNote.type !== 'STORE_CREDIT') {
-        return res.status(400).json({ success: false, error: `El código proporcionado no es un saldo a favor válido para canjear en tienda.` });
+        return res.status(400).json({
+          success: false,
+          error: `El código proporcionado no es un saldo a favor válido para canjear en tienda.`,
+        });
       }
 
       if (creditNote.usedAt !== null) {
-        return res.status(400).json({ success: false, error: `El vale de crédito ${code} ya fue utilizado el ${creditNote.usedAt.toLocaleDateString()}.` });
+        return res.status(400).json({
+          success: false,
+          error: `El vale de crédito ${code} ya fue utilizado el ${creditNote.usedAt.toLocaleDateString()}.`,
+        });
       }
 
       // TODO: If credit notes expire, we would check expiration date here
@@ -593,7 +688,7 @@ export class SaleController {
         data: {
           code: creditNote.code,
           amount: Number(creditNote.amount),
-        }
+        },
       });
     } catch (error: any) {
       console.error('[SaleController] Error validando vale de crédito:', error);

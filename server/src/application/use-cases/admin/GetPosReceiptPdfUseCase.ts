@@ -16,7 +16,12 @@ export interface PosReceiptData {
   branch: { id: number; name: string; address: string | null };
   sourceBranch: { id: number; name: string } | null;
   seller: { name: string; lastName: string | null; email: string } | null;
-  client: { name: string; lastName: string | null; documentType: string | null; documentId: string | null } | null;
+  client: {
+    name: string;
+    lastName: string | null;
+    documentType: string | null;
+    documentId: string | null;
+  } | null;
   items: Array<{
     productName: string;
     quantity: number;
@@ -32,7 +37,9 @@ export class GetPosReceiptPdfUseCase {
     const order = await prisma.posOrder.findUnique({
       where: { id: orderId },
       include: {
-        branch: { select: { id: true, name: true, address: true, igvExempt: true } },
+        branch: {
+          select: { id: true, name: true, address: true, igvExempt: true },
+        },
         sourceBranch: { select: { id: true, name: true } },
         items: {
           include: {
@@ -55,14 +62,24 @@ export class GetPosReceiptPdfUseCase {
         where: { id: order.userId },
         select: { name: true, lastName: true, email: true },
       });
-      if (user) seller = { name: user.name || 'Vendedor', lastName: user.lastName, email: user.email };
+      if (user)
+        seller = {
+          name: user.name || 'Vendedor',
+          lastName: user.lastName,
+          email: user.email,
+        };
     }
 
     let client = null;
     if (order.userId) {
       const dbClient = await prisma.client.findFirst({
         where: { userId: order.userId },
-        select: { name: true, lastName: true, documentType: true, documentId: true },
+        select: {
+          name: true,
+          lastName: true,
+          documentType: true,
+          documentId: true,
+        },
       });
       if (dbClient) client = dbClient;
     }

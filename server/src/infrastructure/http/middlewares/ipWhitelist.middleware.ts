@@ -15,7 +15,11 @@ const jwtService = new JwtService();
  *
  * If IP_WHITELIST is empty the middleware is a no-op (dev/open mode).
  */
-export const ipWhitelist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const ipWhitelist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const whitelistEnv = process.env.IP_WHITELIST ?? '';
 
   if (!whitelistEnv.trim()) {

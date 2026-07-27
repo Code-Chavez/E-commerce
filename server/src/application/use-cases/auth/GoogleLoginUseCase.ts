@@ -28,7 +28,7 @@ export interface GoogleLoginResultDTO {
 export class GoogleLoginUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async execute(dto: GoogleProfileDTO): Promise<GoogleLoginResultDTO> {
@@ -44,9 +44,13 @@ export class GoogleLoginUseCase {
         await this.userRepository.updateGoogleId(
           existingUser.id,
           dto.googleId,
-          dto.avatarUrl,
+          dto.avatarUrl
         );
-        user = { ...existingUser, googleId: dto.googleId, authProvider: 'google' };
+        user = {
+          ...existingUser,
+          googleId: dto.googleId,
+          authProvider: 'google',
+        };
       } else {
         // Step 3: Create new user with random password
         const randomPassword = crypto.randomUUID();

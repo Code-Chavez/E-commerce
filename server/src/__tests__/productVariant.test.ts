@@ -39,12 +39,20 @@ jest.mock('@infrastructure/database/prisma', () => {
   };
 
   const mockPriceHistory = {
-    create: jest.fn().mockImplementation((args: any) => Promise.resolve({ id: 1, ...args.data })),
+    create: jest
+      .fn()
+      .mockImplementation((args: any) =>
+        Promise.resolve({ id: 1, ...args.data })
+      ),
     findMany: jest.fn(),
   };
 
   const mockAuditLog = {
-    create: jest.fn().mockImplementation((args: any) => Promise.resolve({ id: 1, ...args.data })),
+    create: jest
+      .fn()
+      .mockImplementation((args: any) =>
+        Promise.resolve({ id: 1, ...args.data })
+      ),
     findMany: jest.fn(),
   };
 
@@ -55,7 +63,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     attribute: mockAttribute,
     priceHistory: mockPriceHistory,
     auditLog: mockAuditLog,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -66,7 +76,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'SUPERADMIN',
     }),
   })),
@@ -77,15 +87,12 @@ import prisma from '@infrastructure/database/prisma';
 // Usuario admin con permisos de productos
 const mockAdminUser = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {
       name: 'SUPERADMIN',
-      permissions: [
-        { name: 'products:read' },
-        { name: 'products:write' },
-      ],
+      permissions: [{ name: 'products:read' }, { name: 'products:write' }],
     },
   ],
 };
@@ -104,7 +111,12 @@ const dummyProduct = {
 };
 
 // Fixture: variante base
-const makeVariant = (id: number, sku: string, talla: string, color: string) => ({
+const makeVariant = (
+  id: number,
+  sku: string,
+  talla: string,
+  color: string
+) => ({
   id,
   productId: 1,
   sku,
@@ -150,7 +162,8 @@ describe('Módulo ProductVariant — HU-014 (T-077, T-078, T-080)', () => {
       (prisma.product.findUnique as any).mockResolvedValue(dummyProduct);
       (prisma.productVariant.findMany as any)
         .mockResolvedValueOnce([]) // findByProductId (duplicados check)
-        .mockResolvedValueOnce([   // findByProductId (retorno post-createMany)
+        .mockResolvedValueOnce([
+          // findByProductId (retorno post-createMany)
           makeVariant(1, 'CAM-S-NEGRO', 'S', 'NEGRO'),
           makeVariant(2, 'CAM-S-BLANCO', 'S', 'BLANCO'),
           makeVariant(3, 'CAM-M-NEGRO', 'M', 'NEGRO'),
@@ -166,7 +179,7 @@ describe('Módulo ProductVariant — HU-014 (T-077, T-078, T-080)', () => {
             talla: ['S', 'M'],
             color: ['NEGRO', 'BLANCO'],
           },
-          basePrice: 99.90,
+          basePrice: 99.9,
         });
 
       expect(res.status).toBe(201);
@@ -211,7 +224,10 @@ describe('Módulo ProductVariant — HU-014 (T-077, T-078, T-080)', () => {
       const res = await request(app)
         .post('/api/v1/products/1/variants')
         .set('Authorization', 'Bearer mock-token')
-        .send({ attributes: { talla: ['S'], color: ['NEGRO'] }, basePrice: 50 });
+        .send({
+          attributes: { talla: ['S'], color: ['NEGRO'] },
+          basePrice: 50,
+        });
 
       expect(res.status).toBe(409);
       expect(res.body.success).toBe(false);
@@ -266,11 +282,11 @@ describe('Módulo ProductVariant — HU-014 (T-077, T-078, T-080)', () => {
       const res = await request(app)
         .put('/api/v1/variants/1')
         .set('Authorization', 'Bearer mock-token')
-        .send({ price: 149.90 });
+        .send({ price: 149.9 });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data.price).toBe(149.90);
+      expect(res.body.data.price).toBe(149.9);
     });
 
     it('✅ debe actualizar el SKU de una variante con SKU único', async () => {
@@ -372,5 +388,3 @@ describe('Módulo ProductVariant — HU-014 (T-077, T-078, T-080)', () => {
     });
   });
 });
-
-

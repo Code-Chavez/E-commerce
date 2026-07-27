@@ -5,7 +5,7 @@ export class GetPendingOrderAlertsUseCase {
     // Get active alerts
     const alerts = await prisma.pendingOrderAlert.findMany({
       where: {
-        isActive: true
+        isActive: true,
       },
       include: {
         order: {
@@ -17,20 +17,20 @@ export class GetPendingOrderAlertsUseCase {
               select: {
                 id: true,
                 name: true,
-                email: true
-              }
-            }
-          }
-        }
+                email: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        createdAt: 'asc'
-      }
+        createdAt: 'asc',
+      },
     });
 
     return {
       count: alerts.length,
-      alerts
+      alerts,
     };
   }
 }

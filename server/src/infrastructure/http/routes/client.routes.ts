@@ -56,14 +56,14 @@ router.put(
 router.get(
   '/admin/clients/rfm-segments',
   requirePermission('users:read'),
-  rfmController.getSegments,
+  rfmController.getSegments
 );
 
 // T-269: Envío de campaña por segmento RFM (HU-083)
 router.post(
   '/admin/clients/rfm-segments/:segment/campaign',
   requirePermission('users:read'),
-  rfmController.sendCampaign,
+  rfmController.sendCampaign
 );
 
 // T-284 / HU-089: Historial de comunicaciones
@@ -72,6 +72,5 @@ router.get(
   requirePermission('users:read'),
   clientController.getClientCommunications.bind(clientController)
 );
-
 
 export default router;

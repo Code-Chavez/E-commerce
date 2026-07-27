@@ -2,7 +2,7 @@ export const seedData = {
   "branches": [
     {
       "id": 1,
-      "name": "D'Mendoza - Principal",
+      "name": "E-Commerce - Principal",
       "address": "Jr. Amazonas 769, Chachapoyas 01001",
       "phone": "932107731",
       "isActive": true,
@@ -11,7 +11,7 @@ export const seedData = {
     },
     {
       "id": 2,
-      "name": "D'Mendoza - Amazonas - 810",
+      "name": "E-Commerce - Amazonas - 810",
       "address": "Jr. Amazonas 810, Chachapoyas 01001",
       "phone": "997527792",
       "isActive": true,
@@ -20,7 +20,7 @@ export const seedData = {
     },
     {
       "id": 3,
-      "name": "D'Mendoza - Dos de Mayo - 558",
+      "name": "E-Commerce - Dos de Mayo - 558",
       "address": "Jr. Dos de Mayo 558, Chachapoyas 01001",
       "phone": "997005395",
       "isActive": true,
@@ -29,7 +29,7 @@ export const seedData = {
     },
     {
       "id": 4,
-      "name": "D'Mendoza - Dos de Mayo - 551",
+      "name": "E-Commerce - Dos de Mayo - 551",
       "address": "Jr. Dos de Mayo 551, Chachapoyas 01001",
       "phone": "997867168",
       "isActive": true,
@@ -42,7 +42,7 @@ export const seedData = {
       "id": 1,
       "ruc": "20608765432",
       "razonSocial": "Distribuidora Intercontinental de Calzado S.A.C.",
-      "contacto": "Alejandro Mendoza",
+      "contacto": "E-Commerce",
       "direccion": "Jr. Amazonas 456, Chachapoyas",
       "isActive": true
     }

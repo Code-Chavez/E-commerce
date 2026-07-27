@@ -33,7 +33,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     productImage: mockProductImage,
     user: mockUser,
     branch: mockBranch,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -44,7 +46,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'SUPERADMIN',
     }),
   })),
@@ -54,7 +56,9 @@ jest.mock('@infrastructure/services/JwtService', () => ({
 jest.mock('@infrastructure/services/CloudinaryStorageService', () => {
   return {
     CloudinaryStorageService: jest.fn().mockImplementation(() => ({
-      uploadImage: (jest.fn() as any).mockResolvedValue('https://res.cloudinary.com/mock/image.png'),
+      uploadImage: (jest.fn() as any).mockResolvedValue(
+        'https://res.cloudinary.com/mock/image.png'
+      ),
     })),
   };
 });
@@ -63,15 +67,12 @@ import prisma from '@infrastructure/database/prisma';
 
 const mockAdminUser = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {
       name: 'SUPERADMIN',
-      permissions: [
-        { name: 'products:read' },
-        { name: 'products:write' },
-      ],
+      permissions: [{ name: 'products:read' }, { name: 'products:write' }],
     },
   ],
 };
@@ -118,7 +119,12 @@ describe('Desacoplamiento Visual y Visual Driver (isVisualDriver)', () => {
 
   describe('Subida de Imagen con attributeValueId', () => {
     it('debería asociar la imagen al attributeValueId enviado en el request', async () => {
-      const mockProduct = { id: 1, code: 'NIKE', name: 'Zapatilla Nike', isActive: true };
+      const mockProduct = {
+        id: 1,
+        code: 'NIKE',
+        name: 'Zapatilla Nike',
+        isActive: true,
+      };
       (prisma.product.findUnique as any).mockResolvedValue(mockProduct);
       (prisma.productImage.count as any).mockResolvedValue(0);
       (prisma.productImage.create as any).mockResolvedValue({
@@ -151,7 +157,12 @@ describe('Desacoplamiento Visual y Visual Driver (isVisualDriver)', () => {
     });
 
     it('debería retornar error 400 si se excede el límite de 4 imágenes por agrupación', async () => {
-      const mockProduct = { id: 1, code: 'NIKE', name: 'Zapatilla Nike', isActive: true };
+      const mockProduct = {
+        id: 1,
+        code: 'NIKE',
+        name: 'Zapatilla Nike',
+        isActive: true,
+      };
       (prisma.product.findUnique as any).mockResolvedValue(mockProduct);
       (prisma.productImage.count as any).mockResolvedValue(4); // Límite alcanzado
 
@@ -186,16 +197,36 @@ describe('Desacoplamiento Visual y Visual Driver (isVisualDriver)', () => {
         category: { id: 1, name: 'Calzado' },
         brand: { id: 1, name: 'Nike' },
         images: [
-          { id: 10, productId: 1, url: 'img1.png', isMain: true, attributeValueId: null },
-          { id: 11, productId: 1, url: 'img2.png', isMain: false, attributeValueId: 5 }, // Vinculado a Rojo (id 5)
+          {
+            id: 10,
+            productId: 1,
+            url: 'img1.png',
+            isMain: true,
+            attributeValueId: null,
+          },
+          {
+            id: 11,
+            productId: 1,
+            url: 'img2.png',
+            isMain: false,
+            attributeValueId: 5,
+          }, // Vinculado a Rojo (id 5)
         ],
         variants: [],
       };
 
-      (prisma.branch.findFirst as any).mockResolvedValue({ id: 1, isMain: true, isActive: true });
-      (prisma.product.findFirst as any).mockResolvedValue(mockProductWithImages);
+      (prisma.branch.findFirst as any).mockResolvedValue({
+        id: 1,
+        isMain: true,
+        isActive: true,
+      });
+      (prisma.product.findFirst as any).mockResolvedValue(
+        mockProductWithImages
+      );
 
-      const res = await request(app).get('/api/v1/ecommerce/products/zapatilla-nike-nike');
+      const res = await request(app).get(
+        '/api/v1/ecommerce/products/zapatilla-nike-nike'
+      );
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -205,5 +236,3 @@ describe('Desacoplamiento Visual y Visual Driver (isVisualDriver)', () => {
     });
   });
 });
-
-

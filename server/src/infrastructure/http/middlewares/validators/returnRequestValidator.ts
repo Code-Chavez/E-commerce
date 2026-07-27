@@ -15,7 +15,11 @@ const createReturnRequestSchema = z.object({
     .min(1, 'At least one item must be returned'),
 });
 
-export const validateCreateReturnRequest = (req: Request, res: Response, next: NextFunction): void => {
+export const validateCreateReturnRequest = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   const result = createReturnRequestSchema.safeParse(req.body);
   if (!result.success) {
     res.status(400).json({

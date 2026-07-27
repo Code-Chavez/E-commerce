@@ -20,7 +20,7 @@ const PickingPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Generación de Picking | Admin D'Mendoza</title>
+        <title>Generación de Picking | Admin E-Commerce</title>
       </Helmet>
       
       <div className="space-y-6">

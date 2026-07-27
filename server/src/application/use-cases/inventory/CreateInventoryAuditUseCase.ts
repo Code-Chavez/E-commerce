@@ -1,13 +1,22 @@
 import { IInventoryAuditRepository } from '@domain/repositories/IInventoryAuditRepository';
-import { CreateInventoryAuditRequestDTO, InventoryAuditResponseDTO } from '../../dtos/InventoryAuditDTOs';
+import {
+  CreateInventoryAuditRequestDTO,
+  InventoryAuditResponseDTO,
+} from '../../dtos/InventoryAuditDTOs';
 import prisma from '@infrastructure/database/prisma';
 
 export class CreateInventoryAuditUseCase {
-  constructor(private readonly inventoryAuditRepository: IInventoryAuditRepository) {}
+  constructor(
+    private readonly inventoryAuditRepository: IInventoryAuditRepository
+  ) {}
 
-  async execute(dto: CreateInventoryAuditRequestDTO): Promise<InventoryAuditResponseDTO> {
+  async execute(
+    dto: CreateInventoryAuditRequestDTO
+  ): Promise<InventoryAuditResponseDTO> {
     // 1. Validar que la sucursal exista
-    const branch = await prisma.branch.findUnique({ where: { id: dto.branchId } });
+    const branch = await prisma.branch.findUnique({
+      where: { id: dto.branchId },
+    });
     if (!branch) {
       throw new Error(`La sucursal con ID ${dto.branchId} no existe`);
     }
@@ -16,14 +25,24 @@ export class CreateInventoryAuditUseCase {
     const itemsWithQty = [];
     for (const item of dto.items) {
       // Validar que la variante exista
-      const variant = await prisma.productVariant.findUnique({ where: { id: item.variantId } });
+      const variant = await prisma.productVariant.findUnique({
+        where: { id: item.variantId },
+      });
       if (!variant) {
-        throw new Error(`La variante de producto con ID ${item.variantId} no existe`);
+        throw new Error(
+          `La variante de producto con ID ${item.variantId} no existe`
+        );
       }
 
       // Obtener el stock actual de la sucursal
       const stock = await prisma.branchStock.findUnique({
-        where: { variantId_branchId_status: { variantId: item.variantId, branchId: dto.branchId, status: 'AVAILABLE' } },
+        where: {
+          variantId_branchId_status: {
+            variantId: item.variantId,
+            branchId: dto.branchId,
+            status: 'AVAILABLE',
+          },
+        },
       });
 
       const systemQty = stock?.quantity ?? 0;

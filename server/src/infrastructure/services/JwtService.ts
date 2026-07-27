@@ -34,7 +34,7 @@ export class JwtService {
       }
 
       throw new Error(
-        'JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables',
+        'JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables'
       );
     }
 
@@ -50,9 +50,13 @@ export class JwtService {
       expiresIn: '15m',
     });
 
-    const refreshToken = jwt.sign({ userId: payload.userId }, this.refreshSecret, {
-      expiresIn: '7d',
-    });
+    const refreshToken = jwt.sign(
+      { userId: payload.userId },
+      this.refreshSecret,
+      {
+        expiresIn: '7d',
+      }
+    );
 
     return { accessToken, refreshToken };
   }
@@ -79,7 +83,11 @@ export class JwtService {
    * for server-side validation (to ensure single-use).
    * Signed with JWT_SECRET to ensure it cannot be forged.
    */
-  generatePasswordResetToken(userId: number, email: string, currentPasswordHash: string): string {
+  generatePasswordResetToken(
+    userId: number,
+    email: string,
+    currentPasswordHash: string
+  ): string {
     const expiresIn = process.env.RESET_PASSWORD_TOKEN_EXPIRES_IN || '1h';
     // Use the last 10 characters of the hash as a simple stateless invalidation check
     const hashFragment = currentPasswordHash.slice(-10);
@@ -87,20 +95,24 @@ export class JwtService {
     return jwt.sign(
       { userId, email, purpose: 'password-reset', hashFragment },
       this.accessSecret,
-      { expiresIn: expiresIn as any },
+      { expiresIn: expiresIn as any }
     );
   }
 
   /**
    * HU-008: Generates a 48h password reset token specifically for new linked accounts.
    */
-  generateWelcomePasswordToken(userId: number, email: string, currentPasswordHash: string): string {
+  generateWelcomePasswordToken(
+    userId: number,
+    email: string,
+    currentPasswordHash: string
+  ): string {
     const hashFragment = currentPasswordHash.slice(-10);
 
     return jwt.sign(
       { userId, email, purpose: 'welcome-password', hashFragment },
       this.accessSecret,
-      { expiresIn: '48h' },
+      { expiresIn: '48h' }
     );
   }
 
@@ -108,7 +120,12 @@ export class JwtService {
    * HU-003 / HU-008: Verifies a password reset or welcome token.
    * Returns the decoded payload or throws if expired / invalid.
    */
-  verifyPasswordResetToken(token: string): { userId: number; email: string; purpose: string; hashFragment?: string } {
+  verifyPasswordResetToken(token: string): {
+    userId: number;
+    email: string;
+    purpose: string;
+    hashFragment?: string;
+  } {
     const payload = jwt.verify(token, this.accessSecret) as {
       userId: number;
       email: string;
@@ -116,7 +133,10 @@ export class JwtService {
       hashFragment?: string;
     };
 
-    if (payload.purpose !== 'password-reset' && payload.purpose !== 'welcome-password') {
+    if (
+      payload.purpose !== 'password-reset' &&
+      payload.purpose !== 'welcome-password'
+    ) {
       throw new Error('Token inválido');
     }
 

@@ -38,7 +38,7 @@ export const useResetPassword = () => {
       return result;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Ocurrió un error inesperado';
-      throw new Error(message);
+      throw new Error(message, { cause: err });
     } finally {
       setIsLoading(false);
     }

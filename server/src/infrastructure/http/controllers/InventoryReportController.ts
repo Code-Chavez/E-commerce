@@ -20,13 +20,20 @@ export class InventoryReportController {
     try {
       const parsed = QuerySchema.safeParse(req.query);
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const { from, to, branchId } = parsed.data;
       const fromDate = new Date(from);
       const toDate = new Date(to);
-      const periodDays = Math.max(1, Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const periodDays = Math.max(
+        1,
+        Math.ceil(
+          (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)
+        )
+      );
 
       const entries = await prisma.kardexEntry.findMany({
         where: {
@@ -34,17 +41,27 @@ export class InventoryReportController {
           ...(branchId ? { branchId } : {}),
         },
         include: {
-          variant: { select: { sku: true, product: { select: { name: true } } } },
+          variant: {
+            select: { sku: true, product: { select: { name: true } } },
+          },
           branch: { select: { name: true } },
         },
         orderBy: { createdAt: 'asc' },
       });
 
-      const map = new Map<string, {
-        variantId: number; sku: string; productName: string;
-        branchId: number; branchName: string;
-        unitsSold: number; openingQty: number; closingQty: number;
-      }>();
+      const map = new Map<
+        string,
+        {
+          variantId: number;
+          sku: string;
+          productName: string;
+          branchId: number;
+          branchName: string;
+          unitsSold: number;
+          openingQty: number;
+          closingQty: number;
+        }
+      >();
 
       for (const e of entries) {
         const key = `${e.variantId}-${e.branchId}`;
@@ -65,14 +82,18 @@ export class InventoryReportController {
         row.closingQty = e.balanceQty;
       }
 
-      const report = Array.from(map.values()).map(row => {
+      const report = Array.from(map.values()).map((row) => {
         const avgStock = (row.openingQty + row.closingQty) / 2;
-        const rotationRatio = avgStock > 0 ? Math.round((row.unitsSold / avgStock) * 100) / 100 : 0;
-        const stockDays = rotationRatio > 0 ? Math.round(periodDays / rotationRatio) : null;
+        const rotationRatio =
+          avgStock > 0 ? Math.round((row.unitsSold / avgStock) * 100) / 100 : 0;
+        const stockDays =
+          rotationRatio > 0 ? Math.round(periodDays / rotationRatio) : null;
         return { ...row, avgStock, rotationRatio, stockDays, periodDays };
       });
 
       return res.status(200).json({ success: true, data: report });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   }
 }

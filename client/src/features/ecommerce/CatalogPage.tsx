@@ -41,7 +41,7 @@ export const CatalogPage: React.FC = () => {
   const stringifiedAttributes = JSON.stringify(attributes);
 
   // Set document title
-  useDocumentTitle(q ? `Buscar: ${q}` : 'Catálogo de Prendas - D\'Mendoza');
+  useDocumentTitle(q ? `Buscar: ${q}` : 'Catálogo de Prendas - E-Commerce');
 
   // Trigger search when searchParams change
   useEffect(() => {

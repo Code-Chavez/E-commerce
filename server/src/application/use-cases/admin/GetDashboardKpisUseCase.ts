@@ -14,7 +14,9 @@ export class GetDashboardKpisUseCase {
 
   async execute(): Promise<DashboardKpiDto> {
     // Calcular inicio y fin del día en la zona horaria de la operación (America/Lima - GMT-5)
-    const todayStr = new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Lima' });
+    const todayStr = new Date().toLocaleDateString('sv-SE', {
+      timeZone: 'America/Lima',
+    });
     const startOfDay = new Date(`${todayStr}T00:00:00-05:00`);
     const endOfDay = new Date(`${todayStr}T23:59:59.999-05:00`);
 

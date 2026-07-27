@@ -18,15 +18,17 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockPrisma: any = {
     operatingExpense: mockOperatingExpense,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (args: any): Promise<any> => {
-      if (Array.isArray(args)) {
-        return Promise.all(args);
-      }
-      if (typeof args === 'function') {
-        return args(mockPrisma);
-      }
-      return args;
-    }),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (args: any): Promise<any> => {
+        if (Array.isArray(args)) {
+          return Promise.all(args);
+        }
+        if (typeof args === 'function') {
+          return args(mockPrisma);
+        }
+        return args;
+      }),
   };
 
   return { __esModule: true, default: mockPrisma };
@@ -37,7 +39,7 @@ jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: jest.fn().mockReturnValue({
       userId: 1,
-      email: 'admin@dmendoza.com',
+      email: 'admin@e-commerce.com',
       role: 'ADMIN',
     }),
   })),
@@ -48,14 +50,17 @@ import prisma from '@infrastructure/database/prisma';
 describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Sucursal (T-244)', () => {
   const dummyAdminUser = {
     id: 1,
-    email: 'admin@dmendoza.com',
+    email: 'admin@e-commerce.com',
     isActive: true,
     roles: [
       {
         name: 'ADMIN',
         permissions: [
           { name: 'sales:read' },
-          { name: 'sales:write' }, { name: 'roles:manage' }, { name: 'expenses:write' }, { name: 'expenses:read' },
+          { name: 'sales:write' },
+          { name: 'roles:manage' },
+          { name: 'expenses:write' },
+          { name: 'expenses:read' },
         ],
       },
     ],
@@ -72,7 +77,7 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
         branchId: 1,
         type: 'FIXED',
         description: 'Alquiler de local',
-        amount: 1500.00,
+        amount: 1500.0,
         date: '2026-07-02T10:00:00.000Z',
       };
 
@@ -81,7 +86,7 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
         branchId: 1,
         type: 'FIXED',
         description: 'Alquiler de local',
-        amount: 1500.00,
+        amount: 1500.0,
         date: new Date(payload.date),
         userId: 1,
         createdAt: new Date(),
@@ -96,7 +101,7 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('success', true);
       expect(response.body.data).toHaveProperty('id', 10);
-      expect(response.body.data.amount).toBe(1500.00);
+      expect(response.body.data.amount).toBe(1500.0);
       expect(response.body.data.userId).toBe(1);
     });
 
@@ -105,7 +110,7 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
         branchId: 1,
         type: 'FIXED',
         description: 'Servicio de luz',
-        amount: -50.00,
+        amount: -50.0,
         date: '2026-07-02T10:00:00.000Z',
       };
 
@@ -123,7 +128,7 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
         branchId: 1,
         type: 'INVALID_TYPE',
         description: 'Servicio de luz',
-        amount: 50.00,
+        amount: 50.0,
         date: '2026-07-02T10:00:00.000Z',
       };
 
@@ -246,5 +251,3 @@ describe('Tests de Integración — HU-071: Registro de Gastos Operativos por Su
     });
   });
 });
-
-

@@ -32,13 +32,17 @@ export class ConfirmCrossBranchSaleUseCase {
     }
 
     if (!order.isCrossBranch || !order.sourceBranchId) {
-      const err = new Error('Esta orden no corresponde a una venta Cross-Branch');
+      const err = new Error(
+        'Esta orden no corresponde a una venta Cross-Branch'
+      );
       (err as any).statusCode = 400;
       throw err;
     }
 
     if (order.status !== 'COMPLETED') {
-      const err = new Error(`No se puede confirmar una orden con estado ${order.status}`);
+      const err = new Error(
+        `No se puede confirmar una orden con estado ${order.status}`
+      );
       (err as any).statusCode = 400;
       throw err;
     }
@@ -56,7 +60,9 @@ export class ConfirmCrossBranchSaleUseCase {
     });
 
     if (alreadyConfirmed) {
-      const err = new Error('Esta venta Cross-Branch ya ha sido confirmada previamente');
+      const err = new Error(
+        'Esta venta Cross-Branch ya ha sido confirmada previamente'
+      );
       (err as any).statusCode = 400;
       throw err;
     }
@@ -136,7 +142,7 @@ export class ConfirmCrossBranchSaleUseCase {
             quantity: item.quantity,
             unitCost: currentUnitCost,
             balanceQty: newBalanceQty,
-            balanceCost: currentBalanceCost - (item.quantity * currentUnitCost),
+            balanceCost: currentBalanceCost - item.quantity * currentUnitCost,
             userId: userId ?? null,
           },
         });

@@ -7,7 +7,10 @@ import { UpdateUserPreferencesUseCase } from '@application/use-cases/profile/Upd
 
 const userRepository = new PrismaUserRepository();
 const storageService = new CloudinaryStorageService();
-const updateProfileUseCase = new UpdateProfileUseCase(userRepository, storageService);
+const updateProfileUseCase = new UpdateProfileUseCase(
+  userRepository,
+  storageService
+);
 const updatePreferencesUseCase = new UpdateUserPreferencesUseCase();
 
 // Validation Schema with strict E.164 phone format validation (HU-005)
@@ -25,12 +28,16 @@ const UpdateProfileSchema = z.object({
   phone: z
     .string()
     .regex(/^\+[1-9]\d{1,14}$/, {
-      message: 'El número de teléfono debe estar en formato internacional E.164 (ej: +51999888777)',
+      message:
+        'El número de teléfono debe estar en formato internacional E.164 (ej: +51999888777)',
     })
     .optional(),
   birthdate: z
     .string()
-    .datetime({ message: 'La fecha de nacimiento debe ser una fecha ISO válida (ej: 1990-01-01T00:00:00Z)' })
+    .datetime({
+      message:
+        'La fecha de nacimiento debe ser una fecha ISO válida (ej: 1990-01-01T00:00:00Z)',
+    })
     .optional(),
 });
 
@@ -167,4 +174,3 @@ export class ProfileController {
     }
   }
 }
-

@@ -36,7 +36,7 @@ router.get(
  */
 router.put(
   '/config/brand',
-  requirePermission('roles:manage'), 
+  requirePermission('roles:manage'),
   brandController.updateBrandConfig.bind(brandController)
 );
 

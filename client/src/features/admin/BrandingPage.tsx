@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { Palette, Globe, Save, Loader2, Image as ImageIcon, UploadCloud, Plus, Trash2, Link as LinkIcon } from 'lucide-react';
@@ -124,11 +124,7 @@ export const BrandingPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const { refreshBrandConfig } = useBrand();
 
-  useEffect(() => {
-    fetchConfig();
-  }, []);
-
-  const fetchConfig = async () => {
+  const fetchConfig = useCallback(async () => {
     try {
       const { data } = await axiosInstance.get('/v1/config/brand');
       if (data.success) {
@@ -146,7 +142,13 @@ export const BrandingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchConfig();
+  }, [fetchConfig]);
+
+
 
   const handleSave = async () => {
     setSaving(true);
@@ -250,7 +252,7 @@ export const BrandingPage: React.FC = () => {
                 value={config.brandName}
                 onChange={(e) => setConfig({ ...config, brandName: e.target.value })}
                 className="w-full px-4 py-2 border border-[#D9D9D2] rounded-xl focus:border-[#3F3F3F] outline-none transition-colors"
-                placeholder="Ej. D'Mendoza"
+                placeholder="Ej. E-Commerce"
               />
             </div>
 

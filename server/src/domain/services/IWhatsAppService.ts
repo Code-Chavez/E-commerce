@@ -5,5 +5,9 @@ export interface IWhatsAppService {
    * @param template Nombre o identificador del template del mensaje
    * @param params Variables que se inyectarán en el template
    */
-  sendMessage(phone: string, template: string, params: Record<string, string>): Promise<boolean>;
+  sendMessage(
+    phone: string,
+    template: string,
+    params: Record<string, string>
+  ): Promise<boolean>;
 }

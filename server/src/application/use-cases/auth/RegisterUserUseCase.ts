@@ -8,7 +8,7 @@ export class RegisterUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly emailService: IEmailService
-  ) { }
+  ) {}
 
   async execute(dto: RegisterUserDTO) {
     const existingUser = await this.userRepository.findByEmail(dto.email);
@@ -25,27 +25,37 @@ export class RegisterUserUseCase {
 
     const pin = CodeGenerator.generatePin();
     const expiresAt = new Date();
-    const expirationHours = parseInt(process.env.VERIFICATION_PIN_EXPIRES_IN_HOURS || '24', 10);
+    const expirationHours = parseInt(
+      process.env.VERIFICATION_PIN_EXPIRES_IN_HOURS || '24',
+      10
+    );
     expiresAt.setHours(expiresAt.getHours() + expirationHours);
 
     try {
-      await this.userRepository.updateVerificationPin(newUser.id, pin, expiresAt);
+      await this.userRepository.updateVerificationPin(
+        newUser.id,
+        pin,
+        expiresAt
+      );
 
       await this.emailService.sendEmail(
         newUser.email,
-        'Tu código de verificación - DMendoza',
+        'Tu código de verificación - E-Commerce',
         `<p>Hola,</p><p>Tu código de verificación es: <strong>${pin}</strong></p><p>Este código expira en ${expirationHours} horas.</p>`
       );
     } catch (error) {
       await this.userRepository.deleteById(newUser.id);
-      throw new Error('El registro falló porque no se pudo despachar el código de verificación. Por favor reintente.');
+      throw new Error(
+        'El registro falló porque no se pudo despachar el código de verificación. Por favor reintente.'
+      );
     }
 
     return {
       id: newUser.id,
       email: newUser.email,
       isActive: newUser.isActive,
-      message: "El usuario se ha creado correctamente. A la espera de verificación.",
+      message:
+        'El usuario se ha creado correctamente. A la espera de verificación.',
     };
   }
 }

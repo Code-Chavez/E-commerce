@@ -5,7 +5,7 @@ import { Ticket, Search, Loader2 } from 'lucide-react';
 import { useCreditNotes } from '../hooks/useCreditNotes';
 
 export const CreditNotesPage: React.FC = () => {
-  useDocumentTitle('Notas de Crédito - D\'Mendoza');
+  useDocumentTitle('Notas de Crédito - E-Commerce');
   
   const [searchTerm, setSearchTerm] = useState('');
   const { creditNotes, loading, resendingId, fetchCreditNotes, resendPdf } = useCreditNotes();

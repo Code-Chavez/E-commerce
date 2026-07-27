@@ -1,4 +1,11 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
 import bcrypt from 'bcrypt';
 import { LoginUseCase } from '@application/use-cases/auth/LoginUseCase';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
@@ -34,12 +41,14 @@ const mockJwtService = {
 const PLAIN_PASSWORD = 'Password1!';
 
 // Build a real bcrypt hash at the given cost to simulate stored hashes
-async function buildUser(overrides: Partial<User> & { saltRounds?: number } = {}): Promise<User> {
+async function buildUser(
+  overrides: Partial<User> & { saltRounds?: number } = {}
+): Promise<User> {
   const { saltRounds = 10, ...userOverrides } = overrides;
   const hash = await bcrypt.hash(PLAIN_PASSWORD, saltRounds);
   return {
     id: 1,
-    email: 'test@dmendoza.com',
+    email: 'test@e-commerce.com',
     name: 'Test User',
     password: hash,
     authProvider: 'local',
@@ -114,7 +123,7 @@ describe('LoginUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(user);
 
     await expect(
-      loginUseCase.execute({ email: user.email, password: 'WrongPassword!' }),
+      loginUseCase.execute({ email: user.email, password: 'WrongPassword!' })
     ).rejects.toThrow('Credenciales inválidas');
 
     expect(mockUserRepository.updatePassword).not.toHaveBeenCalled();
@@ -129,7 +138,7 @@ describe('LoginUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(user);
 
     await expect(
-      loginUseCase.execute({ email: user.email, password: PLAIN_PASSWORD }),
+      loginUseCase.execute({ email: user.email, password: PLAIN_PASSWORD })
     ).rejects.toThrow('Cuenta inactiva o no verificada');
 
     expect(mockUserRepository.updatePassword).not.toHaveBeenCalled();
@@ -143,7 +152,7 @@ describe('LoginUseCase', () => {
     mockUserRepository.findByEmail.mockResolvedValue(user);
 
     await expect(
-      loginUseCase.execute({ email: user.email, password: PLAIN_PASSWORD }),
+      loginUseCase.execute({ email: user.email, password: PLAIN_PASSWORD })
     ).rejects.toThrow('Esta cuenta fue registrada con Google');
 
     expect(mockUserRepository.updatePassword).not.toHaveBeenCalled();

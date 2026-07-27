@@ -12,11 +12,11 @@ export class StockAlertController {
         where: { isActive: true },
         include: {
           variant: {
-            include: { product: true }
+            include: { product: true },
           },
-          branch: true
+          branch: true,
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return res.status(200).json({ success: true, data: alerts });
@@ -38,7 +38,7 @@ export class StockAlertController {
 
       const alert = await prisma.stockAlert.update({
         where: { id },
-        data: { isActive: false }
+        data: { isActive: false },
       });
 
       return res.status(200).json({ success: true, data: alert });

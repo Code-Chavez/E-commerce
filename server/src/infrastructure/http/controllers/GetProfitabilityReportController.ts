@@ -12,8 +12,17 @@ const getProfitabilityReportUseCase = new GetProfitabilityReportUseCase(
 );
 
 const GetProfitabilityReportQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "from" debe tener formato YYYY-MM-DD').optional(),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "to" debe tener formato YYYY-MM-DD').optional(),
+  from: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'La fecha "from" debe tener formato YYYY-MM-DD'
+    )
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha "to" debe tener formato YYYY-MM-DD')
+    .optional(),
   groupBy: z.enum(['brand', 'category'], {
     message: "El parámetro groupBy debe ser 'brand' o 'category'",
   }),

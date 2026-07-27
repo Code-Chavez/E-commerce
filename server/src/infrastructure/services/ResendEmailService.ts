@@ -6,7 +6,8 @@ import { CommunicationChannel } from '@domain/entities/CommunicationLog';
 
 class BaseResendEmailService implements IEmailService {
   private resend: Resend | null;
-  private readonly defaultFrom = process.env.RESEND_FROM_EMAIL || 'DMendoza <noreply@dmendoza.shop>';
+  private readonly defaultFrom =
+    process.env.RESEND_FROM_EMAIL || 'E-Commerce <noreply@e-commerce.shop>';
 
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
@@ -57,7 +58,7 @@ export class ResendEmailService implements IEmailService {
 
   async sendEmail(to: string, subject: string, html: string): Promise<void> {
     await this.baseService.sendEmail(to, subject, html);
-    this.logCommunication(to, subject).catch(err => {
+    this.logCommunication(to, subject).catch((err) => {
       console.error(`Failed to log email communication for ${to}:`, err);
     });
   }
@@ -69,7 +70,7 @@ export class ResendEmailService implements IEmailService {
         userId: user.id,
         channel: CommunicationChannel.EMAIL,
         subject,
-        type: 'SYSTEM'
+        type: 'SYSTEM',
       });
     }
   }

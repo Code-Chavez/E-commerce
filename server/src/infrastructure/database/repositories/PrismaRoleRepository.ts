@@ -22,7 +22,10 @@ export class PrismaRoleRepository implements IRoleRepository {
     return record as Role | null;
   }
 
-  async create(data: { name: string; description?: string | null }): Promise<Role> {
+  async create(data: {
+    name: string;
+    description?: string | null;
+  }): Promise<Role> {
     const record = await prisma.role.create({
       data: {
         name: data.name,
@@ -43,7 +46,11 @@ export class PrismaRoleRepository implements IRoleRepository {
    * Reemplaza todos los roles del usuario por el nuevo rol especificado (Operation: SET)
    * Esto evita la acumulación involuntaria de roles (HU-049 Fix).
    */
-  async assignRoleToUser(userId: number, roleId: number, tx?: any): Promise<void> {
+  async assignRoleToUser(
+    userId: number,
+    roleId: number,
+    tx?: any
+  ): Promise<void> {
     const client = tx || prisma;
     await client.user.update({
       where: { id: userId },

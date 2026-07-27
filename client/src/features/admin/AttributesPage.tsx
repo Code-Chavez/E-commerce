@@ -21,7 +21,7 @@ interface AttributeValue { id: number; value: string; isActive: boolean; }
 interface Attribute { id: number; name: string; isActive: boolean; values: AttributeValue[]; isVisualDriver?: boolean; }
 
 const AttributesPage: React.FC = () => {
-  useDocumentTitle('Gestión de Atributos - D\'Mendoza');
+  useDocumentTitle('Gestión de Atributos - E-Commerce');
 
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);

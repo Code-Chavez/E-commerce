@@ -25,7 +25,7 @@ interface CloseCashTurnSummary {
 export class CloseCashTurnUseCase {
   constructor(
     private readonly cashTurnRepository: ICashTurnRepository,
-    private readonly cashMovementRepository: ICashMovementRepository,
+    private readonly cashMovementRepository: ICashMovementRepository
   ) {}
 
   async execute(dto: CloseCashTurnDTO): Promise<CloseCashTurnSummary> {
@@ -46,14 +46,22 @@ export class CloseCashTurnUseCase {
     }
 
     // 4. Obtener la sucursal del turno a través de la caja registradora
-    const register = await this.cashTurnRepository.findRegisterById(turn.registerId);
+    const register = await this.cashTurnRepository.findRegisterById(
+      turn.registerId
+    );
     if (!register) {
       throw new Error('La caja registradora asociada al turno no existe');
     }
 
     // 5. Calcular totales de movimientos
-    const totalIngresos = await this.cashMovementRepository.sumByTurnAndType(dto.turnId, 'INGRESO');
-    const totalEgresos = await this.cashMovementRepository.sumByTurnAndType(dto.turnId, 'EGRESO');
+    const totalIngresos = await this.cashMovementRepository.sumByTurnAndType(
+      dto.turnId,
+      'INGRESO'
+    );
+    const totalEgresos = await this.cashMovementRepository.sumByTurnAndType(
+      dto.turnId,
+      'EGRESO'
+    );
 
     // 6. Calcular total de ventas completadas durante el turno
     const salesResult = await prisma.posOrder.aggregate({
@@ -72,12 +80,16 @@ export class CloseCashTurnUseCase {
     const salesCount = salesResult._count;
 
     // 7. Calcular monto esperado y diferencia
-    const expectedAmount = turn.openAmount + totalIngresos - totalEgresos + totalVentas;
+    const expectedAmount =
+      turn.openAmount + totalIngresos - totalEgresos + totalVentas;
     const closeAmount = dto.closeAmount ?? 0;
     const difference = closeAmount - expectedAmount;
 
     // 8. Cerrar el turno
-    const closedTurn = await this.cashTurnRepository.close(dto.turnId, closeAmount);
+    const closedTurn = await this.cashTurnRepository.close(
+      dto.turnId,
+      closeAmount
+    );
 
     return {
       turnId: closedTurn.id!,

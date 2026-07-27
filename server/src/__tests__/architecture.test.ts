@@ -14,7 +14,7 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
     it('RF-17: la entidad User debe incluir el campo lastLogin', () => {
       const user: User = {
         id: 1,
-        email: 'test@dmendoza.com',
+        email: 'test@e-commerce.com',
         name: 'Test',
         password: 'hashed',
         authProvider: 'local',
@@ -31,7 +31,7 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
     it('lastLogin puede ser null (usuario que nunca ha iniciado sesión)', () => {
       const user: User = {
         id: 2,
-        email: 'nuevo@dmendoza.com',
+        email: 'nuevo@e-commerce.com',
         name: null,
         password: 'hashed',
         authProvider: 'local',
@@ -47,7 +47,7 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
     it('UserResponseDTO no debe contener password', () => {
       const dto: UserResponseDTO = {
         id: 1,
-        email: 'test@dmendoza.com',
+        email: 'test@e-commerce.com',
         name: 'Test',
         lastLogin: new Date(),
         createdAt: new Date(),
@@ -59,7 +59,7 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
 
     it('CreateUserDTO no debe contener campos autogenerados', () => {
       const dto: CreateUserDTO = {
-        email: 'new@dmendoza.com',
+        email: 'new@e-commerce.com',
         password: 'Pass123!',
         name: 'New User',
       };
@@ -173,5 +173,3 @@ describe('Separación de capas (Arquitectura Hexagonal)', () => {
     });
   });
 });
-
-

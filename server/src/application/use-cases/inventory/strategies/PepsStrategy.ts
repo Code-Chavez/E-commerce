@@ -1,4 +1,7 @@
-import type { IKardexCostStrategy, SalidaCostResult } from '@domain/services/IKardexCostStrategy';
+import type {
+  IKardexCostStrategy,
+  SalidaCostResult,
+} from '@domain/services/IKardexCostStrategy';
 
 interface Lote {
   quantity: number;
@@ -62,7 +65,7 @@ export class PepsStrategy implements IKardexCostStrategy {
     // Calcular costo de la nueva salida consumiendo del frente de la queue
     let remaining = quantity;
     let totalCost = 0;
-    const queueCopy = queue.map(l => ({ ...l }));
+    const queueCopy = queue.map((l) => ({ ...l }));
 
     for (const lote of queueCopy) {
       if (remaining <= 0) break;
@@ -74,7 +77,7 @@ export class PepsStrategy implements IKardexCostStrategy {
     if (remaining > 0) {
       throw new Error(
         `Stock PEPS insuficiente para variante ${variantId} en sucursal ${branchId}. ` +
-        `Faltan ${remaining} unidades en lotes disponibles.`
+          `Faltan ${remaining} unidades en lotes disponibles.`
       );
     }
 

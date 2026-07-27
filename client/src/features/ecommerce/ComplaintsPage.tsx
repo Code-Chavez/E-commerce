@@ -23,7 +23,7 @@ const STATUS_CONFIG = {
 };
 
 const ComplaintsPage: React.FC = () => {
-  useDocumentTitle("Libro de Reclamaciones - D'Mendoza");
+  useDocumentTitle("Libro de Reclamaciones - E-Commerce");
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);

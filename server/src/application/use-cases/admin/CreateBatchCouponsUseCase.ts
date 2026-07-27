@@ -34,9 +34,12 @@ export class CreateBatchCouponsUseCase {
 
     const couponsToCreate = [];
     for (let i = 0; i < quantity; i++) {
-      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const randomSuffix = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
       const code = `${prefix}-${randomSuffix}`;
-      
+
       couponsToCreate.push({
         code,
         type,

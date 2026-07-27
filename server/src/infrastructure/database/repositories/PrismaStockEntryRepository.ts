@@ -95,11 +95,13 @@ export class PrismaStockEntryRepository implements IStockEntryRepository {
         const groupedAssignments: Record<number, number> = {};
 
         for (const dist of dists) {
-          groupedAssignments[dist.branchId] = (groupedAssignments[dist.branchId] || 0) + dist.quantity;
+          groupedAssignments[dist.branchId] =
+            (groupedAssignments[dist.branchId] || 0) + dist.quantity;
         }
 
         if (remainingQuantity > 0) {
-          groupedAssignments[data.branchId] = (groupedAssignments[data.branchId] || 0) + remainingQuantity;
+          groupedAssignments[data.branchId] =
+            (groupedAssignments[data.branchId] || 0) + remainingQuantity;
         }
 
         // Procesar transacciones individuales para cada sucursal de destino
@@ -119,8 +121,19 @@ export class PrismaStockEntryRepository implements IStockEntryRepository {
 
           // Upsert del stock en la sucursal de asignación
           await tx.branchStock.upsert({
-            where: { variantId_branchId_status: { variantId: item.variantId, branchId: targetBranchId, status: 'AVAILABLE' } },
-            create: { variantId: item.variantId, branchId: targetBranchId, quantity: qty, status: 'AVAILABLE' },
+            where: {
+              variantId_branchId_status: {
+                variantId: item.variantId,
+                branchId: targetBranchId,
+                status: 'AVAILABLE',
+              },
+            },
+            create: {
+              variantId: item.variantId,
+              branchId: targetBranchId,
+              quantity: qty,
+              status: 'AVAILABLE',
+            },
             update: { quantity: { increment: qty } },
           });
 
@@ -179,13 +192,15 @@ export class PrismaStockEntryRepository implements IStockEntryRepository {
         createdAt: record.supplier.createdAt,
         updatedAt: record.supplier.updatedAt,
       },
-      items: record.items.map((item): StockEntryItem => ({
-        id: item.id,
-        stockEntryId: item.stockEntryId,
-        variantId: item.variantId,
-        quantity: item.quantity,
-        unitCost: item.unitCost,
-      })),
+      items: record.items.map(
+        (item): StockEntryItem => ({
+          id: item.id,
+          stockEntryId: item.stockEntryId,
+          variantId: item.variantId,
+          quantity: item.quantity,
+          unitCost: item.unitCost,
+        })
+      ),
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     };

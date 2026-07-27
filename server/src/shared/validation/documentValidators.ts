@@ -21,12 +21,18 @@ export const positiveInt = z
 export const nonNegativeMoney = z
   .number()
   .nonnegative('El monto no puede ser negativo')
-  .refine(val => Number.isInteger(Number(val.toFixed(2)) * 100), 'El monto permite hasta 2 decimales');
+  .refine(
+    (val) => Number.isInteger(Number(val.toFixed(2)) * 100),
+    'El monto permite hasta 2 decimales'
+  );
 
 export const positiveMoney = z
   .number()
   .positive('El monto debe ser mayor a cero')
-  .refine(val => Number.isInteger(Number(val.toFixed(2)) * 100), 'El monto permite hasta 2 decimales');
+  .refine(
+    (val) => Number.isInteger(Number(val.toFixed(2)) * 100),
+    'El monto permite hasta 2 decimales'
+  );
 
 export const percentage0to100 = z
   .number()

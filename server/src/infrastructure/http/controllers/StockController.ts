@@ -32,7 +32,11 @@ export class StockController {
         }
       }
 
-      if (req.query.sku && typeof req.query.sku === 'string' && req.query.sku.trim() !== '') {
+      if (
+        req.query.sku &&
+        typeof req.query.sku === 'string' &&
+        req.query.sku.trim() !== ''
+      ) {
         filter.sku = req.query.sku.trim();
       }
 

@@ -14,16 +14,28 @@ const getUserAddressesUseCase = new GetUserAddressesUseCase(addressRepository);
 
 const CreateAddressSchema = z.object({
   alias: z.string().min(2, 'El alias debe tener al menos 2 caracteres').max(50),
-  fullAddress: z.string().min(5, 'La dirección debe tener al menos 5 caracteres'),
+  fullAddress: z
+    .string()
+    .min(5, 'La dirección debe tener al menos 5 caracteres'),
   district: z.string().min(2, 'El distrito debe tener al menos 2 caracteres'),
   reference: z.string().optional().nullable(),
   isDefault: z.boolean().optional(),
 });
 
 const UpdateAddressSchema = z.object({
-  alias: z.string().min(2, 'El alias debe tener al menos 2 caracteres').max(50).optional(),
-  fullAddress: z.string().min(5, 'La dirección debe tener al menos 5 caracteres').optional(),
-  district: z.string().min(2, 'El distrito debe tener al menos 2 caracteres').optional(),
+  alias: z
+    .string()
+    .min(2, 'El alias debe tener al menos 2 caracteres')
+    .max(50)
+    .optional(),
+  fullAddress: z
+    .string()
+    .min(5, 'La dirección debe tener al menos 5 caracteres')
+    .optional(),
+  district: z
+    .string()
+    .min(2, 'El distrito debe tener al menos 2 caracteres')
+    .optional(),
   reference: z.string().optional().nullable(),
   isDefault: z.boolean().optional(),
 });
@@ -70,7 +82,10 @@ export class AddressController {
         });
       }
 
-      const address = await createAddressUseCase.execute(userId, validation.data);
+      const address = await createAddressUseCase.execute(
+        userId,
+        validation.data
+      );
       return res.status(201).json({
         success: true,
         message: 'Dirección creada correctamente',
@@ -110,7 +125,11 @@ export class AddressController {
         });
       }
 
-      const address = await updateAddressUseCase.execute(userId, addressId, validation.data);
+      const address = await updateAddressUseCase.execute(
+        userId,
+        addressId,
+        validation.data
+      );
       return res.status(200).json({
         success: true,
         message: 'Dirección actualizada correctamente',

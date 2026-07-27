@@ -157,7 +157,7 @@ export class PrismaOrderRepository implements IOrderRepository {
     }
   ): Promise<{ orders: Order[]; totalCount: number }> {
     const whereClause: any = { userId };
-    
+
     if (params.status) {
       whereClause.status = params.status as any;
     }
@@ -327,7 +327,10 @@ export class PrismaOrderRepository implements IOrderRepository {
     return count;
   }
 
-  async findOrdersForExport(params: { from?: Date; to?: Date }): Promise<Order[]> {
+  async findOrdersForExport(params: {
+    from?: Date;
+    to?: Date;
+  }): Promise<Order[]> {
     const { from, to } = params;
     const where: any = {
       status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
@@ -356,15 +359,20 @@ export class PrismaOrderRepository implements IOrderRepository {
     return records.map((r) => this.toDomain(r));
   }
 
-  async getProfitabilityData(from?: Date, to?: Date): Promise<Array<{
-    qty: number;
-    unitPrice: number;
-    variantId: number;
-    brandName: string;
-    categoryName: string;
-    orderCreatedAt: Date;
-    unitCost: number;
-  }>> {
+  async getProfitabilityData(
+    from?: Date,
+    to?: Date
+  ): Promise<
+    Array<{
+      qty: number;
+      unitPrice: number;
+      variantId: number;
+      brandName: string;
+      categoryName: string;
+      orderCreatedAt: Date;
+      unitCost: number;
+    }>
+  > {
     const where: any = {
       order: {
         status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
@@ -419,7 +427,9 @@ export class PrismaOrderRepository implements IOrderRepository {
           brandName: r.variant?.product?.brand?.name || 'Sin Marca',
           categoryName: r.variant?.product?.category?.name || 'Sin Categoría',
           orderCreatedAt: r.order.createdAt,
-          unitCost: lastKardex ? Number(lastKardex.unitCost) : Number(r.variant?.costPrice ?? 0),
+          unitCost: lastKardex
+            ? Number(lastKardex.unitCost)
+            : Number(r.variant?.costPrice ?? 0),
         };
       })
     );
@@ -427,10 +437,15 @@ export class PrismaOrderRepository implements IOrderRepository {
     return result;
   }
 
-  async getFinancialSales(from?: Date, to?: Date): Promise<Array<{
-    amount: number;
-    createdAt: Date;
-  }>> {
+  async getFinancialSales(
+    from?: Date,
+    to?: Date
+  ): Promise<
+    Array<{
+      amount: number;
+      createdAt: Date;
+    }>
+  > {
     const where: any = {
       status: {
         in: ['PAID', 'SHIPPED', 'DELIVERED'],
@@ -457,6 +472,3 @@ export class PrismaOrderRepository implements IOrderRepository {
     }));
   }
 }
-
-
-

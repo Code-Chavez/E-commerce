@@ -3,14 +3,19 @@ import { IStockAlertRepository } from '@domain/repositories/IStockAlertRepositor
 import { SystemSettingCacheService } from '@infrastructure/services/SystemSettingCacheService';
 
 export class PrismaStockAlertRepository implements IStockAlertRepository {
-  async getActiveAlertsWithQuantity(): Promise<Array<{
-    sku: string;
-    productName: string;
-    branchName: string;
-    currentStock: number;
-    minStock: number;
-  }>> {
-    const globalMinStockStr = await SystemSettingCacheService.getSetting('MIN_STOCK_ALERT', '10');
+  async getActiveAlertsWithQuantity(): Promise<
+    Array<{
+      sku: string;
+      productName: string;
+      branchName: string;
+      currentStock: number;
+      minStock: number;
+    }>
+  > {
+    const globalMinStockStr = await SystemSettingCacheService.getSetting(
+      'MIN_STOCK_ALERT',
+      '10'
+    );
     const globalMinStock = parseInt(globalMinStockStr, 10);
 
     const variants = await prisma.productVariant.findMany({
@@ -25,9 +30,9 @@ export class PrismaStockAlertRepository implements IStockAlertRepository {
         },
         branchStock: {
           where: {
-            status: 'AVAILABLE'
-          }
-        }
+            status: 'AVAILABLE',
+          },
+        },
       },
     });
 
@@ -40,11 +45,13 @@ export class PrismaStockAlertRepository implements IStockAlertRepository {
     }> = [];
 
     for (const v of variants) {
-      const globalStock = v.branchStock.reduce((sum, stock) => sum + stock.quantity, 0);
+      const globalStock = v.branchStock.reduce(
+        (sum, stock) => sum + stock.quantity,
+        0
+      );
 
-      const threshold = (v.minStock && v.minStock > 0)
-        ? v.minStock
-        : globalMinStock;
+      const threshold =
+        v.minStock && v.minStock > 0 ? v.minStock : globalMinStock;
 
       if (globalStock <= threshold) {
         criticalStocks.push({

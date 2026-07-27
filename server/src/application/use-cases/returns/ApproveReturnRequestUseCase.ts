@@ -26,7 +26,9 @@ export class ApproveReturnRequestUseCase {
     }
 
     if (returnRequestRecord.status !== 'PENDING') {
-      throw new Error(`Return request is already ${returnRequestRecord.status}`);
+      throw new Error(
+        `Return request is already ${returnRequestRecord.status}`
+      );
     }
 
     return await prisma.$transaction(async (tx) => {

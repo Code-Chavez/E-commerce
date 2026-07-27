@@ -3,30 +3,36 @@ import { CreateBatchCouponsUseCase } from '@application/use-cases/admin/CreateBa
 import { GetAdminCouponsUseCase } from '@application/use-cases/admin/GetAdminCouponsUseCase';
 
 import { z } from 'zod';
-import { percentage0to100, positiveMoney, positiveInt } from '@shared/validation/documentValidators';
+import {
+  percentage0to100,
+  positiveMoney,
+  positiveInt,
+} from '@shared/validation/documentValidators';
 
-const CreateBatchCouponsSchema = z.object({
-  prefix: z.string().optional().default('COUPON'),
-  quantity: positiveInt.optional().default(1),
-  type: z.enum(['PERCENT', 'FIXED']),
-  value: z.number().positive('El valor debe ser positivo'),
-  minPurchaseAmount: z.number().nonnegative().optional().nullable(),
-  specificProductId: z.number().int().positive().optional().nullable(),
-  specificCategoryId: z.number().int().positive().optional().nullable(),
-  expiresAt: z.string().optional().nullable(),
-  maxUses: z.number().int().positive().optional().nullable(),
-}).refine(
-  (data) => {
-    if (data.type === 'PERCENT' && data.value > 100) {
-      return false;
+const CreateBatchCouponsSchema = z
+  .object({
+    prefix: z.string().optional().default('COUPON'),
+    quantity: positiveInt.optional().default(1),
+    type: z.enum(['PERCENT', 'FIXED']),
+    value: z.number().positive('El valor debe ser positivo'),
+    minPurchaseAmount: z.number().nonnegative().optional().nullable(),
+    specificProductId: z.number().int().positive().optional().nullable(),
+    specificCategoryId: z.number().int().positive().optional().nullable(),
+    expiresAt: z.string().optional().nullable(),
+    maxUses: z.number().int().positive().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === 'PERCENT' && data.value > 100) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'El porcentaje de descuento no puede exceder el 100%',
+      path: ['value'],
     }
-    return true;
-  },
-  {
-    message: 'El porcentaje de descuento no puede exceder el 100%',
-    path: ['value'],
-  }
-);
+  );
 
 export class AdminCouponController {
   constructor(
@@ -40,14 +46,22 @@ export class AdminCouponController {
         ...req.body,
         quantity: req.body.quantity ? parseInt(req.body.quantity, 10) : 1,
         value: parseFloat(req.body.value),
-        minPurchaseAmount: req.body.minPurchaseAmount ? parseFloat(req.body.minPurchaseAmount) : undefined,
-        specificProductId: req.body.specificProductId ? parseInt(req.body.specificProductId, 10) : undefined,
-        specificCategoryId: req.body.specificCategoryId ? parseInt(req.body.specificCategoryId, 10) : undefined,
+        minPurchaseAmount: req.body.minPurchaseAmount
+          ? parseFloat(req.body.minPurchaseAmount)
+          : undefined,
+        specificProductId: req.body.specificProductId
+          ? parseInt(req.body.specificProductId, 10)
+          : undefined,
+        specificCategoryId: req.body.specificCategoryId
+          ? parseInt(req.body.specificCategoryId, 10)
+          : undefined,
         maxUses: req.body.maxUses ? parseInt(req.body.maxUses, 10) : undefined,
       });
 
       if (!parsed.success) {
-        return res.status(400).json({ success: false, error: parsed.error.issues });
+        return res
+          .status(400)
+          .json({ success: false, error: parsed.error.issues });
       }
 
       const {
@@ -84,7 +98,7 @@ export class AdminCouponController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
-      
+
       let isActive: boolean | undefined;
       if (req.query.isActive !== undefined) {
         isActive = req.query.isActive === 'true';

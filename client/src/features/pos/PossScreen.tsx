@@ -30,7 +30,7 @@ import { CrossBranchStockModal } from './components/CrossBranchStockModal';
 import { CrossBranchTag } from './components/CrossBranchTag';
 
 export const PossScreen: React.FC = () => {
-  useDocumentTitle('Punto de Venta (POS) - D\'Mendoza');
+  useDocumentTitle('Punto de Venta (POS) - E-Commerce');
   
   const { activeRegister, branchId, igvExempt } = usePos();
   const { cartItems, addItem, updateQty, removeItem, clearCart, totals } = usePosCart(igvExempt);

@@ -1,6 +1,6 @@
 export enum CommunicationChannel {
   EMAIL = 'EMAIL',
-  WHATSAPP = 'WHATSAPP'
+  WHATSAPP = 'WHATSAPP',
 }
 
 export interface CommunicationLog {

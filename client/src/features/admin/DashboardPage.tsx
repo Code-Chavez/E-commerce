@@ -30,7 +30,7 @@ const DirectionBadge: React.FC<{ direction: 'HIGH' | 'LOW' }> = ({ direction }) 
 );
 
 export const DashboardPage: React.FC = () => {
-  useDocumentTitle('Dashboard - D\'Mendoza');
+  useDocumentTitle('Dashboard - E-Commerce');
   const { kpis, loading, error, refresh } = useDashboardKpis();
 
   const [anomalies, setAnomalies] = useState<SalesAnomaly[]>([]);

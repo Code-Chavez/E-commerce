@@ -8,28 +8,51 @@ export const kardexExtension = Prisma.defineExtension({
   name: 'kardexExtension',
   model: {
     branchStock: {
-      async upsertWithKardex(this: any, args: {
-        variantId: number;
-        branchId: number;
-        quantityDelta: number;
-        type: 'COMPRA' | 'VENTA' | 'TRANSFERENCIA' | 'DEVOLUCION' | 'AJUSTE';
-        unitCost: number;
-        newQuantity?: number;
-      }) {
+      async upsertWithKardex(
+        this: any,
+        args: {
+          variantId: number;
+          branchId: number;
+          quantityDelta: number;
+          type: 'COMPRA' | 'VENTA' | 'TRANSFERENCIA' | 'DEVOLUCION' | 'AJUSTE';
+          unitCost: number;
+          newQuantity?: number;
+        }
+      ) {
         const ctx = Prisma.getExtensionContext(this);
         const client = (ctx as any).$parent as any;
 
         return client.$transaction(async (tx: any) => {
           const existing = await tx.branchStock.findUnique({
-            where: { variantId_branchId_status: { variantId: args.variantId, branchId: args.branchId, status: 'AVAILABLE' } },
+            where: {
+              variantId_branchId_status: {
+                variantId: args.variantId,
+                branchId: args.branchId,
+                status: 'AVAILABLE',
+              },
+            },
           });
 
           const prevQty = existing?.quantity ?? 0;
-          const newQty = args.newQuantity !== undefined ? args.newQuantity : prevQty + args.quantityDelta;
+          const newQty =
+            args.newQuantity !== undefined
+              ? args.newQuantity
+              : prevQty + args.quantityDelta;
 
           const stock = await tx.branchStock.upsert({
-            where: { variantId_branchId_status: { variantId: args.variantId, branchId: args.branchId, status: 'AVAILABLE' } },
-            create: { variantId: args.variantId, branchId: args.branchId, quantity: newQty, status: 'AVAILABLE' },
+            where: {
+              variantId_branchId_status: {
+                variantId: args.variantId,
+                branchId: args.branchId,
+                status: 'AVAILABLE',
+              },
+            },
+            create: {
+              variantId: args.variantId,
+              branchId: args.branchId,
+              quantity: newQty,
+              status: 'AVAILABLE',
+            },
             update: { quantity: newQty },
           });
 
@@ -38,7 +61,8 @@ export const kardexExtension = Prisma.defineExtension({
             orderBy: { createdAt: 'desc' },
           });
 
-          const balanceCost = (lastEntry?.balanceCost ?? 0) + args.quantityDelta * args.unitCost;
+          const balanceCost =
+            (lastEntry?.balanceCost ?? 0) + args.quantityDelta * args.unitCost;
 
           await tx.kardexEntry.create({
             data: {

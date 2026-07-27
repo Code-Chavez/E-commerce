@@ -21,7 +21,9 @@ jest.mock('@infrastructure/database/prisma', () => {
     branch: mockBranch,
     warehouse: mockWarehouse,
     user: mockUser,
-    $transaction: jest.fn().mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
+    $transaction: jest
+      .fn()
+      .mockImplementation(async (cb: any): Promise<any> => cb(mockPrisma)),
   };
 
   return {
@@ -38,7 +40,7 @@ jest.mock('@infrastructure/services/JwtService', () => {
     JwtService: jest.fn().mockImplementation(() => ({
       verifyAccessToken: jest.fn().mockReturnValue({
         userId: 1,
-        email: 'admin@dmendoza.com',
+        email: 'admin@e-commerce.com',
         role: 'SUPERADMIN',
       }),
     })),
@@ -48,15 +50,12 @@ jest.mock('@infrastructure/services/JwtService', () => {
 // Mocked Security Principal User
 const mockAdminUser = {
   id: 1,
-  email: 'admin@dmendoza.com',
+  email: 'admin@e-commerce.com',
   isActive: true,
   roles: [
     {
       name: 'SUPERADMIN',
-      permissions: [
-        { name: 'users:read' },
-        { name: 'users:write' },
-      ],
+      permissions: [{ name: 'users:read' }, { name: 'users:write' }],
     },
   ],
 };
@@ -92,10 +91,18 @@ describe('Módulo Branch — HU-020 (T-063 y T-064)', () => {
   });
 
   describe('Use Cases (Capa de Aplicación)', () => {
-    const { CreateBranchUseCase } = require('@application/use-cases/branch/CreateBranchUseCase');
-    const { UpdateBranchUseCase } = require('@application/use-cases/branch/UpdateBranchUseCase');
-    const { ToggleBranchStatusUseCase } = require('@application/use-cases/branch/ToggleBranchStatusUseCase');
-    const { PrismaBranchRepository } = require('@infrastructure/database/repositories/PrismaBranchRepository');
+    const {
+      CreateBranchUseCase,
+    } = require('@application/use-cases/branch/CreateBranchUseCase');
+    const {
+      UpdateBranchUseCase,
+    } = require('@application/use-cases/branch/UpdateBranchUseCase');
+    const {
+      ToggleBranchStatusUseCase,
+    } = require('@application/use-cases/branch/ToggleBranchStatusUseCase');
+    const {
+      PrismaBranchRepository,
+    } = require('@infrastructure/database/repositories/PrismaBranchRepository');
 
     let branchRepo: any;
     let createBranchUC: any;
@@ -112,7 +119,9 @@ describe('Módulo Branch — HU-020 (T-063 y T-064)', () => {
     it('CreateBranchUseCase: debe crear una sucursal y su almacén asociado', async () => {
       (prisma.branch.findUnique as any).mockResolvedValue(null); // Name is free
       (prisma.branch.create as any).mockResolvedValue(dummyBranchRecord);
-      (prisma.warehouse.create as any).mockResolvedValue(dummyBranchRecord.warehouse);
+      (prisma.warehouse.create as any).mockResolvedValue(
+        dummyBranchRecord.warehouse
+      );
 
       const result = await createBranchUC.execute({
         name: 'Sucursal Central',
@@ -140,7 +149,7 @@ describe('Módulo Branch — HU-020 (T-063 y T-064)', () => {
       (prisma.branch.findUnique as any)
         .mockResolvedValueOnce(dummyBranchRecord) // findById check
         .mockResolvedValueOnce(null); // findByName check (no conflicts)
-      
+
       (prisma.branch.update as any).mockResolvedValue({
         ...dummyBranchRecord,
         address: 'Nueva Dirección 456',
@@ -172,7 +181,9 @@ describe('Módulo Branch — HU-020 (T-063 y T-064)', () => {
     it('POST /api/v1/branches — debe crear una sucursal exitosamente', async () => {
       (prisma.branch.findUnique as any).mockResolvedValue(null);
       (prisma.branch.create as any).mockResolvedValue(dummyBranchRecord);
-      (prisma.warehouse.create as any).mockResolvedValue(dummyBranchRecord.warehouse);
+      (prisma.warehouse.create as any).mockResolvedValue(
+        dummyBranchRecord.warehouse
+      );
 
       const res = await request(app)
         .post('/api/v1/branches')
@@ -259,5 +270,3 @@ describe('Módulo Branch — HU-020 (T-063 y T-064)', () => {
     });
   });
 });
-
-

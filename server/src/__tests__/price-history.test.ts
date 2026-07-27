@@ -29,7 +29,7 @@ jest.mock('@infrastructure/database/prisma', () => {
 // 2. Mock JwtService para simular sesiones
 let mockUserSession = {
   userId: 1,
-  email: 'user1@dmendoza.com',
+  email: 'user1@e-commerce.com',
   role: 'ADMIN',
 };
 
@@ -46,7 +46,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
     jest.clearAllMocks();
     mockUserSession = {
       userId: 1,
-      email: 'user1@dmendoza.com',
+      email: 'user1@e-commerce.com',
       role: 'ADMIN',
     };
   });
@@ -55,14 +55,12 @@ describe('HU-014: Historial de Cambios de Precios', () => {
     // Simulamos que el usuario logueado existe y tiene permisos
     const mockAdmin = {
       id: 1,
-      email: 'user1@dmendoza.com',
+      email: 'user1@e-commerce.com',
       isActive: true,
       roles: [
         {
           name: 'ADMIN',
-          permissions: [
-            { name: 'products:read' },
-          ],
+          permissions: [{ name: 'products:read' }],
         },
       ],
     };
@@ -85,7 +83,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
         user: {
           id: 1,
           name: 'Carlos Perez',
-          email: 'user1@dmendoza.com',
+          email: 'user1@e-commerce.com',
         },
       },
       {
@@ -99,7 +97,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
         user: {
           id: 2,
           name: 'Maria Gomez',
-          email: 'user2@dmendoza.com',
+          email: 'user2@e-commerce.com',
         },
       },
     ];
@@ -128,7 +126,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
       user: {
         id: 1,
         name: 'Carlos Perez',
-        email: 'user1@dmendoza.com',
+        email: 'user1@e-commerce.com',
       },
     });
 
@@ -144,7 +142,7 @@ describe('HU-014: Historial de Cambios de Precios', () => {
       user: {
         id: 2,
         name: 'Maria Gomez',
-        email: 'user2@dmendoza.com',
+        email: 'user2@e-commerce.com',
       },
     });
 
