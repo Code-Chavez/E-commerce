@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { 
@@ -70,7 +70,7 @@ export const EmployeesPage: React.FC = () => {
     setFormData(prev => ({ ...prev, password: pass }));
   };
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axiosInstance.get('/v1/employees', {
@@ -83,32 +83,33 @@ export const EmployeesPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm]);
 
-  const fetchBranches = async () => {
+  const fetchBranches = useCallback(async () => {
     try {
       const { data } = await axiosInstance.get('/v1/branches');
       setBranches(data.data);
-    } catch {
-      // silently ignore branch fetch errors
+    } catch (error) {
+      console.error(error);
     }
-  };
+  }, []);
 
-  const fetchRoles = async () => {
+  const fetchRoles = useCallback(async () => {
     try {
       const { data } = await axiosInstance.get('/v1/roles');
       setRoles(data.data);
-    } catch {
-      // silently ignore role fetch errors
+    } catch (error) {
+      console.error(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEmployees();
     fetchBranches();
     fetchRoles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, searchTerm]);
+  }, [fetchEmployees, fetchBranches, fetchRoles]);
+
+
 
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { UserPlus, Users, Search, Loader2, Mail } from 'lucide-react';
@@ -39,7 +39,7 @@ export const ClientLinkPage: React.FC = () => {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [pendingEmails, setPendingEmails] = useState<Record<number, string>>({});
 
-  const fetchUnlinkedClients = async () => {
+  const fetchUnlinkedClients = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axiosInstance.get('/v1/admin/clients/unlinked');
@@ -49,12 +49,13 @@ export const ClientLinkPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUnlinkedClients();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchUnlinkedClients]);
+
+
 
   const executeLink = async (clientId: number, email?: string) => {
     setConfirmModal(prev => ({ ...prev, isOpen: false }));

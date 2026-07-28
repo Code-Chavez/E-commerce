@@ -2748,7 +2748,7 @@ Devuelve los datos completos y estructurados de una venta específica, optimizad
   "data": {
     "orderId": 1,
     "date": "2026-06-02T12:00:00.000Z",
-    "seller": "Carlos Mendoza",
+    "seller": "E-Commerce",
     "branch": {
       "id": 1,
       "name": "Sede Principal",
@@ -3223,7 +3223,7 @@ Consulta de manera paginada y filtrada las ventas/comprobantes electrónicos emi
         "client": {
           "id": 3,
           "name": "Carlos",
-          "lastName": "Mendoza",
+          "lastName": "E-Commerce",
           "documentId": "45678912"
         }
       }

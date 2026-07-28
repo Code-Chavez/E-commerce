@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { Palette, Globe, Save, Loader2, Image as ImageIcon, UploadCloud, Plus, Trash2, Link as LinkIcon } from 'lucide-react';
@@ -124,7 +124,7 @@ export const BrandingPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const { refreshBrandConfig } = useBrand();
 
-  const fetchConfig = async () => {
+  const fetchConfig = useCallback(async () => {
     try {
       const { data } = await axiosInstance.get('/v1/config/brand');
       if (data.success) {
@@ -142,12 +142,13 @@ export const BrandingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchConfig();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchConfig]);
+
+
 
   const handleSave = async () => {
     setSaving(true);

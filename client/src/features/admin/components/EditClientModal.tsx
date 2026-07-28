@@ -33,6 +33,24 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'communications'>('info');
 
+  React.useEffect(() => {
+    if (client) {
+      setName(client.name || '');
+      setLastName(client.lastName || '');
+      setEmail(client.email || '');
+      setPhone(client.phone || '');
+      setDocumentType(client.documentType || 'DNI');
+      setDocumentId(client.documentId || '');
+      setAddress(client.address || '');
+      setDepartment(client.department || '');
+      setProvince(client.province || '');
+      setDistrict(client.district || '');
+      setUbigeo(client.ubigeo || '');
+      setActiveTab('info');
+      setError(null);
+    }
+  }, [client]);
+
   if (!isOpen || !client) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {

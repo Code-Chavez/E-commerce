@@ -65,11 +65,14 @@ export const BranchesPage: React.FC = () => {
   };
 
   const handleModalSubmit = async (data: BranchFormData) => {
-    const result = editingBranch
-      ? await updateBranch(editingBranch.id, data)
-      : await createBranch(data);
+    let success;
+    if (editingBranch) {
+      success = await updateBranch(editingBranch.id, data);
+    } else {
+      success = await createBranch(data);
+    }
 
-    if (result) {
+    if (success) {
       setIsModalOpen(false);
       setEditingBranch(null);
     }

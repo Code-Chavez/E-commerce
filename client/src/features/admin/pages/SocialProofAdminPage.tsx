@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import { Camera, Check, X, Trash2, Plus, AlertCircle, Loader } from 'lucide-react';
 
@@ -21,7 +21,7 @@ export const SocialProofAdminPage: React.FC = () => {
   const [newImage, setNewImage] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  const fetchProofs = async () => {
+  const fetchProofs = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get('/v1/social-proof/admin');
@@ -31,12 +31,13 @@ export const SocialProofAdminPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProofs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchProofs]);
+
+
 
   const toggleApproval = async (id: number, currentStatus: boolean) => {
     try {

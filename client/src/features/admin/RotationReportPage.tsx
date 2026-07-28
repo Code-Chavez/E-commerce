@@ -18,23 +18,6 @@ interface RotationRow {
 
 type SortKey = keyof RotationRow;
 
-const SortIcon = ({ k, sortKey, sortAsc }: { k: SortKey; sortKey: SortKey; sortAsc: boolean }) => {
-  if (sortKey !== k) return null;
-  return sortAsc ? <ArrowUp size={12} className="text-[#3F3F3F]" /> : <ArrowDown size={12} className="text-[#3F3F3F]" />;
-};
-
-const Th = ({ label, k, center = false, sortKey, sortAsc, onSort }: { label: string; k: SortKey; center?: boolean; sortKey: SortKey; sortAsc: boolean; onSort: (key: SortKey) => void }) => (
-  <th 
-    className={`px-5 py-4 text-xs font-bold text-[#3F3F3F]/80 uppercase tracking-wider cursor-pointer hover:bg-[#D9D9D2]/20 select-none transition-colors ${center ? 'text-center' : 'text-left'}`} 
-    onClick={() => onSort(k)}
-  >
-    <span className={`flex items-center gap-1.5 ${center ? 'justify-center' : ''}`}>
-      {label}
-      <SortIcon k={k} sortKey={sortKey} sortAsc={sortAsc} />
-    </span>
-  </th>
-);
-
 const RotationReportPage: React.FC = () => {
   useDocumentTitle('Rotación de Inventario - E-Commerce');
 
@@ -93,7 +76,22 @@ const RotationReportPage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  // SortIcon and Th are defined outside this component
+  const renderSortIcon = (k: SortKey) => {
+    if (sortKey !== k) return null;
+    return sortAsc ? <ArrowUp size={12} className="text-[#3F3F3F]" /> : <ArrowDown size={12} className="text-[#3F3F3F]" />;
+  };
+
+  const renderTh = (label: string, k: SortKey, center: boolean = false) => (
+    <th 
+      className={`px-5 py-4 text-xs font-bold text-[#3F3F3F]/80 uppercase tracking-wider cursor-pointer hover:bg-[#D9D9D2]/20 select-none transition-colors ${center ? 'text-center' : 'text-left'}`} 
+      onClick={() => handleSort(k)}
+    >
+      <span className={`flex items-center gap-1.5 ${center ? 'justify-center' : ''}`}>
+        {label}
+        {renderSortIcon(k)}
+      </span>
+    </th>
+  );
 
   // Compute stats metrics
   const totalSold = data.reduce((acc, curr) => acc + curr.unitsSold, 0);
@@ -257,13 +255,13 @@ const RotationReportPage: React.FC = () => {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-[#FAFAFA] border-b border-[#D9D9D2]/40">
-                  <Th label="SKU" k="sku" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Producto" k="productName" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Sucursal" k="branchName" sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Vendidas" k="unitsSold" center sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Stock Prom." k="avgStock" center sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Ratio Rotación" k="rotationRatio" center sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
-                  <Th label="Días de Stock" k="stockDays" center sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} />
+                  {renderTh("SKU", "sku")}
+                  {renderTh("Producto", "productName")}
+                  {renderTh("Sucursal", "branchName")}
+                  {renderTh("Vendidas", "unitsSold", true)}
+                  {renderTh("Stock Prom.", "avgStock", true)}
+                  {renderTh("Ratio Rotación", "rotationRatio", true)}
+                  {renderTh("Días de Stock", "stockDays", true)}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#D9D9D2]/30">

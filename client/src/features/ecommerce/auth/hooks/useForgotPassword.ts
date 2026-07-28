@@ -24,13 +24,13 @@ export const useForgotPassword = () => {
 
       if (!response.ok || result.success === false) {
         if (Array.isArray(result.error)) {
-          throw new Error(result.error[0]?.message || 'Error de validación');
+          throw new Error(result.error[0]?.message || 'Error de validación', { cause: result.error });
         } else if (typeof result.error === 'string') {
-          throw new Error(result.error);
+          throw new Error(result.error, { cause: result.error });
         } else if (typeof result.message === 'string') {
-          throw new Error(result.message);
+          throw new Error(result.message, { cause: result.message });
         } else {
-          throw new Error('Error al enviar solicitud');
+          throw new Error('Error al enviar solicitud', { cause: result });
         }
       }
 
