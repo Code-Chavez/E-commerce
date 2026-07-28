@@ -24,9 +24,8 @@ jest.mock('@infrastructure/database/prisma', () => {
     create: jest.fn(),
     findFirst: jest.fn(),
   };
-
   const mockProductVariant = {
-    findUnique: jest.fn().mockImplementation(async () => ({ id: 1, costPrice: 10 })),
+    findUnique: jest.fn(),
     update: jest.fn(),
   };
   const mockPriceHistory = {

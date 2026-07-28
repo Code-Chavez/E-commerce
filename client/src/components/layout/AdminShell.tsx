@@ -154,6 +154,7 @@ export const AdminShell: React.FC = () => {
     }
     
     if (activeKey) {
+      // eslint-disable-next-line
       setExpandedMenus({
         ventas: false,
         catalogo: false,
@@ -173,7 +174,7 @@ export const AdminShell: React.FC = () => {
         const { data } = await axiosInstance.get('/v1/admin/cross-branch/pending');
         if (data.success) {
           const list = data.data || [];
-          const count = list.reduce((acc: number, item: any) => acc + (item.pendingOrdersCount || 0), 0);
+          const count = list.reduce((acc: number, item: { pendingOrdersCount?: number }) => acc + (item.pendingOrdersCount || 0), 0);
           setPendingCrossBranchCount(count);
         }
       } catch (err) {

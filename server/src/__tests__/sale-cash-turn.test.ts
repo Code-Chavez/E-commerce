@@ -23,12 +23,6 @@ jest.mock('@infrastructure/database/prisma', () => {
               cashTurnId: 1,
             } as never),
           },
-          productVariant: {
-            findMany: jest.fn().mockImplementation(async () => ([] as any)),
-          },
-          documentSequence: {
-            upsert: jest.fn().mockImplementation(async () => ({ nextValue: 1 } as any)),
-          },
           payment: {
             createMany: jest.fn(),
           },
@@ -38,6 +32,23 @@ jest.mock('@infrastructure/database/prisma', () => {
           },
           loyaltyConfig: {
             findFirst: jest.fn().mockResolvedValue(null as never),
+          },
+          loyaltyAccount: {
+            upsert: jest.fn(),
+          },
+          productVariant: {
+            findMany: jest
+              .fn()
+              .mockResolvedValue([{ id: 1, costPrice: 0 }] as never),
+          },
+          documentSequence: {
+            upsert: jest
+              .fn()
+              .mockResolvedValue({ series: 'T001', nextNumber: 2 } as never),
+          },
+          creditNote: {
+            findUnique: jest.fn(),
+            updateMany: jest.fn(),
           },
         })
       ),
@@ -112,7 +123,7 @@ describe('Sale POS - Cash Turn Validation (HU-032)', () => {
 
     const response = await request(app).post('/api/v1/pos/sales').send(payload);
 
-    console.log(response.body); expect(response.status).toBe(201);
+    expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
     expect(response.body.data.cashTurnId).toBe(1);
     expect(prisma.cashTurn.findFirst).toHaveBeenCalledWith({

@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../app';
 import { Readable } from 'stream';
 
-const mockGenerateTransferGuideExecute = jest.fn();
+var mockGenerateTransferGuideExecute = jest.fn();
 jest.mock(
   '@application/use-cases/inventory/GenerateTransferGuideUseCase',
   () => {
@@ -15,7 +15,7 @@ jest.mock(
   }
 );
 
-const mockPdfGenerate = jest.fn().mockImplementation(() => {
+var mockPdfGenerate = jest.fn().mockImplementation(() => {
   const stream = new Readable();
   stream.push('mock pdf content');
   stream.push(null);

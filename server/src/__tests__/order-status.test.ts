@@ -237,7 +237,7 @@ describe('Tests de Integración — HU-045: Seguimiento del Estado del Pedido y 
         .expect(403);
 
       expect(res.body.success).toBe(false);
-      console.log(res.body); expect(res.body.error || res.body.message || res.body.error).toContain('Acceso denegado');
+      expect(res.body.error).toContain('Acceso denegado');
       expect(prisma.order.update).not.toHaveBeenCalled();
       expect(mockSendEmail).not.toHaveBeenCalled();
     });

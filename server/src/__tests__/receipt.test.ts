@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../app';
 import { Readable } from 'stream';
 
-const mockGetReceiptsExecute = jest.fn();
+var mockGetReceiptsExecute = jest.fn();
 jest.mock('@application/use-cases/admin/GetReceiptsUseCase', () => {
   return {
     GetReceiptsUseCase: jest.fn().mockImplementation(() => ({
@@ -12,7 +12,7 @@ jest.mock('@application/use-cases/admin/GetReceiptsUseCase', () => {
   };
 });
 
-const mockGetPosReceiptPdfExecute = jest.fn();
+var mockGetPosReceiptPdfExecute = jest.fn();
 jest.mock('@application/use-cases/admin/GetPosReceiptPdfUseCase', () => {
   return {
     GetPosReceiptPdfUseCase: jest.fn().mockImplementation(() => ({
@@ -21,7 +21,7 @@ jest.mock('@application/use-cases/admin/GetPosReceiptPdfUseCase', () => {
   };
 });
 
-const mockPdfGenerate = jest.fn().mockImplementation(() => {
+var mockPdfGenerate = jest.fn().mockImplementation(() => {
   const stream = new Readable();
   stream.push('mock pdf content');
   stream.push(null);
@@ -36,7 +36,7 @@ jest.mock('@infrastructure/services/PDFKitPosReceiptService', () => {
   };
 });
 
-const mockTicketGenerate = jest.fn().mockImplementation(() => {
+var mockTicketGenerate = jest.fn().mockImplementation(() => {
   const stream = new Readable();
   stream.push('mock ticket content');
   stream.push(null);

@@ -3,7 +3,7 @@ import request from 'supertest';
 import bcrypt from 'bcrypt';
 
 // Mock JWT verification
-const mockVerifyAccessToken = jest.fn();
+var mockVerifyAccessToken = jest.fn();
 jest.mock('@infrastructure/services/JwtService', () => ({
   JwtService: jest.fn().mockImplementation(() => ({
     verifyAccessToken: (...args: any[]) => mockVerifyAccessToken(...args),

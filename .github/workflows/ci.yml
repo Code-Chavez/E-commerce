@@ -25,44 +25,53 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
+          cache-dependency-path: 'client/pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Run lint
-        continue-on-error: true
-        run: pnpm run lint
+        run: pnpm --dir . run lint
 
       - name: Build client
-        run: pnpm run build
+        run: pnpm --dir . run build
 
   server-checks:
     name: Server Checks (Lint & Test)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
     services:
-      mysql:
+      # MariaDB (not MySQL): the migrations use MariaDB-only syntax such as
+      # `DROP FOREIGN KEY IF EXISTS`, which MySQL 8.0 rejects with error 1064.
+      # Match the version used in dev/prod.
+      mariadb:
         image: mariadb:10.11
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ecommerce_test
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ecommerce_test
+          MARIADB_USER: testuser
+          MARIADB_PASSWORD: testpass
         ports:
           - 3306:3306
         options: >-
           --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
-    defaults:
-      run:
-        working-directory: ./server
+          --health-retries=15
+
+    env:
+      DATABASE_URL: mysql://testuser:testpass@127.0.0.1:3306/ecommerce_test
+      SEED_ADMIN_EMAIL: admin@test.com
+      SEED_ADMIN_PASSWORD: Admin123!
 
     steps:
       - name: Checkout code
@@ -72,41 +81,37 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
+          cache-dependency-path: 'server/pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-workspace
+
+      # --ignore-workspace drops the workspace allowBuilds, so pnpm skips
+      # native build scripts. Rebuild them explicitly (bcrypt, esbuild,
+      # prisma engines) so seed/tests can run.
+      - name: Build native dependencies
+        run: pnpm rebuild
 
       - name: Prisma Generate
-        run: pnpm run prisma:generate
+        run: npx prisma generate
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
+      - name: Seed database
+        run: npx prisma db seed
 
       - name: Run lint
-        continue-on-error: true
-        run: pnpm run lint
+        run: pnpm --dir . run lint
 
       - name: Build server
-        run: pnpm run build
-
-      - name: Setup Database
-        env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:3306/ecommerce_test
-        run: pnpm run prisma:migrate
+        run: pnpm --dir . run build
 
       - name: Run tests
-        env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:3306/ecommerce_test
-          JWT_SECRET: test-secret
-          JWT_REFRESH_SECRET: test-refresh-secret
-          STRIPE_SECRET_KEY: sk_test_mock_stripe_key
-          STRIPE_WEBHOOK_SECRET: whsec_test_mock_webhook
-          RESEND_API_KEY: re_test_mock_resend_key
-          GOOGLE_CLIENT_ID: mock-client-id
-          GOOGLE_CLIENT_SECRET: mock-client-secret
-        run: pnpm run test
+        run: pnpm --dir . run test

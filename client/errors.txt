@@ -1,0 +1,128 @@
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\BlogAdminPage.tsx
+16:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\BrandingPage.tsx
+128:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\ClientLinkPage.tsx
+43:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\EmployeesPage.tsx
+74:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\EmployeesPage.tsx:79:3
+75:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\EmployeesPage.tsx:94:3
+76:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\EmployeesPage.tsx:101:3
+98:21  error    Empty block statement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-empty
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\EmployeesPage.tsx:101:3
+105:21  error    Empty block statement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-empty
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\ProductsAdminPage.tsx
+22:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx
+258:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+259:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+260:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+261:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+262:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+263:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\RotationReportPage.tsx:84:14
+264:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\audits\components\AuditTable.tsx
+71:33  error  Unexpected constant nullishness on the left-hand side of a `??` expression  no-constant-binary-expression
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\branches\BranchesPage.tsx
+68:9  error  The value assigned to 'success' is not used in subsequent statements  no-useless-assignment
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\branches\CashRegistersPage.tsx
+88:9  error  The value assigned to 'success' is not used in subsequent statements  no-useless-assignment
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+22:27  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+23:35  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+24:29  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+25:29  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+26:43  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+27:39  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+28:33  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+29:39  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+30:35  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+31:35  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+32:31  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+34:31  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+35:29  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\EditClientModal.tsx
+36:37  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\DemandForecastTable.tsx
+80:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\DemandForecastTable.tsx:47:20
+89:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\DemandForecastTable.tsx:47:20
+98:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\LowRotationTable.tsx
+89:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\LowRotationTable.tsx:56:20
+98:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\LowRotationTable.tsx:56:20
+110:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\LowRotationTable.tsx:56:20
+119:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\LowRotationTable.tsx:56:20
+128:20  error    Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\RestockSuggestionsTable.tsx
+68:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\RestockSuggestionsTable.tsx:35:20
+77:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\components\reports\RestockSuggestionsTable.tsx:35:20
+86:20  error  Error: Cannot create components during render
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\entries\schemas\stockEntry.schema.ts
+11:23  error  Unnecessary escape character: \-  no-useless-escape
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\expenses\ExpensesPage.tsx
+52:9   error    The value assigned to 'success' is not used in subsequent statements  no-useless-assignment
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\pages\SocialProofAdminPage.tsx
+25:5   error    Error: Cannot access variable before it is declared
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\services\logistics.service.ts
+88:9   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\admin\suppliers\SuppliersPage.tsx
+60:9  error  The value assigned to 'success' is not used in subsequent statements  no-useless-assignment
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\auth\hooks\useForgotPassword.ts
+41:7  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\auth\hooks\useResetPassword.ts
+41:7  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useAddresses.ts
+21:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useAddresses.ts
+50:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useAddresses.ts
+78:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useAddresses.ts
+92:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useAddresses.ts
+104:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useProfile.ts
+37:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\features\ecommerce\profile\hooks\useProfile.ts
+88:7   error    There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+22:31  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+23:27  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+24:23  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+25:37  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+26:29  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/rules-of-hooks
+C:\Proyects\Proyects\E-commerce\client\src\shared\components\ExportModal.tsx
+28:3   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/rules-of-hooks

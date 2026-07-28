@@ -122,7 +122,7 @@ app.use('/api/v1/cart', ecommerceCartRoutes); // HU-041 — Carrito de Compras
 app.use('/api/v1', posStockRoutes);
 app.use('/api/v1', stockTransferRoutes);
 app.use('/api/v1', adminCrossBranchRoutes);
-app.use('/api/v1/admin', adminSettingsRoutes);
+app.use('/api/v1/admin/settings', adminSettingsRoutes);
 app.use('/api/v1', receiptRoutes);
 app.use('/api/v1', addressRoutes);
 app.use('/api/v1', blogRoutes);

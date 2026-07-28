@@ -15,33 +15,29 @@ jest.mock('@infrastructure/database/prisma', () => {
   const mockStockAlert = {
     findMany: jest.fn(),
   };
+  const mockProductVariant = {
+    findMany: jest.fn(),
+  };
+  const mockSystemSetting = {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+  };
   const mockBranch = {
     findMany: jest.fn(),
   };
   const mockUser = {
-    findUnique: jest.fn().mockImplementation(async (args: any) => ({
-      id: 1,
-      email: 'admin@example.com',
-      isActive: true,
-      roles: [
-        {
-          name: 'ADMIN',
-          permissions: [
-            { permission: { name: 'dashboard:read' } },
-            { permission: { name: 'sales:read' } },
-          ],
-        },
-      ],
-    })),
-  } as any;
+    findUnique: jest.fn(),
+  };
 
   const mockPrisma: any = {
     order: mockOrder,
     posOrder: mockPosOrder,
     stockAlert: mockStockAlert,
+    productVariant: mockProductVariant,
+    systemSetting: mockSystemSetting,
     branch: mockBranch,
     user: mockUser,
-    productVariant: { findMany: jest.fn().mockImplementation(async () => []) },
     $transaction: jest
       .fn()
       .mockImplementation(async (args: any): Promise<any> => {
@@ -104,10 +100,10 @@ describe('Tests de Integración — HU-047: Dashboard de Indicadores Clave del N
       // Mock de ecommerce order count (pedidos pendientes)
       (prisma.order.count as any).mockResolvedValue(3);
 
-      // Mock de productVariant.findMany
+      // Mock del cálculo de stock crítico (ahora global por variante)
+      (prisma.systemSetting.findUnique as any).mockResolvedValue(null);
       (prisma.productVariant.findMany as any).mockResolvedValue([
         {
-          id: 10,
           sku: 'CAM-M-ROJO',
           minStock: 5,
           isActive: true,
